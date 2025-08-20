@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, ArrowLeft, Users, CheckCircle, Shield, Star } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Users, CheckCircle, Shield, Star, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 const ClientRegistration = () => {
