@@ -20,7 +20,7 @@ export const ServiceCard = ({ icon, title, description, className, link }: Servi
         <img
           src={icon}
           alt={title}
-          className="w-20 h-20 object-cover rounded-2xl shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300"
+          className="w-28 h-28 object-cover rounded-2xl shadow-xl mb-6 group-hover:scale-110 transition-transform duration-300 border-2 border-white/20"
         />
         <h3 className="text-center text-lg font-bold mb-3">{title}</h3>
       </div>

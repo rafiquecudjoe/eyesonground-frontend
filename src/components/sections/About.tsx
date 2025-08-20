@@ -13,9 +13,9 @@ export const About = () => {
           <div className="flex w-full flex-col items-stretch text-4xl md:text-[52px] text-[rgba(13,38,75,1)] font-bold max-md:max-w-full max-md:mt-10">
             <div className="flex items-center gap-4 justify-start mb-8 max-md:text-[40px]">
               <img
-                src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=70&h=70&fit=crop"
+                src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop"
                 alt="About icon"
-                className="aspect-square object-cover w-16 h-16 rounded-2xl shadow-lg"
+                className="aspect-square object-cover w-20 h-20 rounded-2xl shadow-xl border-2 border-white/30"
               />
               <h2 className="self-stretch my-auto max-md:text-[32px] bg-gradient-to-r from-[rgba(13,38,75,1)] to-[rgba(42,100,186,1)] bg-clip-text text-transparent">
                 About us
@@ -54,9 +54,9 @@ export const About = () => {
             </div>
             <div className="flex items-start gap-4 text-base text-[#233E4C] leading-6 mt-12 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <img
-                src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
+                src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop"
                 alt="Feature 1"
-                className="aspect-square object-cover w-12 h-12 rounded-xl shadow-md flex-shrink-0"
+                className="aspect-square object-cover w-14 h-14 rounded-xl shadow-lg flex-shrink-0 border border-white/50"
               />
               <div>
                 <h4 className="font-bold text-[rgba(13,38,75,1)] mb-2">Global Network</h4>
@@ -67,9 +67,9 @@ export const About = () => {
             </div>
             <div className="flex items-start gap-4 text-base text-[#233E4C] leading-6 mt-6 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <img
-                src="https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
+                src="https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop"
                 alt="Feature 2"
-                className="aspect-square object-cover w-12 h-12 rounded-xl shadow-md flex-shrink-0"
+                className="aspect-square object-cover w-14 h-14 rounded-xl shadow-lg flex-shrink-0 border border-white/50"
               />
               <div>
                 <h4 className="font-bold text-[rgba(13,38,75,1)] mb-2">Professional Reports</h4>
