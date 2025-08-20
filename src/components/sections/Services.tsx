@@ -9,25 +9,25 @@ export const Services = () => {
   
   const services = [
     {
-      icon: "https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop",
+      icon: "https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
       title: "VEHICLE INSPECTIONS",
       description:
         "Comprehensive vehicle inspections including engine checks, body condition, interior assessment, and test drives by certified automotive experts.",
     },
     {
-      icon: "https://images.pexels.com/photos/2343468/pexels-photo-2343468.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop",
+      icon: "https://images.pexels.com/photos/2343468/pexels-photo-2343468.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
       title: "APPLIANCE & ELECTRONICS",
       description:
         "Detailed inspections of home appliances, electronics, and gadgets with functionality tests, condition reports, and warranty verification.",
     },
     {
-      icon: "https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop",
+      icon: "https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
       title: "MACHINERY & EQUIPMENT",
       description:
         "Professional inspection of industrial machinery, construction equipment, and heavy-duty tools with operational assessments and safety checks.",
     },
     {
-      icon: "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop",
+      icon: "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
       title: "REAL ESTATE & PROPERTY",
       description:
         "Thorough property inspections including structural assessments, room-by-room documentation, and neighborhood evaluation reports.",
