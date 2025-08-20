@@ -58,9 +58,9 @@ const ClientRegistration = () => {
           className="flex items-center gap-4 text-[rgba(13,38,75,1)] hover:opacity-80 transition-opacity"
         >
           <img
-            src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop"
+            src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
             alt="EyesOnGround Logo"
-            className="aspect-square object-cover w-10 h-10 rounded-lg shadow-sm"
+            className="aspect-square object-cover w-12 h-12 rounded-xl shadow-lg border-2 border-white/20"
           />
           <span className="text-xl md:text-2xl font-bold tracking-wide">EYESONGROUND</span>
         </Link>
