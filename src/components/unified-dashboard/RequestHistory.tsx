@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter } from "lucide-react";
+import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -13,28 +13,8 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
   const [statusFilter, setStatusFilter] = useState("all");
   const isMobile = useIsMobile();
 
-  // Mock data
+  // Mock data - only active requests (pending and in-progress)
   const requests = [
-    {
-      id: 1,
-      title: "Vehicle Inspection - 2019 Honda Civic",
-      category: "Automotive",
-      location: "Los Angeles, CA",
-      budget: "$150",
-      status: "completed",
-      date: "Dec 15, 2024",
-      agent: {
-        name: "John Smith",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        rating: 4.9
-      },
-      client: {
-        name: "Sarah Johnson",
-        avatar: "https://randomuser.me/api/portraits/women/32.jpg"
-      },
-      completedDate: "Dec 16, 2024",
-      duration: "2 hours"
-    },
     {
       id: 2,
       title: "Property Assessment - Downtown Apartment",
@@ -60,7 +40,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
       category: "Electronics",
       location: "San Francisco, CA",
       budget: "$85",
-      status: "pending",
+      status: "pending", 
       date: "Dec 20, 2024",
       applicants: 5
     }
@@ -93,12 +73,12 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">
-          {userType === "client" ? "My Requests" : "My Assignments"}
+          {userType === "client" ? "My Active Requests" : "Current Assignments"}
         </h1>
         <p className="text-[rgba(13,38,75,0.7)]">
           {userType === "client" 
-            ? "Track and manage your inspection requests" 
-            : "View your current and completed assignments"}
+            ? "Track and manage your pending and in-progress inspection requests" 
+            : "View your current assignments and applications"}
         </p>
       </div>
 
@@ -107,7 +87,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[rgba(13,38,75,0.5)] h-4 w-4" />
           <Input
-            placeholder="Search requests..."
+            placeholder="Search active requests..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/80 backdrop-blur-sm"
@@ -234,18 +214,21 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
             <FileText className="h-8 w-8 text-[rgba(42,100,186,1)]" />
           </div>
           <h3 className="text-xl font-bold text-[rgba(13,38,75,1)] mb-2">
-            {userType === "client" ? "No requests yet" : "No assignments yet"}
+            {userType === "client" ? "No active requests found" : "No current assignments"}
           </h3>
           <p className="text-[rgba(13,38,75,0.7)] mb-6">
             {userType === "client" 
-              ? "Start by posting your first inspection request" 
-              : "Check the marketplace for available jobs"}
+              ? "Create your first inspection request to get started" 
+              : "Your current assignments will appear here"}
           </p>
-          <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
-            <Link to={`/${userType === 'client' ? 'client' : 'psi'}-dashboard/${userType === 'client' ? 'create-request' : 'available-jobs'}`}>
-              {userType === "client" ? "Post Your First Request" : "Browse Available Jobs"}
-            </Link>
-          </Button>
+          {userType === "client" && (
+            <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
+              <Link to="/client-dashboard/create-request">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Request
+              </Link>
+            </Button>
+          )}
         </div>
       )}
     </div>
