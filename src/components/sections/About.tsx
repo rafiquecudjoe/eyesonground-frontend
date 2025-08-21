@@ -28,8 +28,8 @@ export const About = () => {
             </div>
             <div className="relative">
               <img
-              src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=600"
-              alt="About illustration"
+              src="https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=600"
+              alt="Professional inspector conducting detailed vehicle inspection"
               className="aspect-[1.26] object-cover w-full rounded-3xl shadow-2xl border-4 border-white/50"
               />
               {/* Floating inspection badge */}

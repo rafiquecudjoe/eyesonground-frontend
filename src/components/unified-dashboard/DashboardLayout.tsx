@@ -37,20 +37,20 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
     if (userType === "client") {
       return [
         { 
-          path: "/client-dashboard/marketplace", 
-          label: "Marketplace", 
+          path: "/client-dashboard/create-request", 
+          label: "New Request", 
           icon: Search,
-          description: "Find & request inspections"
+          description: "Post a new inspection request"
         },
         { 
           path: "/client-dashboard/my-requests", 
-          label: "My Requests", 
+          label: "Active Requests", 
           icon: FileText,
-          description: "Track your inspection requests"
+          description: "Track active inspection requests"
         },
         { 
           path: "/client-dashboard/history", 
-          label: "History", 
+          label: "Completed", 
           icon: History,
           description: "View completed inspections"
         },
@@ -64,23 +64,16 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
     } else {
       return [
         { 
-          path: "/psi-dashboard/available-jobs", 
-          label: "Available Jobs", 
-          icon: Search,
-          description: "Browse inspection opportunities",
-          badge: 3
-        },
-        { 
           path: "/psi-dashboard/my-assignments", 
-          label: "My Assignments", 
+          label: "Current Jobs", 
           icon: FileText,
           description: "Current & upcoming inspections"
         },
         { 
-          path: "/psi-dashboard/earnings", 
-          label: "Earnings", 
+          path: "/psi-dashboard/history", 
+          label: "Completed", 
           icon: History,
-          description: "Track your income & history"
+          description: "View completed assignments"
         },
         { 
           path: "/psi-dashboard/messages", 
@@ -129,7 +122,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <div className="flex items-center gap-2">
                     <IconComponent className="h-4 w-4" />
                     <span className="font-medium">{item.label}</span>
-                    {item.badge && (
+                    {item.badge && item.badge > 0 && (
                       <Badge className="bg-red-500 text-white text-xs h-5 min-w-5 flex items-center justify-center">
                         {item.badge}
                       </Badge>
@@ -155,7 +148,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                       <div className="w-8 h-8 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center">
                         <Eye className="w-4 h-4 text-white" />
                       </div>
-                      <span className="font-bold text-[rgba(13,38,75,1)]">Dashboard</span>
+                      {item.badge && item.badge > 0 && (
                     </div>
                   </div>
                   
