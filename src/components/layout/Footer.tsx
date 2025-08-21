@@ -1,3 +1,5 @@
+import { Eye } from "lucide-react";
+
 export const Footer = () => {
   return (
     <footer className="bg-gradient-to-b from-[rgba(1,9,21,1)] to-[rgba(13,38,75,1)] w-full overflow-hidden pt-16 pb-8 px-6 md:px-[52px] max-md:max-w-full relative">
