@@ -148,7 +148,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                       <div className="w-8 h-8 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center">
                         <Eye className="w-4 h-4 text-white" />
                       </div>
-                      {item.badge && item.badge > 0 && (
+                      <span className="font-bold text-[rgba(13,38,75,1)]">EYESONGROUND</span>
                     </div>
                   </div>
                   
