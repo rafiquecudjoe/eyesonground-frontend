@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "@/components/unified-dashboard/DashboardLayout";
-import { Marketplace } from "@/components/unified-dashboard/Marketplace";
 import { RequestHistory } from "@/components/unified-dashboard/RequestHistory";
 import { History } from "@/components/unified-dashboard/History";
 import { CreateRequest } from "@/components/unified-dashboard/CreateRequest";
@@ -36,7 +35,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
           <>
             <Route path="/" element={<Navigate to="/client-dashboard/create-request" replace />} />
             <Route path="/create-request" element={<CreateRequest />} />
-            <Route path="/my-requests" element={<RequestHistory userType="client" showOnlyActive={true} />} />
+            <Route path="/my-requests" element={<RequestHistory userType="client" />} />
             <Route path="/history" element={<History userType="client" />} />
             <Route path="/messages" element={<Messages userType="client" />} />
             <Route path="/profile" element={<Profile userType="client" />} />
@@ -47,7 +46,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {userType === "agent" && (
           <>
             <Route path="/" element={<Navigate to="/psi-dashboard/my-assignments" replace />} />
-            <Route path="/my-assignments" element={<RequestHistory userType="agent" showOnlyActive={true} />} />
+            <Route path="/my-assignments" element={<RequestHistory userType="agent" />} />
             <Route path="/history" element={<History userType="agent" />} />
             <Route path="/messages" element={<Messages userType="agent" />} />
             <Route path="/profile" element={<Profile userType="agent" />} />

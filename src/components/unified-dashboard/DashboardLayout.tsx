@@ -11,26 +11,10 @@ import { Link } from "react-router-dom";
 export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [showOnlyActive, setShowOnlyActive] = useState(true);
   const isMobile = useIsMobile();
 
   // Mock data - only active requests (pending and in-progress)
   const requests = [
-    {
-      id: 1,
-      title: "Property Inspection - Luxury Condo",
-      category: "Real Estate",
-      location: "Miami, FL",
-      budget: "$250",
-      status: "completed",
-      date: "Dec 15, 2024",
-      agent: {
-        name: "Sarah Johnson",
-        rating: 4.9,
-        avatar: "https://randomuser.me/api/portraits/women/32.jpg"
-      },
-      client: {
-        name: "Sarah Johnson",
         avatar: "https://randomuser.me/api/portraits/women/32.jpg"
       },
       completedDate: "Dec 16, 2024",
