@@ -87,9 +87,19 @@ curl http://localhost:8080/health
 ## Troubleshooting
 
 ### Build Issues
+- **"vite: not found" error**: Fixed in updated Dockerfile - now installs all dependencies including dev dependencies
 - Ensure all dependencies are in `package.json`
 - Check Node.js version compatibility
 - Verify build script works locally: `npm run build`
+
+### Alternative Dockerfile
+If you encounter issues with the main Dockerfile, you can use the simpler version:
+```bash
+# Rename simple dockerfile
+mv Dockerfile.simple Dockerfile
+
+# Then deploy to Coolify
+```
 
 ### Runtime Issues
 - Check container logs in Coolify dashboard
@@ -100,3 +110,8 @@ curl http://localhost:8080/health
 - Images are cached for 1 year
 - HTML files have no-cache headers
 - GZIP compression reduces transfer size
+
+## Deployment Fix Applied
+✅ **Fixed**: "vite: not found" error by installing all dependencies (including devDependencies) during build stage
+✅ **Optimized**: Added build dependencies for native packages
+✅ **Alternative**: Created Dockerfile.simple for simpler deployments
