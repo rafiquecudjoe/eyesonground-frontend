@@ -1,4 +1,6 @@
 
+import { Eye } from "lucide-react";
+
 export const About = () => {
   return (
     <section id="about" className="bg-gradient-to-b from-[rgba(234,241,255,1)] to-white w-full overflow-hidden px-6 md:px-[62px] py-16 md:py-20 max-md:max-w-full relative">
