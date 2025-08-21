@@ -62,11 +62,11 @@ export const CreateRequest = () => {
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="mb-6">
         <button 
-          onClick={() => navigate("/client-dashboard/marketplace")}
+          onClick={() => navigate("/client-dashboard/my-requests")}
           className="inline-flex items-center text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] mb-4 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Marketplace
+          Back to Requests
         </button>
         
         <div className="text-center mb-8">

@@ -6,12 +6,19 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Upload, Star, Eye, Shield, CheckCircle } from "lucide-react";
+import { Pencil, Upload, Star, Eye, Shield, CheckCircle, CreditCard, Wallet, Settings, Bell, Lock, DollarSign, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [notifications, setNotifications] = useState({
+    email: true,
+    sms: false,
+    push: true
+  });
 
   const [personalInfo, setPersonalInfo] = useState({
     firstName: "John",
@@ -36,6 +43,39 @@ export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
     successRate: "98%"
   });
 
+  // Mock payment methods for clients
+  const [paymentMethods] = useState([
+    {
+      id: 1,
+      type: "card",
+      last4: "4242",
+      brand: "Visa",
+      expiryMonth: 12,
+      expiryYear: 2025,
+      isDefault: true
+    },
+    {
+      id: 2,
+      type: "card",
+      last4: "5555",
+      brand: "Mastercard",
+      expiryMonth: 8,
+      expiryYear: 2026,
+      isDefault: false
+    }
+  ]);
+
+  // Mock bank accounts for agents
+  const [bankAccounts] = useState([
+    {
+      id: 1,
+      bankName: "Chase Bank",
+      accountType: "Checking",
+      last4: "1234",
+      isDefault: true
+    }
+  ]);
+
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPersonalInfo((prev) => ({ ...prev, [name]: value }));
@@ -54,6 +94,11 @@ export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
   const handleSaveAddressInfo = () => {
     setIsEditingAddress(false);
     toast.success("Address information updated successfully");
+  };
+
+  const handleNotificationChange = (key: string, value: boolean) => {
+    setNotifications(prev => ({ ...prev, [key]: value }));
+    toast.success("Notification preferences updated");
   };
 
   return (
@@ -122,12 +167,18 @@ export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
 
       {/* Profile Tabs */}
       <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="mb-6 bg-white/80 backdrop-blur-sm border border-[rgba(42,100,186,0.1)]">
+        <TabsList className="mb-6 bg-white/80 backdrop-blur-sm border border-[rgba(42,100,186,0.1)] grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="personal" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[rgba(42,100,186,1)] data-[state=active]:to-[rgba(13,38,75,1)] data-[state=active]:text-white">
-            Personal Information
+            Personal
           </TabsTrigger>
           <TabsTrigger value="address" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[rgba(42,100,186,1)] data-[state=active]:to-[rgba(13,38,75,1)] data-[state=active]:text-white">
             Address
+          </TabsTrigger>
+          <TabsTrigger value={userType === "client" ? "payments" : "banking"} className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[rgba(42,100,186,1)] data-[state=active]:to-[rgba(13,38,75,1)] data-[state=active]:text-white">
+            {userType === "client" ? "Payments" : "Banking"}
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[rgba(42,100,186,1)] data-[state=active]:to-[rgba(13,38,75,1)] data-[state=active]:text-white">
+            Settings
           </TabsTrigger>
           {userType === "agent" && (
             <TabsTrigger value="verification" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[rgba(42,100,186,1)] data-[state=active]:to-[rgba(13,38,75,1)] data-[state=active]:text-white">
@@ -321,6 +372,235 @@ export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Payment Methods Tab (Clients) */}
+        {userType === "client" && (
+          <TabsContent value="payments">
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <CreditCard className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Payment Methods
+                </CardTitle>
+                <CardDescription>
+                  Manage your payment methods for inspection services
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {paymentMethods.map((method) => (
+                    <div key={method.id} className="flex items-center justify-between p-4 border border-[rgba(42,100,186,0.2)] rounded-xl bg-white/60">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center">
+                          <CreditCard className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-[rgba(13,38,75,1)]">
+                            {method.brand} •••• {method.last4}
+                          </p>
+                          <p className="text-sm text-[rgba(13,38,75,0.7)]">
+                            Expires {method.expiryMonth}/{method.expiryYear}
+                          </p>
+                        </div>
+                        {method.isDefault && (
+                          <Badge className="bg-green-100 text-green-800">Default</Badge>
+                        )}
+                      </div>
+                      <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  
+                  <Button className="w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Payment Method
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {/* Banking Tab (Agents) */}
+        {userType === "agent" && (
+          <TabsContent value="banking">
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <Wallet className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Banking & Withdrawals
+                </CardTitle>
+                <CardDescription>
+                  Manage your bank accounts and withdrawal preferences
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Current Balance */}
+                  <div className="p-6 bg-gradient-to-r from-[rgba(42,100,186,0.1)] to-[rgba(13,38,75,0.1)] rounded-xl border border-[rgba(42,100,186,0.2)]">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-[rgba(13,38,75,1)]">Available Balance</h3>
+                      <DollarSign className="h-6 w-6 text-[rgba(42,100,186,1)]" />
+                    </div>
+                    <div className="text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">$1,247.50</div>
+                    <p className="text-sm text-[rgba(13,38,75,0.7)]">Ready for withdrawal</p>
+                    <Button className="mt-4 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
+                      Withdraw Funds
+                    </Button>
+                  </div>
+
+                  {/* Bank Accounts */}
+                  <div>
+                    <h3 className="text-lg font-bold text-[rgba(13,38,75,1)] mb-4">Bank Accounts</h3>
+                    <div className="space-y-3">
+                      {bankAccounts.map((account) => (
+                        <div key={account.id} className="flex items-center justify-between p-4 border border-[rgba(42,100,186,0.2)] rounded-xl bg-white/60">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center">
+                              <Wallet className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-[rgba(13,38,75,1)]">
+                                {account.bankName} - {account.accountType}
+                              </p>
+                              <p className="text-sm text-[rgba(13,38,75,0.7)]">
+                                •••• {account.last4}
+                              </p>
+                            </div>
+                            {account.isDefault && (
+                              <Badge className="bg-green-100 text-green-800">Default</Badge>
+                            )}
+                          </div>
+                          <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      
+                      <Button className="w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Bank Account
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {/* Settings Tab */}
+        <TabsContent value="settings">
+          <div className="space-y-6">
+            {/* Notifications */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <Bell className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Notification Preferences
+                </CardTitle>
+                <CardDescription>
+                  Choose how you want to receive notifications
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-[rgba(13,38,75,1)]">Email Notifications</p>
+                      <p className="text-sm text-[rgba(13,38,75,0.7)]">Receive updates via email</p>
+                    </div>
+                    <Switch 
+                      checked={notifications.email} 
+                      onCheckedChange={(checked) => handleNotificationChange('email', checked)}
+                    />
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-[rgba(13,38,75,1)]">SMS Notifications</p>
+                      <p className="text-sm text-[rgba(13,38,75,0.7)]">Receive updates via text message</p>
+                    </div>
+                    <Switch 
+                      checked={notifications.sms} 
+                      onCheckedChange={(checked) => handleNotificationChange('sms', checked)}
+                    />
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-[rgba(13,38,75,1)]">Push Notifications</p>
+                      <p className="text-sm text-[rgba(13,38,75,0.7)]">Receive browser notifications</p>
+                    </div>
+                    <Switch 
+                      checked={notifications.push} 
+                      onCheckedChange={(checked) => handleNotificationChange('push', checked)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Security Settings */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Security Settings
+                </CardTitle>
+                <CardDescription>
+                  Manage your account security and privacy
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
+                    <Lock className="mr-2 h-4 w-4" />
+                    Change Password
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full justify-start border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Enable Two-Factor Authentication
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full justify-start border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Privacy Settings
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Account Actions */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)]">Account Actions</CardTitle>
+                <CardDescription>
+                  Manage your account settings and data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Button variant="outline" className="w-full justify-start border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Export Account Data
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Account
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {userType === "agent" && (
