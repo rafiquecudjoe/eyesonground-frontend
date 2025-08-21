@@ -70,7 +70,12 @@ export const Features = () => {
         
         <div className="w-full md:w-1/2 bg-gradient-to-tr from-[rgba(42,100,186,0.05)] to-[rgba(13,38,75,0.02)] relative overflow-hidden">
           <div className="absolute top-0 right-0 bottom-0 left-0 md:left-auto md:w-full h-full">
-            <img alt="Professional inspector examining equipment" src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=800" className="w-full h-full object-center object-cover" />
+          {/* <img alt="Professional inspector examining equipment" src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=800" className="w-full h-full object-center object-cover" /> */}
+            <img
+              src="/images/pexels-cottonbro-5184919.jpg"
+              alt="Professional inspector conducting detailed inspection with tablet and equipment"
+              className="w-full h-full object-center object-cover"
+              />
             
             {/* Overlay with inspection stats */}
             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(13,38,75,0.8)] via-transparent to-transparent"></div>

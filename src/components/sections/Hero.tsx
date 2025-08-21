@@ -7,20 +7,20 @@ import { Search, MapPin, Eye, Shield, Clock } from "lucide-react";
 export const Hero = () => {
   const heroImages = [
     {
-      src: "https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=600",
-      alt: "Professional inspecting a car engine"
+      src: "/images/pexels-shvetsa-4315575.jpg",
+      alt: "Professional real estate inspector consulting with clients in modern home"
     },
     {
-      src: "https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=600",
-      alt: "Inspector examining appliances"
+      src: "/images/pexels-gustavo-fring-4975384.jpg", 
+      alt: "Inspector measuring property dimensions with professional tools"
     },
     {
-      src: "https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=600",
-      alt: "Professional inspecting machinery"
+      src: "/images/pexels-tim-samuel-5835356.jpg",
+      alt: "Professional inspector documenting findings with tablet outdoors"
     },
     {
-      src: "https://images.pexels.com/photos/3964736/pexels-photo-3964736.jpeg?auto=compress&cs=tinysrgb&w=600",
-      alt: "Quality inspection process"
+      src: "/images/pexels-a-darmel-7641860.jpg",
+      alt: "Professional documenting delivery and goods inspection"
     }
   ];
   

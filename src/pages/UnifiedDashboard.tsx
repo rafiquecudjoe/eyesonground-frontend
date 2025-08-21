@@ -5,6 +5,7 @@ import { History } from "@/components/unified-dashboard/History";
 import { CreateRequest } from "@/components/unified-dashboard/CreateRequest";
 import { Messages } from "@/components/unified-dashboard/Messages";
 import { Profile } from "@/components/unified-dashboard/Profile";
+import { Settings } from "@/components/unified-dashboard/Settings";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
