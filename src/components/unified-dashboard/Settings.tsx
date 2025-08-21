@@ -72,7 +72,7 @@ export const Settings = ({ userType }: { userType: "client" | "agent" }) => {
     toast.success("Notification preferences updated");
   };
 
-  const handlePrivacyChange = (key: string, value: any) => {
+  const handlePrivacyChange = (key: string, value: boolean | string) => {
     setPrivacy(prev => ({ ...prev, [key]: value }));
     toast.success("Privacy settings updated");
   };
