@@ -8,33 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 
-export const RequestHistory = ({ userType, showOnlyActive = true }: { userType: "client" | "agent"; showOnlyActive?: boolean }) => {
+export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const isMobile = useIsMobile();
 
-  // Mock data - filter based on showOnlyActive prop
+  // Mock data - only active requests (pending and in-progress)
   const requests = [
-    {
-      id: 1,
-      title: "Vehicle Inspection - 2019 Honda Civic",
-      category: "Automotive",
-      location: "Los Angeles, CA",
-      budget: "$150",
-      status: "completed",
-      date: "Dec 15, 2024",
-      agent: {
-        name: "John Smith",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        rating: 4.9
-      },
-      client: {
-        name: "Sarah Johnson",
-        avatar: "https://randomuser.me/api/portraits/women/32.jpg"
-      },
-      completedDate: "Dec 16, 2024",
-      duration: "2 hours"
-    },
     {
       id: 2,
       title: "Property Assessment - Downtown Apartment",
@@ -64,12 +44,7 @@ export const RequestHistory = ({ userType, showOnlyActive = true }: { userType: 
       date: "Dec 20, 2024",
       applicants: 5
     }
-  ].filter(request => {
-    if (showOnlyActive) {
-      return request.status === "pending" || request.status === "in-progress";
-    }
-    return true;
-  });
+  ];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -98,11 +73,11 @@ export const RequestHistory = ({ userType, showOnlyActive = true }: { userType: 
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">
-          {userType === "client" ? "Active Requests" : "Current Assignments"}
+          {userType === "client" ? "My Active Requests" : "Current Assignments"}
         </h1>
         <p className="text-[rgba(13,38,75,0.7)]">
           {userType === "client" 
-            ? "Track and manage your active inspection requests" 
+            ? "Track and manage your pending and in-progress inspection requests" 
             : "View your current assignments and applications"}
         </p>
       </div>
@@ -112,7 +87,7 @@ export const RequestHistory = ({ userType, showOnlyActive = true }: { userType: 
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[rgba(13,38,75,0.5)] h-4 w-4" />
           <Input
-            placeholder={showOnlyActive ? "Search active requests..." : "Search all requests..."}
+            placeholder="Search active requests..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/80 backdrop-blur-sm"
@@ -239,13 +214,21 @@ export const RequestHistory = ({ userType, showOnlyActive = true }: { userType: 
             <FileText className="h-8 w-8 text-[rgba(42,100,186,1)]" />
           </div>
           <h3 className="text-xl font-bold text-[rgba(13,38,75,1)] mb-2">
-            {userType === "client" ? "No active requests" : "No current assignments"}
+            {userType === "client" ? "No active requests found" : "No current assignments"}
           </h3>
           <p className="text-[rgba(13,38,75,0.7)] mb-6">
             {userType === "client" 
-              ? "Your active inspection requests will appear here" 
+              ? "Create your first inspection request to get started" 
               : "Your current assignments will appear here"}
           </p>
+          {userType === "client" && (
+            <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
+              <Link to="/client-dashboard/create-request">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Request
+              </Link>
+            </Button>
+          )}
         </div>
       )}
     </div>
