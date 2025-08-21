@@ -37,7 +37,9 @@ export const Hero = () => {
           <div className="mt-2 max-md:max-w-full max-md:mt-10 space-y-8">
             <div className="w-full text-[rgba(20,40,77,1)] max-md:max-w-full">
               <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-[rgba(42,100,186,0.2)] mb-6">
-                <Eye className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                <div className="w-5 h-5 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded flex items-center justify-center">
+                  <Eye className="w-3 h-3 text-white" />
+                </div>
                 <span className="text-sm font-medium text-[rgba(13,38,75,1)]">Trusted Remote Inspection Service</span>
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight max-md:max-w-full max-md:text-[40px] max-md:leading-[50px] bg-gradient-to-r from-[rgba(13,38,75,1)] to-[rgba(42,100,186,1)] bg-clip-text text-transparent">

@@ -17,12 +17,18 @@ export const Navbar = () => {
         to="/"
         className="flex items-center gap-3 text-[rgba(13,38,75,1)] justify-center my-auto"
       >
-        <img
-          src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
-          alt="EyesOnGround Logo"
-          className="aspect-square object-cover w-12 h-12 rounded-xl shadow-lg border-2 border-white/20"
-        />
-        <span className="self-stretch my-auto font-semibold tracking-wide">EYESONGROUND</span>
+        <div className="w-10 h-10 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center shadow-lg relative">
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+            <svg className="w-1.5 h-1.5 text-[rgba(42,100,186,1)]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+        </div>
+        <span className="self-stretch my-auto font-bold tracking-wide">EYESONGROUND</span>
       </Link>
 
       {/* Mobile Menu Button */}

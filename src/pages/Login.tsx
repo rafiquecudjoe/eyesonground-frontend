@@ -54,13 +54,16 @@ const Login = () => {
       <div className="relative z-10 flex items-center justify-between p-6 md:p-8">
         <Link
           to="/"
-          className="flex items-center gap-4 text-[rgba(13,38,75,1)] hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 text-[rgba(13,38,75,1)] hover:opacity-80 transition-opacity"
         >
-          <img
-            src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
-            alt="EyesOnGround Logo"
-            className="aspect-square object-cover w-12 h-12 rounded-xl shadow-lg border-2 border-white/20"
-          />
+          <div className="w-12 h-12 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-xl flex items-center justify-center shadow-lg relative">
+            <Eye className="w-6 h-6 text-white" />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-md">
+              <svg className="w-2 h-2 text-[rgba(42,100,186,1)]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+          </div>
           <span className="text-xl md:text-2xl font-bold tracking-wide">EYESONGROUND</span>
         </Link>
         

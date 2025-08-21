@@ -12,11 +12,14 @@ export const About = () => {
         <div className="w-full lg:w-[43%] max-md:w-full max-md:ml-0 relative z-10">
           <div className="flex w-full flex-col items-stretch text-4xl md:text-[52px] text-[rgba(13,38,75,1)] font-bold max-md:max-w-full max-md:mt-10">
             <div className="flex items-center gap-4 justify-start mb-8 max-md:text-[40px]">
-              <img
-                src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop"
-                alt="About icon"
-                className="aspect-square object-cover w-20 h-20 rounded-2xl shadow-xl border-2 border-white/30"
-              />
+              <div className="w-20 h-20 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-2xl flex items-center justify-center shadow-xl relative">
+                <Eye className="w-10 h-10 text-white" />
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                  <svg className="w-3 h-3 text-[rgba(13,38,75,1)]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+              </div>
               <h2 className="self-stretch my-auto max-md:text-[32px] bg-gradient-to-r from-[rgba(13,38,75,1)] to-[rgba(42,100,186,1)] bg-clip-text text-transparent">
                 About us
               </h2>

@@ -10,8 +10,7 @@ import ClientRegistration from "./pages/ClientRegistration";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AccountTypeSelection from "./pages/AccountTypeSelection";
-import ClientDashboard from "./pages/ClientDashboard";
-import PSIAgentDashboard from "./pages/PSIAgentDashboard";
+import UnifiedDashboard from "./pages/UnifiedDashboard";
 import LogoSelection from "./pages/LogoSelection";
 
 const queryClient = new QueryClient();
@@ -28,8 +27,8 @@ const App = () => (
           <Route path="/clientregister" element={<ClientRegistration />} />
           <Route path="/account-type" element={<AccountTypeSelection />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/client-dashboard/*" element={<ClientDashboard />} />
-          <Route path="/psi-dashboard/*" element={<PSIAgentDashboard />} />
+          <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
+          <Route path="/psi-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
           <Route path="/logo-samples" element={<LogoSelection />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

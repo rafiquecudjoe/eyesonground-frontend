@@ -11,11 +11,14 @@ export const Footer = () => {
         <div className="w-full md:w-[37%] max-md:w-full max-md:ml-0 relative z-10">
           <div className="flex w-full flex-col items-stretch mt-[11px] max-md:mt-10">
             <div className="flex items-center gap-4 text-2xl text-white font-bold">
-              <img
-                src="https://images.pexels.com/photos/5691659/pexels-photo-5691659.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop"
-                alt="EyesOnGround Logo"
-                className="aspect-square object-cover w-12 h-12 rounded-xl shadow-lg border-2 border-white/20"
-              />
+              <div className="w-12 h-12 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-xl flex items-center justify-center shadow-lg relative border-2 border-white/20">
+                <Eye className="w-6 h-6 text-white" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-md">
+                  <svg className="w-2 h-2 text-[rgba(42,100,186,1)]" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+              </div>
               <div className="self-stretch my-auto tracking-wide">EYESONGROUND</div>
             </div>
             <p className="text-[rgba(219,231,255,0.8)] text-base font-normal leading-relaxed mt-4">
