@@ -1,11 +1,15 @@
 
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Check if user is logged in (you can replace this with actual auth state)
+  const isLoggedIn = localStorage.getItem('userType') || sessionStorage.getItem('userType');
+  const userType = isLoggedIn; // This would be 'client' or 'agent'
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -79,6 +83,17 @@ export const Navbar = () => {
 
       {/* Desktop Action Buttons */}
       <div className="flex items-stretch gap-[21px] text-base font-normal max-md:hidden">
+        {/* Back to Dashboard button for logged-in users */}
+        {isLoggedIn && (
+          <Link
+            to={userType === 'client' ? '/client-dashboard' : '/psi-dashboard'}
+            className="self-stretch bg-gradient-to-r from-green-500 to-emerald-600 min-h-[47px] gap-2.5 overflow-hidden text-white flex items-center justify-center pl-[21px] pr-5 py-[13px] rounded-xl max-md:pl-5 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            <ArrowRight className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+        )}
+        
         <Link
           to="/account-type"
           className="self-stretch bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] min-h-[47px] gap-2.5 overflow-hidden text-white flex items-center justify-center pl-[21px] pr-5 py-[13px] rounded-xl max-md:pl-5 hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
@@ -128,6 +143,18 @@ export const Navbar = () => {
           </nav>
           
           <div className="flex flex-col mt-4 gap-3 w-full">
+            {/* Back to Dashboard button for mobile logged-in users */}
+            {isLoggedIn && (
+              <Link
+                to={userType === 'client' ? '/client-dashboard' : '/psi-dashboard'}
+                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-center hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-2"
+                onClick={toggleMenu}
+              >
+                <ArrowRight className="h-4 w-4" />
+                Back to Dashboard
+              </Link>
+            )}
+            
             <Link
               to="/account-type"
               className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white py-3 rounded-xl text-center hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] transition-all duration-300"

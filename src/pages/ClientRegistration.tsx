@@ -27,6 +27,9 @@ const ClientRegistration = () => {
     if (firstName && lastName && email && password && agreed) {
       console.log("Registration data:", { firstName, lastName, email, password });
       
+      // Store user type for the back-to-dashboard feature
+      localStorage.setItem('userType', 'client');
+      
       toast.success("Registration successful!", {
         description: "Welcome to your client dashboard"
       });

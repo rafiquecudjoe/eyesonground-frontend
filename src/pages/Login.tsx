@@ -24,6 +24,9 @@ const Login = () => {
     e.preventDefault();
     
     if (email && password) {
+      // Store user type for the back-to-dashboard feature
+      localStorage.setItem('userType', accountType);
+      
       if (accountType === "client") {
         toast.success("Login successful!", {
           description: "Welcome to your client dashboard"

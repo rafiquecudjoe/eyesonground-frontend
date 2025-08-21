@@ -64,6 +64,9 @@ const PSIAgentRegistration = () => {
       zipCode
     });
     
+    // Store user type for the back-to-dashboard feature
+    localStorage.setItem('userType', 'agent');
+    
     toast.success("Registration successful!", {
       description: "Welcome to your PSI agent dashboard"
     });
