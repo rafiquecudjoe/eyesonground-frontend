@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Users, Shield, CheckCircle, Star, Globe, Clock } from "lucide-react";
+import { ArrowLeft, Users, Shield, CheckCircle, Star, Globe, Clock, Eye } from "lucide-react";
 
 const AccountTypeSelection = () => {
   const [selectedType, setSelectedType] = useState<"client" | "agent" | null>(null);
