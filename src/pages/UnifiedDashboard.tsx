@@ -18,9 +18,9 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
   
   useEffect(() => {
     const basePath = userType === "client" ? "/client-dashboard" : "/psi-dashboard";
-    const defaultRoute = userType === "client" ? "/create-request" : "/my-assignments";
+    const defaultRoute = userType === "client" ? "/my-requests" : "/my-assignments";
     
-    if (location.pathname === basePath) {
+    if (location.pathname === basePath || location.pathname === `${basePath}/`) {
       navigate(`${basePath}${defaultRoute}`);
     }
   }, [location.pathname, navigate, userType]);
@@ -33,12 +33,13 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Client Routes */}
         {userType === "client" && (
           <>
-            <Route path="/" element={<Navigate to="/client-dashboard/create-request" replace />} />
+            <Route path="/" element={<Navigate to="/client-dashboard/my-requests" replace />} />
             <Route path="/create-request" element={<CreateRequest />} />
             <Route path="/my-requests" element={<RequestHistory userType="client" />} />
             <Route path="/history" element={<History userType="client" />} />
             <Route path="/messages" element={<Messages userType="client" />} />
             <Route path="/profile" element={<Profile userType="client" />} />
+            <Route path="/settings" element={<Settings userType="client" />} />
           </>
         )}
         
@@ -50,6 +51,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
             <Route path="/history" element={<History userType="agent" />} />
             <Route path="/messages" element={<Messages userType="agent" />} />
             <Route path="/profile" element={<Profile userType="agent" />} />
+            <Route path="/settings" element={<Settings userType="agent" />} />
           </>
         )}
       </Routes>

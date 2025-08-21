@@ -66,6 +66,12 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
       label: "Profile", 
       icon: User,
       description: "Account settings"
+    },
+    { 
+      path: `${basePath}/settings`, 
+      label: "Settings", 
+      icon: Settings,
+      description: "App preferences"
     }
   ];
 
@@ -93,6 +99,12 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
       label: "Profile", 
       icon: User,
       description: "Account settings"
+    },
+    { 
+      path: `${basePath}/settings`, 
+      label: "Settings", 
+      icon: Settings,
+      description: "App preferences"
     }
   ];
 
@@ -252,15 +264,6 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
             {/* Footer */}
             <div className="p-6 border-t border-[rgba(42,100,186,0.1)]">
               <div className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]"
-                  onClick={() => toast.info("Settings not implemented yet")}
-                >
-                  <Settings className="mr-3 h-4 w-4" />
-                  Settings
-                </Button>
-                
                 <Button 
                   variant="outline" 
                   className="w-full justify-start border-red-300 text-red-600 hover:bg-red-50"
