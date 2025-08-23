@@ -199,7 +199,7 @@ const AccountTypeSelection = () => {
                       "h-4 w-4",
                       selectedType === "agent" ? "text-white" : "text-green-500"
                     )} />
-                    <span className="text-sm">Professional training provided</span>
+                    <span className="text-sm">Professional trainings provided</span>
                   </div>
                 </div>
               </div>
