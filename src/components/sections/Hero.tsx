@@ -81,6 +81,16 @@ export const Hero = () => {
               </Button>
             </div>
             
+            {/* Marketplace CTA */}
+            <div className="flex justify-center mt-6">
+              <Button asChild variant="ghost" className="text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] font-medium px-6 py-2 rounded-lg hover:bg-[rgba(42,100,186,0.1)] transition-all duration-300 group">
+                <Link to="/account-type" className="flex items-center gap-2">
+                  <Search className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  Browse Marketplace & Agents
+                </Link>
+              </Button>
+            </div>
+            
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-4 mt-12 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <div className="text-center">
