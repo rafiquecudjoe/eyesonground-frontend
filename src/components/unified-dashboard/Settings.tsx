@@ -574,7 +574,7 @@ export const Settings = ({ userType }: { userType: "client" | "agent" }) => {
                       <Label>Account Type</Label>
                       <div className="p-3 border rounded-xl bg-[rgba(42,100,186,0.05)] border-[rgba(42,100,186,0.1)]">
                         <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'}`}>
-                          {userType === 'client' ? 'Client Account' : 'PSI Agent Account'}
+                          {userType === 'client' ? 'Client Account' : 'Agent Account'}
                         </Badge>
                       </div>
                     </div>

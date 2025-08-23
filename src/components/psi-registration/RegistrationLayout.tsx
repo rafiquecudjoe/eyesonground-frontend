@@ -26,7 +26,7 @@ export const RegistrationLayout = ({ children }: RegistrationLayoutProps) => {
         <div className="hidden md:block md:w-[380px] bg-blue-600 relative">
           <img
             src="/lovable-uploads/922e7656-a989-40b5-afd3-dd2377a7facb.png"
-            alt="PSI Agent"
+            alt="Agent"
             className="h-full w-full object-cover"
           />
         </div>

@@ -122,7 +122,7 @@ const ClientRegistration = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-[rgba(13,38,75,1)] mb-2">Satisfaction Guaranteed</h3>
-                  <p className="text-[rgba(13,38,75,0.7)]">Money-back guarantee if you're not completely satisfied</p>
+                  <p className="text-[rgba(13,38,75,0.7)]">We vet our agents so you can trust their expertise</p>
                 </div>
               </div>
             </div>

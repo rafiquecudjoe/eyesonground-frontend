@@ -24,7 +24,7 @@ export const Footer = () => {
               <div className="self-stretch my-auto tracking-wide">EYESONGROUND</div>
             </div>
             <p className="text-[rgba(219,231,255,0.8)] text-base font-normal leading-relaxed mt-4">
-              The world's most trusted remote inspection platform. We connect buyers with verified local agents to provide detailed, real-time inspections of items anywhere in the world.
+              The world's most trusted remote inspection platform. We connect buyers with verified agents to provide detailed, real-time inspections of items anywhere in the world.
             </p>
             
             {/* Trust badges */}

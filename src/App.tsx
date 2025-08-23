@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import PSIAgentRegistration from "./pages/PSIAgentRegistration";
+import AgentRegistration from "./pages/AgentRegistration";
 import ClientRegistration from "./pages/ClientRegistration";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -22,12 +22,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/psiregister" element={<PSIAgentRegistration />} />
+          <Route path="/psiregister" element={<AgentRegistration />} />
           <Route path="/clientregister" element={<ClientRegistration />} />
           <Route path="/account-type" element={<AccountTypeSelection />} />
           <Route path="/login" element={<Login />} />
           <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
-          <Route path="/psi-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
+          <Route path="/agent-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

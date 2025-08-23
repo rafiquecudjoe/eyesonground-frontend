@@ -54,8 +54,24 @@ export const About = () => {
                 <span className="font-bold text-[rgba(42,100,186,1)]">?</span>
               </h3>
               <p className="text-[#233E4C] text-lg md:text-2xl leading-relaxed max-md:max-w-full">
-                EyesOnGround is the world's leading remote inspection platform that connects buyers with verified local agents who act as your eyes and hands on the ground. Whether you're purchasing a car, appliance, property, or any valuable item from a distant location, our professional inspectors provide detailed reports, photos, videos, and real-time updates to help you make confident buying decisions.
+                EyesOnGround is the world's leading remote inspection platform that connects buyers with verified agents who act as your eyes and hands on the ground. Whether you're purchasing a car, appliance, property, or any valuable item from a distant location, our professional inspectors provide detailed reports, photos, videos, and real-time updates to help you make confident buying decisions.
               </p>
+              
+              {/* Neutral Inspector Message */}
+              <div className="mt-8 p-6 bg-gradient-to-r from-[rgba(42,100,186,0.1)] to-[rgba(13,38,75,0.1)] rounded-2xl border border-[rgba(42,100,186,0.2)]">
+                <h4 className="font-bold text-[rgba(13,38,75,1)] text-xl mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-lg flex items-center justify-center">
+                    <Eye className="w-4 h-4 text-white" />
+                  </div>
+                  Our Commitment to Neutrality
+                </h4>
+                <p className="text-[rgba(13,38,75,0.9)] text-base leading-relaxed">
+                  We are your <strong>neutral inspector</strong> — providing objective, factual reports without influencing your purchasing decisions. Our agents deliver comprehensive condition assessments, detailed documentation, and professional observations, but the final decision always remains yours. We keep it simple, safe, and scalable by staying focused on what we do best: being your trusted eyes on the ground.
+                </p>
+                <div className="mt-4 text-sm text-[rgba(13,38,75,0.7)] italic">
+                  Future enhancement: Market Insight add-on for general pricing trends and resale data (not personal purchase advice).
+                </div>
+              </div>
             </div>
             <div className="flex items-start gap-4 text-base text-[#233E4C] leading-6 mt-12 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <img
@@ -64,9 +80,9 @@ export const About = () => {
                 className="aspect-square object-cover w-14 h-14 rounded-xl shadow-lg flex-shrink-0 border border-white/50"
               />
               <div>
-                <h4 className="font-bold text-[rgba(13,38,75,1)] mb-2">Global Network</h4>
+                <h4 className="font-bold text-[rgba(13,38,75,1)] mb-2">Locations</h4>
                 <p className="text-[rgba(13,38,75,0.8)]">
-                  Our network spans across major cities worldwide, ensuring we have qualified agents ready to inspect items in your target location within hours.
+                  Our network spans across major cities in the US, ensuring we have qualified agents ready to inspect items in your target location within hours.
                 </p>
               </div>
             </div>

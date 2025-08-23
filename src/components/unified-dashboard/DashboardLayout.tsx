@@ -36,7 +36,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const basePath = userType === "client" ? "/client-dashboard" : "/psi-dashboard";
+  const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
 
   const clientNavItems = [
     { 
@@ -187,14 +187,14 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
             ? `fixed inset-y-0 left-0 z-40 w-80 transform transition-transform duration-300 ease-in-out ${
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full'
               }`
-            : 'w-80 flex-shrink-0'
+            : 'fixed left-0 top-0 bottom-0 w-80 z-30'
           }
           bg-white/90 backdrop-blur-sm border-r border-[rgba(42,100,186,0.1)] shadow-xl
         `}>
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full overflow-hidden">
             {/* Desktop Header */}
             {!isMobile && (
-              <div className="p-6 border-b border-[rgba(42,100,186,0.1)]">
+              <div className="p-6 border-b border-[rgba(42,100,186,0.1)] flex-shrink-0">
                 <Link to="/" className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-xl flex items-center justify-center shadow-lg relative">
                     <Eye className="w-6 h-6 text-white" />
@@ -218,7 +218,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <div className="flex-1">
                     <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
                     <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'PSI Agent'}
+                      {userType === 'client' ? 'Client' : 'Agent'}
                     </Badge>
                   </div>
                 </div>
@@ -227,7 +227,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
             {/* Mobile Header */}
             {isMobile && (
-              <div className="p-6 border-b border-[rgba(42,100,186,0.1)]">
+              <div className="p-6 border-b border-[rgba(42,100,186,0.1)] flex-shrink-0">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-[rgba(13,38,75,1)]">Dashboard</h2>
                   <Button variant="ghost" size="icon" onClick={toggleSidebar}>
@@ -246,7 +246,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <div className="flex-1">
                     <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
                     <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'PSI Agent'}
+                      {userType === 'client' ? 'Client' : 'Agent'}
                     </Badge>
                   </div>
                 </div>
@@ -254,7 +254,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
             )}
 
             {/* Navigation */}
-            <nav className="flex-1 p-6">
+            <nav className="flex-1 p-6 overflow-y-auto">
               <div className="space-y-2">
                 {navItems.map((item) => {
                   const Icon = item.icon;
@@ -289,7 +289,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
             </nav>
 
             {/* Footer */}
-            <div className="p-6 border-t border-[rgba(42,100,186,0.1)]">
+            <div className="p-6 border-t border-[rgba(42,100,186,0.1)] flex-shrink-0">
               <div className="space-y-3">
                 <Button 
                   variant="outline" 
@@ -313,14 +313,14 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
         )}
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-h-screen">
+        <main className={`flex-1 flex flex-col min-h-screen ${!isMobile ? 'ml-80' : ''}`}>
           {/* Desktop Header */}
           {!isMobile && (
             <header className="bg-white/80 backdrop-blur-sm border-b border-[rgba(42,100,186,0.1)] p-6 sticky top-0 z-20">
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-[rgba(13,38,75,1)]">
-                    {userType === "client" ? "Client Dashboard" : "PSI Agent Dashboard"}
+                    {userType === "client" ? "Client Dashboard" : "Agent Dashboard"}
                   </h1>
                   <p className="text-[rgba(13,38,75,0.7)]">
                     {userType === "client" 

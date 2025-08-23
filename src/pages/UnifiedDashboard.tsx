@@ -20,7 +20,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
   const location = useLocation();
   
   useEffect(() => {
-    const basePath = userType === "client" ? "/client-dashboard" : "/psi-dashboard";
+    const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
     const defaultRoute = userType === "client" ? "/marketplace" : "/marketplace";
     
     if (location.pathname === basePath || location.pathname === `${basePath}/`) {
@@ -28,7 +28,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
     }
   }, [location.pathname, navigate, userType]);
 
-  const basePath = userType === "client" ? "client-dashboard" : "psi-dashboard";
+  const basePath = userType === "client" ? "client-dashboard" : "agent-dashboard";
 
   return (
     <DashboardLayout userType={userType}>
@@ -50,7 +50,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Agent Routes */}
         {userType === "agent" && (
           <>
-            <Route path="/" element={<Navigate to="/psi-dashboard/marketplace" replace />} />
+            <Route path="/" element={<Navigate to="/agent-dashboard/marketplace" replace />} />
             <Route path="/marketplace" element={<Marketplace userType="agent" />} />
             <Route path="/my-assignments" element={<RequestHistory userType="agent" />} />
             <Route path="/earnings" element={<Earnings />} />

@@ -131,7 +131,7 @@ export const Profile = ({ userType }: { userType: "client" | "agent" }) => {
                     {personalInfo.firstName} {personalInfo.lastName}
                   </h1>
                   <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)]' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-white`}>
-                    {userType === 'client' ? 'Client' : 'PSI Agent'}
+                    {userType === 'client' ? 'Client' : 'Agent'}
                   </Badge>
                 </div>
                 <p className="text-[rgba(13,38,75,0.7)] mb-4">{personalInfo.email}</p>

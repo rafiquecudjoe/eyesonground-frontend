@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const PSIAgentRegistration = () => {
+const AgentRegistration = () => {
   const [step, setStep] = useState<"basicInfo" | "addressInfo">("basicInfo");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -68,10 +68,10 @@ const PSIAgentRegistration = () => {
     localStorage.setItem('userType', 'agent');
     
     toast.success("Registration successful!", {
-      description: "Welcome to your PSI agent dashboard"
+      description: "Welcome to your  agent dashboard"
     });
     
-    navigate("/psi-dashboard/services-history");
+    navigate("/agent-dashboard/services-history");
   };
 
   return (
@@ -172,7 +172,7 @@ const PSIAgentRegistration = () => {
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 bg-[rgba(42,100,186,0.1)] px-4 py-2 rounded-full mb-4">
                   <Shield className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-                  <span className="text-sm font-medium text-[rgba(13,38,75,1)]">PSI Agent Registration</span>
+                  <span className="text-sm font-medium text-[rgba(13,38,75,1)]">Agent Registration</span>
                 </div>
                 <h1 className="text-[rgba(13,38,75,1)] text-2xl font-bold mb-2">
                   Become an Agent
@@ -358,11 +358,57 @@ const PSIAgentRegistration = () => {
                         <SelectValue placeholder="Select your city" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="lagos">Lagos</SelectItem>
-                        <SelectItem value="abuja">Abuja</SelectItem>
-                        <SelectItem value="port-harcourt">Port Harcourt</SelectItem>
-                        <SelectItem value="kano">Kano</SelectItem>
-                        <SelectItem value="ibadan">Ibadan</SelectItem>
+                        <SelectItem value="new-york">New York, NY</SelectItem>
+                        <SelectItem value="los-angeles">Los Angeles, CA</SelectItem>
+                        <SelectItem value="chicago">Chicago, IL</SelectItem>
+                        <SelectItem value="houston">Houston, TX</SelectItem>
+                        <SelectItem value="phoenix">Phoenix, AZ</SelectItem>
+                        <SelectItem value="philadelphia">Philadelphia, PA</SelectItem>
+                        <SelectItem value="san-antonio">San Antonio, TX</SelectItem>
+                        <SelectItem value="san-diego">San Diego, CA</SelectItem>
+                        <SelectItem value="dallas">Dallas, TX</SelectItem>
+                        <SelectItem value="san-jose">San Jose, CA</SelectItem>
+                        <SelectItem value="austin">Austin, TX</SelectItem>
+                        <SelectItem value="jacksonville">Jacksonville, FL</SelectItem>
+                        <SelectItem value="fort-worth">Fort Worth, TX</SelectItem>
+                        <SelectItem value="columbus">Columbus, OH</SelectItem>
+                        <SelectItem value="charlotte">Charlotte, NC</SelectItem>
+                        <SelectItem value="san-francisco">San Francisco, CA</SelectItem>
+                        <SelectItem value="indianapolis">Indianapolis, IN</SelectItem>
+                        <SelectItem value="seattle">Seattle, WA</SelectItem>
+                        <SelectItem value="denver">Denver, CO</SelectItem>
+                        <SelectItem value="washington-dc">Washington, DC</SelectItem>
+                        <SelectItem value="boston">Boston, MA</SelectItem>
+                        <SelectItem value="el-paso">El Paso, TX</SelectItem>
+                        <SelectItem value="detroit">Detroit, MI</SelectItem>
+                        <SelectItem value="nashville">Nashville, TN</SelectItem>
+                        <SelectItem value="portland">Portland, OR</SelectItem>
+                        <SelectItem value="memphis">Memphis, TN</SelectItem>
+                        <SelectItem value="oklahoma-city">Oklahoma City, OK</SelectItem>
+                        <SelectItem value="las-vegas">Las Vegas, NV</SelectItem>
+                        <SelectItem value="louisville">Louisville, KY</SelectItem>
+                        <SelectItem value="baltimore">Baltimore, MD</SelectItem>
+                        <SelectItem value="milwaukee">Milwaukee, WI</SelectItem>
+                        <SelectItem value="albuquerque">Albuquerque, NM</SelectItem>
+                        <SelectItem value="tucson">Tucson, AZ</SelectItem>
+                        <SelectItem value="fresno">Fresno, CA</SelectItem>
+                        <SelectItem value="mesa">Mesa, AZ</SelectItem>
+                        <SelectItem value="sacramento">Sacramento, CA</SelectItem>
+                        <SelectItem value="atlanta">Atlanta, GA</SelectItem>
+                        <SelectItem value="kansas-city">Kansas City, MO</SelectItem>
+                        <SelectItem value="colorado-springs">Colorado Springs, CO</SelectItem>
+                        <SelectItem value="miami">Miami, FL</SelectItem>
+                        <SelectItem value="raleigh">Raleigh, NC</SelectItem>
+                        <SelectItem value="omaha">Omaha, NE</SelectItem>
+                        <SelectItem value="long-beach">Long Beach, CA</SelectItem>
+                        <SelectItem value="virginia-beach">Virginia Beach, VA</SelectItem>
+                        <SelectItem value="oakland">Oakland, CA</SelectItem>
+                        <SelectItem value="minneapolis">Minneapolis, MN</SelectItem>
+                        <SelectItem value="tulsa">Tulsa, OK</SelectItem>
+                        <SelectItem value="tampa">Tampa, FL</SelectItem>
+                        <SelectItem value="arlington">Arlington, TX</SelectItem>
+                        <SelectItem value="wichita">Wichita, KS</SelectItem>
+                        <SelectItem value="other">Other (Please specify in full address)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -374,11 +420,57 @@ const PSIAgentRegistration = () => {
                         <SelectValue placeholder="Select your zip code" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="23401">23401</SelectItem>
-                        <SelectItem value="90001">90001</SelectItem>
-                        <SelectItem value="10001">10001</SelectItem>
-                        <SelectItem value="60601">60601</SelectItem>
-                        <SelectItem value="30301">30301</SelectItem>
+                        <SelectItem value="10001">10001 - New York, NY</SelectItem>
+                        <SelectItem value="90210">90210 - Beverly Hills, CA</SelectItem>
+                        <SelectItem value="60601">60601 - Chicago, IL</SelectItem>
+                        <SelectItem value="77001">77001 - Houston, TX</SelectItem>
+                        <SelectItem value="85001">85001 - Phoenix, AZ</SelectItem>
+                        <SelectItem value="19101">19101 - Philadelphia, PA</SelectItem>
+                        <SelectItem value="78201">78201 - San Antonio, TX</SelectItem>
+                        <SelectItem value="92101">92101 - San Diego, CA</SelectItem>
+                        <SelectItem value="75201">75201 - Dallas, TX</SelectItem>
+                        <SelectItem value="95101">95101 - San Jose, CA</SelectItem>
+                        <SelectItem value="73301">73301 - Austin, TX</SelectItem>
+                        <SelectItem value="32099">32099 - Jacksonville, FL</SelectItem>
+                        <SelectItem value="76101">76101 - Fort Worth, TX</SelectItem>
+                        <SelectItem value="43215">43215 - Columbus, OH</SelectItem>
+                        <SelectItem value="28202">28202 - Charlotte, NC</SelectItem>
+                        <SelectItem value="94102">94102 - San Francisco, CA</SelectItem>
+                        <SelectItem value="46201">46201 - Indianapolis, IN</SelectItem>
+                        <SelectItem value="98101">98101 - Seattle, WA</SelectItem>
+                        <SelectItem value="80202">80202 - Denver, CO</SelectItem>
+                        <SelectItem value="20001">20001 - Washington, DC</SelectItem>
+                        <SelectItem value="02101">02101 - Boston, MA</SelectItem>
+                        <SelectItem value="79901">79901 - El Paso, TX</SelectItem>
+                        <SelectItem value="48201">48201 - Detroit, MI</SelectItem>
+                        <SelectItem value="37201">37201 - Nashville, TN</SelectItem>
+                        <SelectItem value="97201">97201 - Portland, OR</SelectItem>
+                        <SelectItem value="38101">38101 - Memphis, TN</SelectItem>
+                        <SelectItem value="73101">73101 - Oklahoma City, OK</SelectItem>
+                        <SelectItem value="89101">89101 - Las Vegas, NV</SelectItem>
+                        <SelectItem value="40201">40201 - Louisville, KY</SelectItem>
+                        <SelectItem value="21201">21201 - Baltimore, MD</SelectItem>
+                        <SelectItem value="53201">53201 - Milwaukee, WI</SelectItem>
+                        <SelectItem value="87101">87101 - Albuquerque, NM</SelectItem>
+                        <SelectItem value="85701">85701 - Tucson, AZ</SelectItem>
+                        <SelectItem value="93701">93701 - Fresno, CA</SelectItem>
+                        <SelectItem value="85201">85201 - Mesa, AZ</SelectItem>
+                        <SelectItem value="95814">95814 - Sacramento, CA</SelectItem>
+                        <SelectItem value="30303">30303 - Atlanta, GA</SelectItem>
+                        <SelectItem value="64108">64108 - Kansas City, MO</SelectItem>
+                        <SelectItem value="80903">80903 - Colorado Springs, CO</SelectItem>
+                        <SelectItem value="33101">33101 - Miami, FL</SelectItem>
+                        <SelectItem value="27601">27601 - Raleigh, NC</SelectItem>
+                        <SelectItem value="68102">68102 - Omaha, NE</SelectItem>
+                        <SelectItem value="90802">90802 - Long Beach, CA</SelectItem>
+                        <SelectItem value="23451">23451 - Virginia Beach, VA</SelectItem>
+                        <SelectItem value="94601">94601 - Oakland, CA</SelectItem>
+                        <SelectItem value="55401">55401 - Minneapolis, MN</SelectItem>
+                        <SelectItem value="74103">74103 - Tulsa, OK</SelectItem>
+                        <SelectItem value="33602">33602 - Tampa, FL</SelectItem>
+                        <SelectItem value="76010">76010 - Arlington, TX</SelectItem>
+                        <SelectItem value="67202">67202 - Wichita, KS</SelectItem>
+                        <SelectItem value="other">Other (Please specify in address)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -414,4 +506,4 @@ const PSIAgentRegistration = () => {
   );
 };
 
-export default PSIAgentRegistration;
+export default AgentRegistration;

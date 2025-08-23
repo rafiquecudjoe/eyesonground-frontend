@@ -47,7 +47,7 @@ export const Hero = () => {
                 <span className="text-[rgba(42,100,186,1)]">On The Ground</span>
               </h1>
               <p className="text-xl md:text-2xl font-light leading-relaxed mt-6 max-md:max-w-full text-[rgba(13,38,75,0.8)]">
-                Need to inspect an item before buying? Our verified local agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
+                Need to inspect an item before buying? Our verified agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
               </p>
             </div>
             
@@ -63,7 +63,7 @@ export const Hero = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-purple-500" />
-                <span>Global Coverage</span>
+                <span>Major Cities in the US</span>
               </div>
             </div>
             
@@ -77,6 +77,16 @@ export const Hero = () => {
               <Button asChild variant="outline" className="w-full sm:w-auto border-2 border-[rgba(13,38,75,1)] text-[rgba(13,38,75,1)] px-8 py-6 text-lg font-semibold rounded-xl hover:bg-[rgba(13,38,75,0.05)] transition-all duration-300 hover:shadow-md">
                 <Link to="/account-type">
                   Become an Agent
+                </Link>
+              </Button>
+            </div>
+            
+            {/* Marketplace CTA */}
+            <div className="flex justify-center mt-6">
+              <Button asChild variant="ghost" className="text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] font-medium px-6 py-2 rounded-lg hover:bg-[rgba(42,100,186,0.1)] transition-all duration-300 group">
+                <Link to="/account-type" className="flex items-center gap-2">
+                  <Search className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  Browse Marketplace & Agents
                 </Link>
               </Button>
             </div>

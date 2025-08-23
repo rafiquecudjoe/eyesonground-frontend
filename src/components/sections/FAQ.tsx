@@ -27,10 +27,6 @@ export const FAQ = () => {
     {
       question: "How quickly can I get an inspection done?",
       answer: "Most inspections can be scheduled within 24-48 hours. For urgent requests, we offer same-day inspections in major cities for an additional fee. The actual inspection typically takes 1-3 hours depending on the item complexity."
-    },
-    {
-      question: "What if I'm not satisfied with the inspection?",
-      answer: "We guarantee our service quality. If you're not satisfied with an inspection, we'll either send another agent for a re-inspection at no cost or provide a full refund. Your satisfaction is our top priority."
     }
   ];
 
