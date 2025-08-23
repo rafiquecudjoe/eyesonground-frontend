@@ -6,6 +6,8 @@ import { CreateRequest } from "@/components/unified-dashboard/CreateRequest";
 import { Messages } from "@/components/unified-dashboard/Messages";
 import { Profile } from "@/components/unified-dashboard/Profile";
 import { Settings } from "@/components/unified-dashboard/Settings";
+import { Marketplace } from "@/components/unified-dashboard/Marketplace";
+import { Earnings } from "@/components/unified-dashboard/Earnings";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -19,7 +21,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
   
   useEffect(() => {
     const basePath = userType === "client" ? "/client-dashboard" : "/psi-dashboard";
-    const defaultRoute = userType === "client" ? "/my-requests" : "/my-assignments";
+    const defaultRoute = userType === "client" ? "/marketplace" : "/marketplace";
     
     if (location.pathname === basePath || location.pathname === `${basePath}/`) {
       navigate(`${basePath}${defaultRoute}`);
@@ -34,7 +36,8 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Client Routes */}
         {userType === "client" && (
           <>
-            <Route path="/" element={<Navigate to="/client-dashboard/my-requests" replace />} />
+            <Route path="/" element={<Navigate to="/client-dashboard/marketplace" replace />} />
+            <Route path="/marketplace" element={<Marketplace userType="client" />} />
             <Route path="/create-request" element={<CreateRequest />} />
             <Route path="/my-requests" element={<RequestHistory userType="client" />} />
             <Route path="/history" element={<History userType="client" />} />
@@ -47,8 +50,10 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Agent Routes */}
         {userType === "agent" && (
           <>
-            <Route path="/" element={<Navigate to="/psi-dashboard/my-assignments" replace />} />
+            <Route path="/" element={<Navigate to="/psi-dashboard/marketplace" replace />} />
+            <Route path="/marketplace" element={<Marketplace userType="agent" />} />
             <Route path="/my-assignments" element={<RequestHistory userType="agent" />} />
+            <Route path="/earnings" element={<Earnings />} />
             <Route path="/history" element={<History userType="agent" />} />
             <Route path="/messages" element={<Messages userType="agent" />} />
             <Route path="/profile" element={<Profile userType="agent" />} />

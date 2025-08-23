@@ -2,14 +2,38 @@
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { Menu, X, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState<string | null>(null);
   
-  // Check if user is logged in (you can replace this with actual auth state)
-  const isLoggedIn = localStorage.getItem('userType') || sessionStorage.getItem('userType');
-  const userType = isLoggedIn; // This would be 'client' or 'agent'
+  // Check login status on component mount and when storage changes
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const storedUserType = localStorage.getItem('userType') || sessionStorage.getItem('userType');
+      setIsLoggedIn(!!storedUserType);
+      setUserType(storedUserType);
+    };
+
+    checkLoginStatus();
+
+    // Listen for storage changes (when user logs out)
+    const handleStorageChange = () => {
+      checkLoginStatus();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom logout event
+    window.addEventListener('userLogout', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleStorageChange);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

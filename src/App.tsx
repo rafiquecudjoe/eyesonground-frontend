@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AccountTypeSelection from "./pages/AccountTypeSelection";
 import UnifiedDashboard from "./pages/UnifiedDashboard";
-import LogoSelection from "./pages/LogoSelection";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +28,6 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
           <Route path="/psi-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
-          <Route path="/logo-samples" element={<LogoSelection />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

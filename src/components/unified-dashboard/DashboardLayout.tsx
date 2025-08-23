@@ -14,7 +14,9 @@ import {
   Briefcase,
   Settings,
   Bell,
-  Search
+  Search,
+  ShoppingBag,
+  Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -38,20 +40,26 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const clientNavItems = [
     { 
+      path: `${basePath}/marketplace`, 
+      label: "Marketplace", 
+      icon: ShoppingBag,
+      description: "Browse inspection services"
+    },
+    { 
       path: `${basePath}/create-request`, 
-      label: "Create Request", 
+      label: "Post Request", 
       icon: Plus,
-      description: "Post new inspection request"
+      description: "Create new inspection ad"
     },
     { 
       path: `${basePath}/my-requests`, 
-      label: "My Requests", 
+      label: "My Ads", 
       icon: FileText,
-      description: "Active requests"
+      description: "Your posted requests"
     },
     { 
       path: `${basePath}/history`, 
-      label: "History", 
+      label: "Completed", 
       icon: History,
       description: "Completed inspections"
     },
@@ -77,14 +85,26 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const agentNavItems = [
     { 
+      path: `${basePath}/marketplace`, 
+      label: "Job Marketplace", 
+      icon: ShoppingBag,
+      description: "Browse available jobs"
+    },
+    { 
       path: `${basePath}/my-assignments`, 
-      label: "My Assignments", 
+      label: "My Jobs", 
       icon: Briefcase,
-      description: "Current assignments"
+      description: "Active assignments"
+    },
+    { 
+      path: `${basePath}/earnings`, 
+      label: "Earnings", 
+      icon: Target,
+      description: "Track your income"
     },
     { 
       path: `${basePath}/history`, 
-      label: "History", 
+      label: "Completed", 
       icon: History,
       description: "Completed work"
     },
@@ -111,6 +131,13 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
   const navItems = userType === "client" ? clientNavItems : agentNavItems;
 
   const handleLogout = () => {
+    // Clear user data from storage
+    localStorage.removeItem('userType');
+    sessionStorage.removeItem('userType');
+    
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('userLogout'));
+    
     toast.success("Logged out successfully");
     navigate("/");
   };
