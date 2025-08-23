@@ -31,12 +31,12 @@ const Login = () => {
         toast.success("Login successful!", {
           description: "Welcome to your client dashboard"
         });
-        navigate("/client-dashboard/service-history");
+        navigate("/client-dashboard/marketplace");
       } else {
         toast.success("Login successful!", {
           description: "Welcome to your agent dashboard"
         });
-        navigate("/agent-dashboard/services-history");
+        navigate("/agent-dashboard/marketplace");
       }
     } else {
       toast.error("Login failed", {

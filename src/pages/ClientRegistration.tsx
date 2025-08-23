@@ -34,7 +34,7 @@ const ClientRegistration = () => {
         description: "Welcome to your client dashboard"
       });
       
-      navigate("/client-dashboard/service-history");
+      navigate("/client-dashboard/marketplace");
     } else {
       toast.error("Registration failed", {
         description: "Please fill in all required fields"

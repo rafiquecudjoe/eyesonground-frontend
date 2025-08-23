@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, LineChart, Line } from "recharts";
 
 export const Earnings = () => {
   const [timeFilter, setTimeFilter] = useState("this-month");
@@ -162,22 +162,25 @@ export const Earnings = () => {
           </Select>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={earningsData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="earnings" fill="url(#gradient)" radius={8} />
-                <defs>
-                  <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="rgba(42,100,186,1)" />
-                    <stop offset="100%" stopColor="rgba(13,38,75,1)" />
-                  </linearGradient>
-                </defs>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartContainer config={{
+            earnings: {
+              label: "Earnings",
+              color: "rgba(42,100,186,1)",
+            },
+          }} className="h-80">
+            <BarChart data={earningsData}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="earnings" fill="url(#gradient)" radius={8} />
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(42,100,186,1)" />
+                  <stop offset="100%" stopColor="rgba(13,38,75,1)" />
+                </linearGradient>
+              </defs>
+            </BarChart>
+          </ChartContainer>
         </CardContent>
       </Card>
 

@@ -113,11 +113,26 @@ export const CreateRequest = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="automotive">Automotive</SelectItem>
-                    <SelectItem value="real-estate">Real Estate</SelectItem>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="appliances">Appliances</SelectItem>
-                    <SelectItem value="machinery">Machinery</SelectItem>
+                    <SelectItem value="automotive">Automotive & Vehicles</SelectItem>
+                    <SelectItem value="real-estate">Real Estate & Property</SelectItem>
+                    <SelectItem value="electronics">Electronics & Technology</SelectItem>
+                    <SelectItem value="appliances">Home Appliances</SelectItem>
+                    <SelectItem value="machinery">Industrial Machinery</SelectItem>
+                    <SelectItem value="construction">Construction Equipment</SelectItem>
+                    <SelectItem value="antiques">Antiques & Collectibles</SelectItem>
+                    <SelectItem value="jewelry">Jewelry & Precious Items</SelectItem>
+                    <SelectItem value="art">Art & Artwork</SelectItem>
+                    <SelectItem value="furniture">Furniture & Home Goods</SelectItem>
+                    <SelectItem value="sporting">Sporting Goods & Equipment</SelectItem>
+                    <SelectItem value="musical">Musical Instruments</SelectItem>
+                    <SelectItem value="medical">Medical Equipment</SelectItem>
+                    <SelectItem value="marine">Marine & Boats</SelectItem>
+                    <SelectItem value="aviation">Aviation & Aircraft</SelectItem>
+                    <SelectItem value="agricultural">Agricultural Equipment</SelectItem>
+                    <SelectItem value="commercial">Commercial Property</SelectItem>
+                    <SelectItem value="industrial">Industrial Property</SelectItem>
+                    <SelectItem value="retail">Retail & Business Assets</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -129,9 +144,221 @@ export const CreateRequest = () => {
                     <SelectValue placeholder="Select sub category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="car-inspection">Car Inspection</SelectItem>
-                    <SelectItem value="property-assessment">Property Assessment</SelectItem>
-                    <SelectItem value="appliance-check">Appliance Check</SelectItem>
+                    {/* Automotive Subcategories */}
+                    {formData.category === "automotive" && (
+                      <>
+                        <SelectItem value="cars-sedans">Cars - Sedans</SelectItem>
+                        <SelectItem value="cars-suvs">Cars - SUVs/Crossovers</SelectItem>
+                        <SelectItem value="cars-trucks">Cars - Trucks/Pickups</SelectItem>
+                        <SelectItem value="cars-luxury">Cars - Luxury/Sports</SelectItem>
+                        <SelectItem value="cars-classic">Cars - Classic/Vintage</SelectItem>
+                        <SelectItem value="motorcycles">Motorcycles</SelectItem>
+                        <SelectItem value="rvs-motorhomes">RVs/Motorhomes</SelectItem>
+                        <SelectItem value="trailers">Trailers</SelectItem>
+                        <SelectItem value="commercial-vehicles">Commercial Vehicles</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Real Estate Subcategories */}
+                    {formData.category === "real-estate" && (
+                      <>
+                        <SelectItem value="residential-homes">Residential Homes</SelectItem>
+                        <SelectItem value="condos-townhomes">Condos/Townhomes</SelectItem>
+                        <SelectItem value="apartments">Apartments</SelectItem>
+                        <SelectItem value="land-lots">Land/Lots</SelectItem>
+                        <SelectItem value="vacation-rentals">Vacation Rentals</SelectItem>
+                        <SelectItem value="mobile-homes">Mobile Homes</SelectItem>
+                        <SelectItem value="new-construction">New Construction</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Electronics Subcategories */}
+                    {formData.category === "electronics" && (
+                      <>
+                        <SelectItem value="computers-laptops">Computers/Laptops</SelectItem>
+                        <SelectItem value="smartphones-tablets">Smartphones/Tablets</SelectItem>
+                        <SelectItem value="gaming-consoles">Gaming Consoles</SelectItem>
+                        <SelectItem value="audio-equipment">Audio Equipment</SelectItem>
+                        <SelectItem value="cameras-video">Cameras/Video Equipment</SelectItem>
+                        <SelectItem value="smart-home">Smart Home Devices</SelectItem>
+                        <SelectItem value="televisions">Televisions</SelectItem>
+                        <SelectItem value="networking">Networking Equipment</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Appliances Subcategories */}
+                    {formData.category === "appliances" && (
+                      <>
+                        <SelectItem value="kitchen-appliances">Kitchen Appliances</SelectItem>
+                        <SelectItem value="laundry-appliances">Laundry Appliances</SelectItem>
+                        <SelectItem value="hvac-systems">HVAC Systems</SelectItem>
+                        <SelectItem value="water-heaters">Water Heaters</SelectItem>
+                        <SelectItem value="small-appliances">Small Appliances</SelectItem>
+                        <SelectItem value="outdoor-appliances">Outdoor Appliances</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Machinery Subcategories */}
+                    {formData.category === "machinery" && (
+                      <>
+                        <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
+                        <SelectItem value="printing-equipment">Printing Equipment</SelectItem>
+                        <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
+                        <SelectItem value="textile-machinery">Textile Machinery</SelectItem>
+                        <SelectItem value="food-processing">Food Processing Equipment</SelectItem>
+                        <SelectItem value="woodworking-machinery">Woodworking Machinery</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Construction Subcategories */}
+                    {formData.category === "construction" && (
+                      <>
+                        <SelectItem value="excavators">Excavators</SelectItem>
+                        <SelectItem value="bulldozers">Bulldozers</SelectItem>
+                        <SelectItem value="cranes">Cranes</SelectItem>
+                        <SelectItem value="concrete-equipment">Concrete Equipment</SelectItem>
+                        <SelectItem value="generators">Generators</SelectItem>
+                        <SelectItem value="hand-tools">Hand Tools</SelectItem>
+                        <SelectItem value="power-tools">Power Tools</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Other categories */}
+                    {formData.category === "antiques" && (
+                      <>
+                        <SelectItem value="vintage-furniture">Vintage Furniture</SelectItem>
+                        <SelectItem value="vintage-jewelry">Vintage Jewelry</SelectItem>
+                        <SelectItem value="collectible-coins">Collectible Coins</SelectItem>
+                        <SelectItem value="vintage-art">Vintage Art</SelectItem>
+                        <SelectItem value="vintage-books">Vintage Books</SelectItem>
+                        <SelectItem value="vintage-toys">Vintage Toys</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "jewelry" && (
+                      <>
+                        <SelectItem value="diamond-jewelry">Diamond Jewelry</SelectItem>
+                        <SelectItem value="gold-jewelry">Gold Jewelry</SelectItem>
+                        <SelectItem value="silver-jewelry">Silver Jewelry</SelectItem>
+                        <SelectItem value="luxury-watches">Luxury Watches</SelectItem>
+                        <SelectItem value="gemstone-jewelry">Gemstone Jewelry</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "art" && (
+                      <>
+                        <SelectItem value="paintings">Paintings</SelectItem>
+                        <SelectItem value="sculptures">Sculptures</SelectItem>
+                        <SelectItem value="photography">Photography</SelectItem>
+                        <SelectItem value="mixed-media">Mixed Media</SelectItem>
+                        <SelectItem value="prints-posters">Prints/Posters</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "furniture" && (
+                      <>
+                        <SelectItem value="bedroom-furniture">Bedroom Furniture</SelectItem>
+                        <SelectItem value="living-room">Living Room Furniture</SelectItem>
+                        <SelectItem value="dining-furniture">Dining Furniture</SelectItem>
+                        <SelectItem value="office-furniture">Office Furniture</SelectItem>
+                        <SelectItem value="outdoor-furniture">Outdoor Furniture</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "sporting" && (
+                      <>
+                        <SelectItem value="fitness-equipment">Fitness Equipment</SelectItem>
+                        <SelectItem value="outdoor-gear">Outdoor Gear</SelectItem>
+                        <SelectItem value="team-sports">Team Sports Equipment</SelectItem>
+                        <SelectItem value="water-sports">Water Sports Equipment</SelectItem>
+                        <SelectItem value="winter-sports">Winter Sports Equipment</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "musical" && (
+                      <>
+                        <SelectItem value="guitars">Guitars</SelectItem>
+                        <SelectItem value="pianos-keyboards">Pianos/Keyboards</SelectItem>
+                        <SelectItem value="drums-percussion">Drums/Percussion</SelectItem>
+                        <SelectItem value="wind-instruments">Wind Instruments</SelectItem>
+                        <SelectItem value="string-instruments">String Instruments</SelectItem>
+                        <SelectItem value="audio-recording">Audio/Recording Equipment</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "medical" && (
+                      <>
+                        <SelectItem value="diagnostic-equipment">Diagnostic Equipment</SelectItem>
+                        <SelectItem value="surgical-instruments">Surgical Instruments</SelectItem>
+                        <SelectItem value="dental-equipment">Dental Equipment</SelectItem>
+                        <SelectItem value="rehabilitation">Rehabilitation Equipment</SelectItem>
+                        <SelectItem value="laboratory-equipment">Laboratory Equipment</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "marine" && (
+                      <>
+                        <SelectItem value="sailboats">Sailboats</SelectItem>
+                        <SelectItem value="motorboats">Motorboats</SelectItem>
+                        <SelectItem value="yachts">Yachts</SelectItem>
+                        <SelectItem value="jet-skis">Jet Skis</SelectItem>
+                        <SelectItem value="fishing-boats">Fishing Boats</SelectItem>
+                        <SelectItem value="marine-engines">Marine Engines</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "aviation" && (
+                      <>
+                        <SelectItem value="single-engine">Single Engine Aircraft</SelectItem>
+                        <SelectItem value="multi-engine">Multi Engine Aircraft</SelectItem>
+                        <SelectItem value="helicopters">Helicopters</SelectItem>
+                        <SelectItem value="gliders">Gliders</SelectItem>
+                        <SelectItem value="aircraft-parts">Aircraft Parts</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "agricultural" && (
+                      <>
+                        <SelectItem value="tractors">Tractors</SelectItem>
+                        <SelectItem value="harvesters">Harvesters</SelectItem>
+                        <SelectItem value="irrigation-systems">Irrigation Systems</SelectItem>
+                        <SelectItem value="livestock-equipment">Livestock Equipment</SelectItem>
+                        <SelectItem value="farming-tools">Farming Tools</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "commercial" && (
+                      <>
+                        <SelectItem value="office-buildings">Office Buildings</SelectItem>
+                        <SelectItem value="retail-spaces">Retail Spaces</SelectItem>
+                        <SelectItem value="warehouses">Warehouses</SelectItem>
+                        <SelectItem value="restaurants">Restaurants</SelectItem>
+                        <SelectItem value="hotels-motels">Hotels/Motels</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "industrial" && (
+                      <>
+                        <SelectItem value="manufacturing-facilities">Manufacturing Facilities</SelectItem>
+                        <SelectItem value="distribution-centers">Distribution Centers</SelectItem>
+                        <SelectItem value="industrial-land">Industrial Land</SelectItem>
+                        <SelectItem value="storage-facilities">Storage Facilities</SelectItem>
+                      </>
+                    )}
+                    
+                    {formData.category === "retail" && (
+                      <>
+                        <SelectItem value="store-fixtures">Store Fixtures</SelectItem>
+                        <SelectItem value="point-of-sale">Point of Sale Systems</SelectItem>
+                        <SelectItem value="inventory-equipment">Inventory Equipment</SelectItem>
+                        <SelectItem value="display-equipment">Display Equipment</SelectItem>
+                      </>
+                    )}
+                    
+                    {/* Default/Other */}
+                    {(!formData.category || formData.category === "other") && (
+                      <SelectItem value="general-inspection">General Inspection</SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -156,11 +383,183 @@ export const CreateRequest = () => {
                     <SelectValue placeholder="Select location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="los-angeles">Los Angeles, CA</SelectItem>
-                    <SelectItem value="new-york">New York, NY</SelectItem>
-                    <SelectItem value="chicago">Chicago, IL</SelectItem>
-                    <SelectItem value="houston">Houston, TX</SelectItem>
-                    <SelectItem value="miami">Miami, FL</SelectItem>
+                    {/* Major US Cities by State */}
+                    <SelectItem value="new-york-ny">New York, NY</SelectItem>
+                    <SelectItem value="los-angeles-ca">Los Angeles, CA</SelectItem>
+                    <SelectItem value="chicago-il">Chicago, IL</SelectItem>
+                    <SelectItem value="houston-tx">Houston, TX</SelectItem>
+                    <SelectItem value="phoenix-az">Phoenix, AZ</SelectItem>
+                    <SelectItem value="philadelphia-pa">Philadelphia, PA</SelectItem>
+                    <SelectItem value="san-antonio-tx">San Antonio, TX</SelectItem>
+                    <SelectItem value="san-diego-ca">San Diego, CA</SelectItem>
+                    <SelectItem value="dallas-tx">Dallas, TX</SelectItem>
+                    <SelectItem value="san-jose-ca">San Jose, CA</SelectItem>
+                    <SelectItem value="austin-tx">Austin, TX</SelectItem>
+                    <SelectItem value="jacksonville-fl">Jacksonville, FL</SelectItem>
+                    <SelectItem value="fort-worth-tx">Fort Worth, TX</SelectItem>
+                    <SelectItem value="columbus-oh">Columbus, OH</SelectItem>
+                    <SelectItem value="charlotte-nc">Charlotte, NC</SelectItem>
+                    <SelectItem value="san-francisco-ca">San Francisco, CA</SelectItem>
+                    <SelectItem value="indianapolis-in">Indianapolis, IN</SelectItem>
+                    <SelectItem value="seattle-wa">Seattle, WA</SelectItem>
+                    <SelectItem value="denver-co">Denver, CO</SelectItem>
+                    <SelectItem value="washington-dc">Washington, DC</SelectItem>
+                    <SelectItem value="boston-ma">Boston, MA</SelectItem>
+                    <SelectItem value="el-paso-tx">El Paso, TX</SelectItem>
+                    <SelectItem value="detroit-mi">Detroit, MI</SelectItem>
+                    <SelectItem value="nashville-tn">Nashville, TN</SelectItem>
+                    <SelectItem value="portland-or">Portland, OR</SelectItem>
+                    <SelectItem value="memphis-tn">Memphis, TN</SelectItem>
+                    <SelectItem value="oklahoma-city-ok">Oklahoma City, OK</SelectItem>
+                    <SelectItem value="las-vegas-nv">Las Vegas, NV</SelectItem>
+                    <SelectItem value="louisville-ky">Louisville, KY</SelectItem>
+                    <SelectItem value="baltimore-md">Baltimore, MD</SelectItem>
+                    <SelectItem value="milwaukee-wi">Milwaukee, WI</SelectItem>
+                    <SelectItem value="albuquerque-nm">Albuquerque, NM</SelectItem>
+                    <SelectItem value="tucson-az">Tucson, AZ</SelectItem>
+                    <SelectItem value="fresno-ca">Fresno, CA</SelectItem>
+                    <SelectItem value="mesa-az">Mesa, AZ</SelectItem>
+                    <SelectItem value="sacramento-ca">Sacramento, CA</SelectItem>
+                    <SelectItem value="atlanta-ga">Atlanta, GA</SelectItem>
+                    <SelectItem value="kansas-city-mo">Kansas City, MO</SelectItem>
+                    <SelectItem value="colorado-springs-co">Colorado Springs, CO</SelectItem>
+                    <SelectItem value="miami-fl">Miami, FL</SelectItem>
+                    <SelectItem value="raleigh-nc">Raleigh, NC</SelectItem>
+                    <SelectItem value="omaha-ne">Omaha, NE</SelectItem>
+                    <SelectItem value="long-beach-ca">Long Beach, CA</SelectItem>
+                    <SelectItem value="virginia-beach-va">Virginia Beach, VA</SelectItem>
+                    <SelectItem value="oakland-ca">Oakland, CA</SelectItem>
+                    <SelectItem value="minneapolis-mn">Minneapolis, MN</SelectItem>
+                    <SelectItem value="tulsa-ok">Tulsa, OK</SelectItem>
+                    <SelectItem value="tampa-fl">Tampa, FL</SelectItem>
+                    <SelectItem value="arlington-tx">Arlington, TX</SelectItem>
+                    <SelectItem value="wichita-ks">Wichita, KS</SelectItem>
+                    <SelectItem value="new-orleans-la">New Orleans, LA</SelectItem>
+                    <SelectItem value="cleveland-oh">Cleveland, OH</SelectItem>
+                    <SelectItem value="bakersfield-ca">Bakersfield, CA</SelectItem>
+                    <SelectItem value="tampa-fl">Tampa, FL</SelectItem>
+                    <SelectItem value="honolulu-hi">Honolulu, HI</SelectItem>
+                    <SelectItem value="anaheim-ca">Anaheim, CA</SelectItem>
+                    <SelectItem value="santa-ana-ca">Santa Ana, CA</SelectItem>
+                    <SelectItem value="corpus-christi-tx">Corpus Christi, TX</SelectItem>
+                    <SelectItem value="riverside-ca">Riverside, CA</SelectItem>
+                    <SelectItem value="lexington-ky">Lexington, KY</SelectItem>
+                    <SelectItem value="stockton-ca">Stockton, CA</SelectItem>
+                    <SelectItem value="henderson-nv">Henderson, NV</SelectItem>
+                    <SelectItem value="saint-paul-mn">Saint Paul, MN</SelectItem>
+                    <SelectItem value="cincinnati-oh">Cincinnati, OH</SelectItem>
+                    <SelectItem value="pittsburgh-pa">Pittsburgh, PA</SelectItem>
+                    <SelectItem value="greensboro-nc">Greensboro, NC</SelectItem>
+                    <SelectItem value="lincoln-ne">Lincoln, NE</SelectItem>
+                    <SelectItem value="plano-tx">Plano, TX</SelectItem>
+                    <SelectItem value="anchorage-ak">Anchorage, AK</SelectItem>
+                    <SelectItem value="orlando-fl">Orlando, FL</SelectItem>
+                    <SelectItem value="irvine-ca">Irvine, CA</SelectItem>
+                    <SelectItem value="newark-nj">Newark, NJ</SelectItem>
+                    <SelectItem value="durham-nc">Durham, NC</SelectItem>
+                    <SelectItem value="chula-vista-ca">Chula Vista, CA</SelectItem>
+                    <SelectItem value="toledo-oh">Toledo, OH</SelectItem>
+                    <SelectItem value="fort-wayne-in">Fort Wayne, IN</SelectItem>
+                    <SelectItem value="st-petersburg-fl">St. Petersburg, FL</SelectItem>
+                    <SelectItem value="laredo-tx">Laredo, TX</SelectItem>
+                    <SelectItem value="jersey-city-nj">Jersey City, NJ</SelectItem>
+                    <SelectItem value="chandler-az">Chandler, AZ</SelectItem>
+                    <SelectItem value="madison-wi">Madison, WI</SelectItem>
+                    <SelectItem value="lubbock-tx">Lubbock, TX</SelectItem>
+                    <SelectItem value="norfolk-va">Norfolk, VA</SelectItem>
+                    <SelectItem value="winston-salem-nc">Winston-Salem, NC</SelectItem>
+                    <SelectItem value="glendale-az">Glendale, AZ</SelectItem>
+                    <SelectItem value="garland-tx">Garland, TX</SelectItem>
+                    <SelectItem value="hialeah-fl">Hialeah, FL</SelectItem>
+                    <SelectItem value="reno-nv">Reno, NV</SelectItem>
+                    <SelectItem value="baton-rouge-la">Baton Rouge, LA</SelectItem>
+                    <SelectItem value="irving-tx">Irving, TX</SelectItem>
+                    <SelectItem value="chesapeake-va">Chesapeake, VA</SelectItem>
+                    <SelectItem value="scottsdale-az">Scottsdale, AZ</SelectItem>
+                    <SelectItem value="north-las-vegas-nv">North Las Vegas, NV</SelectItem>
+                    <SelectItem value="fremont-ca">Fremont, CA</SelectItem>
+                    <SelectItem value="gilbert-az">Gilbert, AZ</SelectItem>
+                    <SelectItem value="san-bernardino-ca">San Bernardino, CA</SelectItem>
+                    <SelectItem value="boise-id">Boise, ID</SelectItem>
+                    <SelectItem value="birmingham-al">Birmingham, AL</SelectItem>
+                    <SelectItem value="spokane-wa">Spokane, WA</SelectItem>
+                    <SelectItem value="rochester-ny">Rochester, NY</SelectItem>
+                    <SelectItem value="des-moines-ia">Des Moines, IA</SelectItem>
+                    <SelectItem value="modesto-ca">Modesto, CA</SelectItem>
+                    <SelectItem value="fayetteville-nc">Fayetteville, NC</SelectItem>
+                    <SelectItem value="tacoma-wa">Tacoma, WA</SelectItem>
+                    <SelectItem value="oxnard-ca">Oxnard, CA</SelectItem>
+                    <SelectItem value="fontana-ca">Fontana, CA</SelectItem>
+                    <SelectItem value="columbus-ga">Columbus, GA</SelectItem>
+                    <SelectItem value="montgomery-al">Montgomery, AL</SelectItem>
+                    <SelectItem value="shreveport-la">Shreveport, LA</SelectItem>
+                    <SelectItem value="aurora-il">Aurora, IL</SelectItem>
+                    <SelectItem value="yonkers-ny">Yonkers, NY</SelectItem>
+                    <SelectItem value="akron-oh">Akron, OH</SelectItem>
+                    <SelectItem value="huntington-beach-ca">Huntington Beach, CA</SelectItem>
+                    <SelectItem value="little-rock-ar">Little Rock, AR</SelectItem>
+                    <SelectItem value="augusta-ga">Augusta, GA</SelectItem>
+                    <SelectItem value="amarillo-tx">Amarillo, TX</SelectItem>
+                    <SelectItem value="glendale-ca">Glendale, CA</SelectItem>
+                    <SelectItem value="mobile-al">Mobile, AL</SelectItem>
+                    <SelectItem value="grand-rapids-mi">Grand Rapids, MI</SelectItem>
+                    <SelectItem value="salt-lake-city-ut">Salt Lake City, UT</SelectItem>
+                    <SelectItem value="tallahassee-fl">Tallahassee, FL</SelectItem>
+                    <SelectItem value="huntsville-al">Huntsville, AL</SelectItem>
+                    <SelectItem value="grand-prairie-tx">Grand Prairie, TX</SelectItem>
+                    <SelectItem value="knoxville-tn">Knoxville, TN</SelectItem>
+                    <SelectItem value="worcester-ma">Worcester, MA</SelectItem>
+                    <SelectItem value="newport-news-va">Newport News, VA</SelectItem>
+                    <SelectItem value="brownsville-tx">Brownsville, TX</SelectItem>
+                    <SelectItem value="overland-park-ks">Overland Park, KS</SelectItem>
+                    <SelectItem value="santa-clarita-ca">Santa Clarita, CA</SelectItem>
+                    <SelectItem value="providence-ri">Providence, RI</SelectItem>
+                    <SelectItem value="garden-grove-ca">Garden Grove, CA</SelectItem>
+                    <SelectItem value="chattanooga-tn">Chattanooga, TN</SelectItem>
+                    <SelectItem value="oceanside-ca">Oceanside, CA</SelectItem>
+                    <SelectItem value="jackson-ms">Jackson, MS</SelectItem>
+                    <SelectItem value="fort-lauderdale-fl">Fort Lauderdale, FL</SelectItem>
+                    <SelectItem value="santa-rosa-ca">Santa Rosa, CA</SelectItem>
+                    <SelectItem value="rancho-cucamonga-ca">Rancho Cucamonga, CA</SelectItem>
+                    <SelectItem value="port-st-lucie-fl">Port St. Lucie, FL</SelectItem>
+                    <SelectItem value="tempe-az">Tempe, AZ</SelectItem>
+                    <SelectItem value="ontario-ca">Ontario, CA</SelectItem>
+                    <SelectItem value="vancouver-wa">Vancouver, WA</SelectItem>
+                    <SelectItem value="cape-coral-fl">Cape Coral, FL</SelectItem>
+                    <SelectItem value="sioux-falls-sd">Sioux Falls, SD</SelectItem>
+                    <SelectItem value="springfield-mo">Springfield, MO</SelectItem>
+                    <SelectItem value="peoria-az">Peoria, AZ</SelectItem>
+                    <SelectItem value="pembroke-pines-fl">Pembroke Pines, FL</SelectItem>
+                    <SelectItem value="elk-grove-ca">Elk Grove, CA</SelectItem>
+                    <SelectItem value="rockford-il">Rockford, IL</SelectItem>
+                    <SelectItem value="palmdale-ca">Palmdale, CA</SelectItem>
+                    <SelectItem value="corona-ca">Corona, CA</SelectItem>
+                    <SelectItem value="salinas-ca">Salinas, CA</SelectItem>
+                    <SelectItem value="pomona-ca">Pomona, CA</SelectItem>
+                    <SelectItem value="paterson-nj">Paterson, NJ</SelectItem>
+                    <SelectItem value="joliet-il">Joliet, IL</SelectItem>
+                    <SelectItem value="kansas-city-ks">Kansas City, KS</SelectItem>
+                    <SelectItem value="torrance-ca">Torrance, CA</SelectItem>
+                    <SelectItem value="syracuse-ny">Syracuse, NY</SelectItem>
+                    <SelectItem value="bridgeport-ct">Bridgeport, CT</SelectItem>
+                    <SelectItem value="hayward-ca">Hayward, CA</SelectItem>
+                    <SelectItem value="fort-collins-co">Fort Collins, CO</SelectItem>
+                    <SelectItem value="escondido-ca">Escondido, CA</SelectItem>
+                    <SelectItem value="lakewood-co">Lakewood, CO</SelectItem>
+                    <SelectItem value="naperville-il">Naperville, IL</SelectItem>
+                    <SelectItem value="dayton-oh">Dayton, OH</SelectItem>
+                    <SelectItem value="hollywood-fl">Hollywood, FL</SelectItem>
+                    <SelectItem value="sunnyvale-ca">Sunnyvale, CA</SelectItem>
+                    <SelectItem value="alexandria-va">Alexandria, VA</SelectItem>
+                    <SelectItem value="mesquite-tx">Mesquite, TX</SelectItem>
+                    <SelectItem value="hampton-va">Hampton, VA</SelectItem>
+                    <SelectItem value="pasadena-ca">Pasadena, CA</SelectItem>
+                    <SelectItem value="orange-ca">Orange, CA</SelectItem>
+                    <SelectItem value="savannah-ga">Savannah, GA</SelectItem>
+                    <SelectItem value="cary-nc">Cary, NC</SelectItem>
+                    <SelectItem value="fullerton-ca">Fullerton, CA</SelectItem>
+                    <SelectItem value="warren-mi">Warren, MI</SelectItem>
+                    <SelectItem value="other">Other (Please specify in address)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

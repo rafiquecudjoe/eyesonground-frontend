@@ -71,7 +71,7 @@ const AgentRegistration = () => {
       description: "Welcome to your  agent dashboard"
     });
     
-    navigate("/agent-dashboard/services-history");
+    navigate("/agent-dashboard/marketplace");
   };
 
   return (
