@@ -78,83 +78,83 @@ export const FeaturedAgents = () => {
         </div>
 
         {/* Featured Agents Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
           {featuredAgents.map((agent) => (
             <Card key={agent.id} className="group hover:shadow-xl transition-all duration-300 border-[rgba(42,100,186,0.1)] hover:border-[rgba(42,100,186,0.3)] overflow-hidden">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 {/* Agent Header */}
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="relative">
-                    <Avatar className="w-16 h-16 ring-2 ring-[rgba(42,100,186,0.2)]">
+                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-4">
+                  <div className="relative self-center sm:self-start">
+                    <Avatar className="w-14 h-14 sm:w-16 sm:h-16 ring-2 ring-[rgba(42,100,186,0.2)]">
                       <AvatarImage src={agent.avatar} alt={agent.name} />
                       <AvatarFallback>{agent.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                     </Avatar>
                     {agent.verified && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center ring-2 ring-white">
-                        <Shield className="w-3 h-3 text-white" />
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center ring-2 ring-white">
+                        <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                       </div>
                     )}
                   </div>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-[rgba(13,38,75,1)] text-lg">{agent.name}</h3>
+                  <div className="flex-1 text-center sm:text-left min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                      <h3 className="font-bold text-[rgba(13,38,75,1)] text-base sm:text-lg truncate">{agent.name}</h3>
                       {agent.topRated && (
-                        <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 text-xs">
+                        <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-900 text-xs self-center sm:self-auto">
                           TOP RATED
                         </Badge>
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-1 mb-2">
-                      <div className="flex items-center gap-1">
+                    <div className="flex items-center justify-center sm:justify-start gap-1 mb-2">
+                      <div className="flex items-center gap-0.5 sm:gap-1">
                         {[...Array(5)].map((_, i) => (
                           <Star 
                             key={i} 
-                            className={`w-4 h-4 ${i < Math.floor(agent.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                            className={`w-3 h-3 sm:w-4 sm:h-4 ${i < Math.floor(agent.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
                           />
                         ))}
                       </div>
                       <span className="text-sm font-medium text-[rgba(13,38,75,1)]">{agent.rating}</span>
-                      <span className="text-sm text-[rgba(13,38,75,0.6)]">({agent.reviewCount} reviews)</span>
+                      <span className="text-xs sm:text-sm text-[rgba(13,38,75,0.6)] hidden sm:inline">({agent.reviewCount} reviews)</span>
                     </div>
                     
-                    <div className="flex items-center gap-1 text-sm text-[rgba(13,38,75,0.7)]">
-                      <MapPin className="w-4 h-4" />
-                      <span>{agent.location}</span>
+                    <div className="flex items-center justify-center sm:justify-start gap-1 text-sm text-[rgba(13,38,75,0.7)]">
+                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="truncate">{agent.location}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-[rgba(13,38,75,0.8)] mb-4 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[rgba(13,38,75,0.8)] mb-4 leading-relaxed text-center sm:text-left">
                   {agent.description}
                 </p>
 
                 {/* Specialties */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 sm:gap-2 mb-4">
                   {agent.specialties.map((specialty) => (
-                    <Badge key={specialty} variant="secondary" className="bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)] hover:bg-[rgba(42,100,186,0.2)]">
+                    <Badge key={specialty} variant="secondary" className="bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)] hover:bg-[rgba(42,100,186,0.2)] text-xs">
                       {specialty}
                     </Badge>
                   ))}
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-4 text-center">
-                  <div className="bg-[rgba(42,100,186,0.05)] rounded-lg p-3">
-                    <div className="text-lg font-bold text-[rgba(13,38,75,1)]">{agent.completedJobs}</div>
+                <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 text-center">
+                  <div className="bg-[rgba(42,100,186,0.05)] rounded-lg p-2 sm:p-3">
+                    <div className="text-base sm:text-lg font-bold text-[rgba(13,38,75,1)]">{agent.completedJobs}</div>
                     <div className="text-xs text-[rgba(13,38,75,0.7)]">Jobs Completed</div>
                   </div>
-                  <div className="bg-[rgba(42,100,186,0.05)] rounded-lg p-3">
-                    <div className="text-lg font-bold text-[rgba(13,38,75,1)]">{agent.responseTime}</div>
+                  <div className="bg-[rgba(42,100,186,0.05)] rounded-lg p-2 sm:p-3">
+                    <div className="text-base sm:text-lg font-bold text-[rgba(13,38,75,1)]">{agent.responseTime}</div>
                     <div className="text-xs text-[rgba(13,38,75,0.7)]">Response Time</div>
                   </div>
                 </div>
 
                 {/* CTA */}
-                <Button className="w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-medium rounded-lg transition-all duration-300 group-hover:shadow-md">
-                  <Eye className="w-4 h-4 mr-2" />
+                <Button className="w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-medium rounded-lg transition-all duration-300 group-hover:shadow-md text-sm sm:text-base py-2 sm:py-3">
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   View Profile
                 </Button>
               </CardContent>
@@ -165,7 +165,7 @@ export const FeaturedAgents = () => {
         {/* Browse All CTA */}
         <div className="text-center">
           <Link to="/account-type">
-            <Button variant="outline" className="border-2 border-[rgba(42,100,186,1)] text-[rgba(42,100,186,1)] hover:bg-[rgba(42,100,186,0.1)] font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-md">
+            <Button variant="outline" className="border-2 border-[rgba(42,100,186,1)] text-[rgba(42,100,186,1)] hover:bg-[rgba(42,100,186,0.1)] font-semibold px-6 sm:px-8 py-3 rounded-xl transition-all duration-300 hover:shadow-md text-sm sm:text-base">
               Browse All Agents in Marketplace
             </Button>
           </Link>

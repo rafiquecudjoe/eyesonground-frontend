@@ -92,8 +92,8 @@ export const MarketplacePreview = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Sample Jobs */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[rgba(13,38,75,1)]">Recent Requests</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+              <h3 className="text-lg sm:text-xl font-bold text-[rgba(13,38,75,1)]">Recent Requests</h3>
               <div className="flex items-center gap-2 text-sm text-[rgba(13,38,75,0.7)]">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>Live updates</span>
@@ -102,51 +102,55 @@ export const MarketplacePreview = () => {
 
             {sampleJobs.map((job) => (
               <Card key={job.id} className="group hover:shadow-lg transition-all duration-300 border-[rgba(42,100,186,0.1)] hover:border-[rgba(42,100,186,0.3)]">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-[rgba(13,38,75,1)] group-hover:text-[rgba(42,100,186,1)] transition-colors">
-                          {job.title}
-                        </h4>
-                        <Badge className={getUrgencyColor(job.urgency)}>
-                          {job.urgency}
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-sm text-[rgba(13,38,75,0.7)] mb-3">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          <span>{job.location}</span>
+                <CardContent className="p-4 sm:p-6">
+                  <div className="space-y-4">
+                    {/* Title and Budget Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                          <h4 className="font-semibold text-[rgba(13,38,75,1)] group-hover:text-[rgba(42,100,186,1)] transition-colors text-sm sm:text-base leading-tight">
+                            {job.title}
+                          </h4>
+                          <Badge className={`${getUrgencyColor(job.urgency)} self-start sm:self-auto text-xs`}>
+                            {job.urgency}
+                          </Badge>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          <span>{job.postedDate}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          <span>{job.applicants} applicants</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-8 h-8">
-                          <AvatarImage src={job.client.avatar} alt={job.client.name} />
-                          <AvatarFallback>{job.client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium text-sm text-[rgba(13,38,75,1)]">{job.client.name}</div>
+                        
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-[rgba(13,38,75,0.7)] mb-3">
                           <div className="flex items-center gap-1">
-                            <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                            <span className="text-xs text-[rgba(13,38,75,0.7)]">{job.client.rating}</span>
+                            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span className="truncate">{job.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span>{job.postedDate}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Users className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span>{job.applicants} applicants</span>
                           </div>
                         </div>
                       </div>
+                      
+                      <div className="text-left sm:text-right flex-shrink-0">
+                        <div className="text-lg sm:text-xl font-bold text-[rgba(42,100,186,1)]">{job.budget}</div>
+                        <div className="text-sm text-[rgba(13,38,75,0.7)]">{job.distance}</div>
+                      </div>
                     </div>
                     
-                    <div className="text-right">
-                      <div className="text-xl font-bold text-[rgba(42,100,186,1)]">{job.budget}</div>
-                      <div className="text-sm text-[rgba(13,38,75,0.7)]">{job.distance}</div>
+                    {/* Client Info */}
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-8 h-8 flex-shrink-0">
+                        <AvatarImage src={job.client.avatar} alt={job.client.name} />
+                        <AvatarFallback>{job.client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <div className="font-medium text-sm text-[rgba(13,38,75,1)] truncate">{job.client.name}</div>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3 h-3 text-yellow-400 fill-current flex-shrink-0" />
+                          <span className="text-xs text-[rgba(13,38,75,0.7)]">{job.client.rating}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
