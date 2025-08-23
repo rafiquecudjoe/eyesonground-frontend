@@ -36,7 +36,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const basePath = userType === "client" ? "/client-dashboard" : "/psi-dashboard";
+  const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
 
   const clientNavItems = [
     { 
@@ -218,7 +218,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <div className="flex-1">
                     <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
                     <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'PSI Agent'}
+                      {userType === 'client' ? 'Client' : 'Agent'}
                     </Badge>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <div className="flex-1">
                     <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
                     <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'PSI Agent'}
+                      {userType === 'client' ? 'Client' : 'Agent'}
                     </Badge>
                   </div>
                 </div>
@@ -320,7 +320,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-[rgba(13,38,75,1)]">
-                    {userType === "client" ? "Client Dashboard" : "PSI Agent Dashboard"}
+                    {userType === "client" ? "Client Dashboard" : "Agent Dashboard"}
                   </h1>
                   <p className="text-[rgba(13,38,75,0.7)]">
                     {userType === "client" 

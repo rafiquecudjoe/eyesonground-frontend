@@ -48,7 +48,7 @@ export const Services = () => {
             INSPECTION SERVICES WE OFFER
           </h2>
           <p className="text-[rgba(219,231,255,0.9)] text-lg md:text-xl max-w-3xl mx-auto">
-            Our network of verified local agents provides comprehensive inspection services across multiple categories, ensuring you make informed purchasing decisions.
+            Our network of verified agents provides comprehensive inspection services across multiple categories, ensuring you make informed purchasing decisions.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 relative z-10">

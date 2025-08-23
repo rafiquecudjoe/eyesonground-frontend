@@ -34,9 +34,9 @@ const Login = () => {
         navigate("/client-dashboard/service-history");
       } else {
         toast.success("Login successful!", {
-          description: "Welcome to your PSI agent dashboard"
+          description: "Welcome to your agent dashboard"
         });
-        navigate("/psi-dashboard/services-history");
+        navigate("/agent-dashboard/services-history");
       }
     } else {
       toast.error("Login failed", {
@@ -123,7 +123,7 @@ const Login = () => {
                     }`}
                   >
                     <Shield className="h-5 w-5 mx-auto mb-2" />
-                    <span className="text-sm font-medium">PSI Agent</span>
+                    <span className="text-sm font-medium">Agent</span>
                   </button>
                 </div>
               </div>

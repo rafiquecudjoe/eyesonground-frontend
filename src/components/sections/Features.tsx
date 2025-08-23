@@ -25,7 +25,7 @@ export const Features = () => {
                 </div>
                 <div>
                   <h4 className="text-[rgba(20,40,77,1)] text-lg font-bold mb-2">
-                    Verified Local Agents
+                    Verified agents
                   </h4>
                   <p className="text-[rgba(13,38,75,0.8)] text-base leading-relaxed">
                     All our inspection agents are thoroughly vetted, background-checked, and trained to provide detailed, accurate reports you can trust.

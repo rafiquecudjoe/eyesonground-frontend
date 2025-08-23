@@ -47,7 +47,7 @@ export const Hero = () => {
                 <span className="text-[rgba(42,100,186,1)]">On The Ground</span>
               </h1>
               <p className="text-xl md:text-2xl font-light leading-relaxed mt-6 max-md:max-w-full text-[rgba(13,38,75,0.8)]">
-                Need to inspect an item before buying? Our verified local agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
+                Need to inspect an item before buying? Our verified agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
               </p>
             </div>
             
@@ -63,7 +63,7 @@ export const Hero = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-purple-500" />
-                <span>Global Coverage</span>
+                <span>Major Cities in the US</span>
               </div>
             </div>
             

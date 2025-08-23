@@ -60,7 +60,7 @@ const AccountTypeSelection = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-[rgba(42,100,186,0.1)] px-4 py-2 rounded-full mb-6">
               <Globe className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-              <span className="text-sm font-medium text-[rgba(13,38,75,1)]">Join Our Global Network</span>
+              <span className="text-sm font-medium text-[rgba(13,38,75,1)]">Join us at major cities in the US</span>
             </div>
             <h1 className="text-[rgba(13,38,75,1)] text-3xl md:text-5xl font-bold mb-4">
               Choose Your Account Type
@@ -108,7 +108,7 @@ const AccountTypeSelection = () => {
                   "text-base leading-relaxed mb-6",
                   selectedType === "client" ? "text-white/90" : "text-[rgba(13,38,75,0.7)]"
                 )}>
-                  I need professional inspection services to verify items before purchasing. Get detailed reports, photos, and videos from trusted local agents.
+                  I need professional inspection services to verify items before purchasing. Get detailed reports, photos, and videos from trusted agents.
                 </p>
                 
                 {/* Features */}
@@ -170,7 +170,7 @@ const AccountTypeSelection = () => {
                   )}
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-4">I'm a PSI Agent</h3>
+                <h3 className="text-2xl font-bold mb-4">I'm a Agent</h3>
                 <p className={cn(
                   "text-base leading-relaxed mb-6",
                   selectedType === "agent" ? "text-white/90" : "text-[rgba(13,38,75,0.7)]"
