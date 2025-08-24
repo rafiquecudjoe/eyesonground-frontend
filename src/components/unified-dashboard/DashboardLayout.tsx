@@ -39,6 +39,33 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
+  // Helper function to generate user initials safely
+  const getUserInitials = (user: AuthUserData | null): string => {
+    if (!user) return 'U';
+    const firstInitial = user.firstName?.charAt(0)?.toUpperCase() || '';
+    const lastInitial = user.lastName?.charAt(0)?.toUpperCase() || '';
+    return firstInitial + lastInitial || 'U';
+  };
+
+  // Helper function to get user display name
+  const getUserDisplayName = (user: AuthUserData | null): string => {
+    if (!user) return 'User';
+    const firstName = user.firstName || '';
+    const lastName = user.lastName || '';
+    return `${firstName} ${lastName}`.trim() || 'User';
+  };
+
+  // Helper function to get user type display
+  const getUserTypeDisplay = (user: AuthUserData | null): string => {
+    if (!user?.userType) return userType === 'client' ? 'Client' : 'Agent';
+    return user.userType === 'client' ? 'Client' : 'Agent';
+  };
+
+  // Helper function to check if user is agent (for styling)
+  const isUserAgent = (user: AuthUserData | null): boolean => {
+    return user?.userType === 'agent' || userType === 'agent';
+  };
+
   useEffect(() => {
     // Check authentication and get user data
     if (isAuthenticated()) {
@@ -225,15 +252,15 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <Avatar className="h-12 w-12 border-2 border-white shadow-md">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white font-bold">
-                      {currentUser ? `${currentUser.firstName[0]}${currentUser.lastName[0]}` : 'U'}
+                      {getUserInitials(currentUser)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <p className="font-semibold text-[rgba(13,38,75,1)]">
-                      {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'User'}
+                      {getUserDisplayName(currentUser)}
                     </p>
-                    <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'Agent'}
+                    <Badge className={`${isUserAgent(currentUser) ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
+                      {getUserTypeDisplay(currentUser)}
                     </Badge>
                   </div>
                 </div>
@@ -255,13 +282,15 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <Avatar className="h-10 w-10 border-2 border-white shadow-md">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white font-bold">
-                      JD
+                      {getUserInitials(currentUser)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
-                    <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
-                      {userType === 'client' ? 'Client' : 'Agent'}
+                    <p className="font-semibold text-[rgba(13,38,75,1)]">
+                      {getUserDisplayName(currentUser)}
+                    </p>
+                    <Badge className={`${isUserAgent(currentUser) ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
+                      {getUserTypeDisplay(currentUser)}
                     </Badge>
                   </div>
                 </div>
@@ -364,7 +393,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <Avatar className="h-10 w-10 border-2 border-[rgba(42,100,186,0.2)] cursor-pointer hover:border-[rgba(42,100,186,0.4)] transition-colors">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white font-bold">
-                      JD
+                      {getUserInitials(currentUser)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
