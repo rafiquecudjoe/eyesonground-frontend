@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Calendar, ArrowLeft, Shield, CheckCircle, Star, Clock, DollarSign } from "lucide-react";
+import { Eye, EyeOff, Calendar, ArrowLeft, Shield, CheckCircle, Star, Clock, DollarSign, Loader2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRegister, validateRegistrationForm } from "@/lib/api/auth";
+import type { RegisterUserRequest } from "@/lib/api/types";
 
 const AgentRegistration = () => {
   const [step, setStep] = useState<"basicInfo" | "addressInfo">("basicInfo");
@@ -34,8 +36,51 @@ const AgentRegistration = () => {
   
   const navigate = useNavigate();
 
+  const registerMutation = useRegister({
+    onSuccess: (data) => {
+      // Store user type and data for the dashboard
+      localStorage.setItem('userType', 'agent');
+      localStorage.setItem('userData', JSON.stringify(data.data));
+      
+      toast.success("Registration successful!", {
+        description: "Welcome to your agent dashboard"
+      });
+      
+      navigate("/agent-dashboard/marketplace");
+    },
+    onError: (error) => {
+      toast.error("Registration failed", {
+        description: error.message || "Please check your information and try again"
+      });
+    }
+  });
+
   const handleNextStep = () => {
     if (step === "basicInfo") {
+      // Validate basic info before proceeding
+      if (!firstName || !lastName || !email || !password || !dob) {
+        toast.error("Please fill in all required fields", {
+          description: "All basic information fields are required"
+        });
+        return;
+      }
+
+      // Validate email format
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        toast.error("Invalid email", {
+          description: "Please enter a valid email address"
+        });
+        return;
+      }
+
+      // Validate password
+      if (password.length < 6) {
+        toast.error("Weak password", {
+          description: "Password must be at least 6 characters long"
+        });
+        return;
+      }
+
       setStep("addressInfo");
     }
   };
@@ -52,26 +97,38 @@ const AgentRegistration = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleCompleteRegistration = () => {
-    console.log("Registration complete", {
-      firstName,
-      lastName,
-      dob,
-      email,
+  const handleCompleteRegistration = async () => {
+    // Final validation
+    if (!fullAddress || !city || !zipCode || !agreed) {
+      toast.error("Please complete all fields", {
+        description: "All address fields and terms agreement are required"
+      });
+      return;
+    }
+
+    const registrationData: RegisterUserRequest = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim().toLowerCase(),
       password,
-      fullAddress,
-      city,
-      zipCode
-    });
-    
-    // Store user type for the back-to-dashboard feature
-    localStorage.setItem('userType', 'agent');
-    
-    toast.success("Registration successful!", {
-      description: "Welcome to your  agent dashboard"
-    });
-    
-    navigate("/agent-dashboard/marketplace");
+      userType: 'agent',
+      dateOfBirth: dob ? dob.toISOString().split('T')[0] : undefined, // Convert to YYYY-MM-DD format
+      fullAddress: fullAddress.trim(),
+      city: city.trim(),
+      zipCode: zipCode.trim(),
+    };
+
+    // Validate form data
+    const validationErrors = validateRegistrationForm(registrationData);
+    if (validationErrors.length > 0) {
+      toast.error("Please correct the following errors:", {
+        description: validationErrors.join(", ")
+      });
+      return;
+    }
+
+    // Submit registration
+    registerMutation.mutate(registrationData);
   };
 
   return (
@@ -478,10 +535,17 @@ const AgentRegistration = () => {
                   <Button
                     type="button"
                     onClick={handleCompleteRegistration}
-                    className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-                    disabled={!fullAddress || !city || !zipCode}
+                    className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled={!fullAddress || !city || !zipCode || !agreed || registerMutation.isPending}
                   >
-                    Complete Registration
+                    {registerMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      'Complete Registration'
+                    )}
                   </Button>
                 </form>
               )}

@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, ArrowLeft, Users, CheckCircle, Shield, Star, Clock } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Users, CheckCircle, Shield, Star, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRegister, validateRegistrationForm } from "@/lib/api/auth";
+import type { RegisterUserRequest } from "@/lib/api/types";
 
 const ClientRegistration = () => {
   const [firstName, setFirstName] = useState("");
@@ -17,29 +19,59 @@ const ClientRegistration = () => {
   
   const navigate = useNavigate();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (firstName && lastName && email && password && agreed) {
-      console.log("Registration data:", { firstName, lastName, email, password });
-      
-      // Store user type for the back-to-dashboard feature
+  const registerMutation = useRegister({
+    onSuccess: (data) => {
+      // Store user type and data for the dashboard
       localStorage.setItem('userType', 'client');
+      localStorage.setItem('userData', JSON.stringify(data.data));
       
       toast.success("Registration successful!", {
         description: "Welcome to your client dashboard"
       });
       
       navigate("/client-dashboard/marketplace");
-    } else {
+    },
+    onError: (error) => {
       toast.error("Registration failed", {
-        description: "Please fill in all required fields"
+        description: error.message || "Please check your information and try again"
       });
     }
+  });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Basic form validation
+    if (!firstName || !lastName || !email || !password || !agreed) {
+      toast.error("Registration failed", {
+        description: "Please fill in all required fields and agree to terms"
+      });
+      return;
+    }
+
+    const registrationData: RegisterUserRequest = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      password,
+      userType: 'client'
+    };
+
+    // Validate form data
+    const validationErrors = validateRegistrationForm(registrationData);
+    if (validationErrors.length > 0) {
+      toast.error("Please correct the following errors:", {
+        description: validationErrors.join(", ")
+      });
+      return;
+    }
+
+    // Submit registration
+    registerMutation.mutate(registrationData);
   };
 
   const handleGoBack = () => {
@@ -253,10 +285,17 @@ const ClientRegistration = () => {
                 
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
-                  disabled={!agreed || !firstName || !lastName || !email || !password}
+                  className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  disabled={!agreed || !firstName || !lastName || !email || !password || registerMutation.isPending}
                 >
-                  Create Client Account
+                  {registerMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    'Create Client Account'
+                  )}
                 </Button>
                 
                 <div className="text-center pt-4">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Eye, 
@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { getCurrentUser, logout, isAuthenticated } from "@/lib/api/auth";
+import type { AuthUserData } from "@/lib/api/types";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,9 +34,21 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AuthUserData | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    // Check authentication and get user data
+    if (isAuthenticated()) {
+      const userData = getCurrentUser();
+      setCurrentUser(userData);
+    } else {
+      // Redirect to login if not authenticated
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
 
@@ -130,15 +144,14 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const navItems = userType === "client" ? clientNavItems : agentNavItems;
 
-  const handleLogout = () => {
-    // Clear user data from storage
-    localStorage.removeItem('userType');
-    sessionStorage.removeItem('userType');
+    const handleLogout = () => {
+    // Clear authentication data
+    logout();
     
-    // Dispatch custom event to notify other components
-    window.dispatchEvent(new Event('userLogout'));
+    // Show logout message
+    toast.success("Logged out successfully!");
     
-    toast.success("Logged out successfully");
+    // Redirect to home page
     navigate("/");
   };
 
@@ -212,11 +225,13 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
                   <Avatar className="h-12 w-12 border-2 border-white shadow-md">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white font-bold">
-                      JD
+                      {currentUser ? `${currentUser.firstName[0]}${currentUser.lastName[0]}` : 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="font-semibold text-[rgba(13,38,75,1)]">John Doe</p>
+                    <p className="font-semibold text-[rgba(13,38,75,1)]">
+                      {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'User'}
+                    </p>
                     <Badge className={`${userType === 'agent' ? 'bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white' : 'bg-[rgba(42,100,186,0.1)] text-[rgba(42,100,186,1)]'} text-xs`}>
                       {userType === 'client' ? 'Client' : 'Agent'}
                     </Badge>

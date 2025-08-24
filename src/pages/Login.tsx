@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, ArrowLeft, Shield, Users, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Shield, Users, CheckCircle, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { useLogin, validateLoginForm } from "@/lib/api/auth";
+import type { LoginUserRequest } from "@/lib/api/types";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,16 +18,11 @@ const Login = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (email && password) {
-      // Store user type for the back-to-dashboard feature
+  const loginMutation = useLogin({
+    onSuccess: (data) => {
+      // Store user type and data for the dashboard
       localStorage.setItem('userType', accountType);
+      localStorage.setItem('userData', JSON.stringify(data.data));
       
       if (accountType === "client") {
         toast.success("Login successful!", {
@@ -38,11 +35,38 @@ const Login = () => {
         });
         navigate("/agent-dashboard/marketplace");
       }
-    } else {
+    },
+    onError: (error) => {
       toast.error("Login failed", {
-        description: "Please fill in all fields"
+        description: error.message || "Please check your credentials and try again"
       });
     }
+  });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const loginData: LoginUserRequest = {
+      email: email.trim().toLowerCase(),
+      password,
+      userType: accountType as 'client' | 'agent'
+    };
+
+    // Validate form data
+    const validationErrors = validateLoginForm(loginData);
+    if (validationErrors.length > 0) {
+      toast.error("Please correct the following errors:", {
+        description: validationErrors.join(", ")
+      });
+      return;
+    }
+
+    // Submit login
+    loginMutation.mutate(loginData);
   };
 
   return (
@@ -180,9 +204,17 @@ const Login = () => {
               {/* Login Button */}
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                disabled={!email || !password || loginMutation.isPending}
               >
-                Sign In
+                {loginMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
               
               {/* Register Link */}
