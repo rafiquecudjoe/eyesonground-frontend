@@ -14,6 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ServiceTierSelector } from "./ServiceTierSelector";
+import { InspectionDetailsForm } from "./InspectionDetailsForm";
+import { FormProgress } from "./FormProgress";
+import { RequestTips } from "./RequestTips";
+import { ServiceTier, AdditionalService } from "@/lib/pricing/service-tiers";
 
 export const CreateRequest = () => {
   const navigate = useNavigate();
@@ -23,11 +28,23 @@ export const CreateRequest = () => {
     subCategory: "",
     location: "",
     address: "",
-    budget: "",
     urgency: "",
     description: "",
-    phoneNumber: ""
+    phoneNumber: "",
+    specificAreas: "",
+    knownIssues: "",
+    accessInstructions: "",
+    contactPerson: "",
+    contactPhone: "",
+    preferredContact: "",
+    availabilityWindow: "",
+    specialRequirements: "",
+    safetyConsiderations: "",
+    recordingConsent: false,
+    certificationRequirements: []
   });
+  const [selectedServiceTier, setSelectedServiceTier] = useState<ServiceTier>('basic');
+  const [selectedAdditionalServices, setSelectedAdditionalServices] = useState<AdditionalService[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   
@@ -49,7 +66,25 @@ export const CreateRequest = () => {
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Request data:", { ...formData, photoFiles, videoFile });
+    
+    // Basic validation
+    if (!formData.recordingConsent) {
+      toast.error("Please provide consent for recording and documentation");
+      return;
+    }
+    
+    if (!formData.accessInstructions && !formData.contactPhone) {
+      toast.error("Please provide either access instructions or a contact phone number");
+      return;
+    }
+    
+    console.log("Request data:", { 
+      ...formData, 
+      selectedServiceTier,
+      selectedAdditionalServices,
+      photoFiles, 
+      videoFile 
+    });
     
     toast.success("Request posted successfully!", {
       description: "Agents will start applying soon"
@@ -59,7 +94,7 @@ export const CreateRequest = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl min-h-screen">
       <div className="mb-6">
         <button 
           onClick={() => navigate("/client-dashboard/my-requests")}
@@ -83,7 +118,10 @@ export const CreateRequest = () => {
         </div>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
+        {/* Main Form */}
+        <div className="lg:col-span-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
           <CardHeader>
@@ -366,15 +404,15 @@ export const CreateRequest = () => {
           </CardContent>
         </Card>
 
-        {/* Location & Budget */}
+        {/* Location & Service Pricing */}
         <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
           <CardHeader>
             <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
               <MapPin className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-              Location & Budget
+              Location & Service Pricing
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="location">City/State</Label>
@@ -565,24 +603,6 @@ export const CreateRequest = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="budget">Budget Range</Label>
-                <Select value={formData.budget} onValueChange={(value) => handleInputChange("budget", value)}>
-                  <SelectTrigger id="budget" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                    <SelectValue placeholder="Select budget" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="50-100">$50 - $100</SelectItem>
-                    <SelectItem value="100-200">$100 - $200</SelectItem>
-                    <SelectItem value="200-300">$200 - $300</SelectItem>
-                    <SelectItem value="300-500">$300 - $500</SelectItem>
-                    <SelectItem value="500+">$500+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
                 <Label htmlFor="address">Specific Address</Label>
                 <Input 
                   id="address" 
@@ -593,25 +613,51 @@ export const CreateRequest = () => {
                   required
                 />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="urgency">Timeline</Label>
-                <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
-                  <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                    <SelectValue placeholder="When do you need this?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="same-day">Same Day</SelectItem>
-                    <SelectItem value="within-24h">Within 24 hours</SelectItem>
-                    <SelectItem value="within-3-days">Within 3 days</SelectItem>
-                    <SelectItem value="within-week">Within a week</SelectItem>
-                    <SelectItem value="flexible">Flexible</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            </div>
+            
+            {/* Service Tier Selection */}
+            <ServiceTierSelector
+              selectedTier={selectedServiceTier}
+              onTierChange={setSelectedServiceTier}
+              selectedAdditionalServices={selectedAdditionalServices}
+              onAdditionalServicesChange={setSelectedAdditionalServices}
+              className="mt-6"
+            />
+          </CardContent>
+        </Card>
+
+        {/* Timeline */}
+        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+          <CardHeader>
+            <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+              Timeline
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Label htmlFor="urgency">When do you need this inspection?</Label>
+              <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
+                <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                  <SelectValue placeholder="Select timeline" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="same-day">Same Day</SelectItem>
+                  <SelectItem value="within-24h">Within 24 hours</SelectItem>
+                  <SelectItem value="within-3-days">Within 3 days</SelectItem>
+                  <SelectItem value="within-week">Within a week</SelectItem>
+                  <SelectItem value="flexible">Flexible</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
+
+        {/* Inspection Details */}
+        <InspectionDetailsForm
+          formData={formData}
+          onChange={handleInputChange}
+        />
 
         {/* Description & Media */}
         <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
@@ -698,6 +744,24 @@ export const CreateRequest = () => {
           </Button>
         </div>
       </form>
+        </div>
+        
+        {/* Progress Sidebar */}
+        <div className="lg:col-span-1 order-first lg:order-last">
+          <div className="sticky top-4 z-10 h-fit max-h-[calc(100vh-2rem)] overflow-y-auto space-y-3">
+            <div className="space-y-3">
+              <FormProgress
+                formData={formData}
+                selectedServiceTier={selectedServiceTier}
+                photoFiles={photoFiles}
+              />
+              <div className="hidden lg:block">
+                <RequestTips />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
