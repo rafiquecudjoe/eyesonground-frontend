@@ -28,7 +28,7 @@ export const About = () => {
             </div>
             <div className="relative">
               <img
-              src="/images/pexels-thirdman-8482824.jpg"
+              src="/images/pexels-tim-samuel-5835356.jpg"
               alt="Professional inspector conducting detailed inspection with tablet and equipment"
               className="aspect-[1.26] object-cover w-full rounded-3xl shadow-2xl border-4 border-white/50"
               />

@@ -7,11 +7,11 @@ import { Search, MapPin, Eye, Shield, Clock } from "lucide-react";
 export const Hero = () => {
   const heroImages = [
     {
-      src: "/images/pexels-shvetsa-4315575.jpg",
+      src: "/images/image1.jpeg",
       alt: "Professional equipment inspector consulting with clients about heavy machinery"
     },
     {
-      src: "/images/pexels-gustavo-fring-4975384.jpg", 
+      src: "/images/image2.jpeg",
       alt: "Inspector measuring equipment dimensions with professional tools"
     },
     {
@@ -19,7 +19,7 @@ export const Hero = () => {
       alt: "Professional inspector documenting findings with tablet outdoors"
     },
     {
-      src: "/images/pexels-a-darmel-7641860.jpg",
+      src: "/images/image3.jpg",
       alt: "Professional documenting delivery and goods inspection"
     }
   ];

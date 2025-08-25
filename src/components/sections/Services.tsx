@@ -9,7 +9,7 @@ export const Services = () => {
   
   const services = [
     {
-      icon: "/images/pexels-thirdman-8470774.jpg",
+      icon: "/images/image1.jpeg",
       title: "VEHICLE INSPECTIONS",
       description:
         "Comprehensive vehicle inspections including engine checks, body condition, interior assessment, and test drives by certified automotive experts.",
