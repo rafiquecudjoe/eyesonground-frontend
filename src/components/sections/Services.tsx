@@ -28,9 +28,9 @@ export const Services = () => {
     },
     {
       icon: "/images/pexels-rdne-7362950.jpg",
-      title: "REAL ESTATE & PROPERTY",
+      title: "HEAVY EQUIPMENT & MACHINERY",
       description:
-        "Thorough property inspections including structural assessments, room-by-room documentation, and neighborhood evaluation reports.",
+        "Comprehensive inspection of heavy equipment, construction machinery, and industrial tools with operational assessments and safety checks.",
     },
   ];
 

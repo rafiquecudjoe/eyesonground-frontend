@@ -41,7 +41,7 @@ export const Earnings = () => {
       id: 2,
       client: "Michael Chen", 
       avatar: "https://randomuser.me/api/portraits/men/55.jpg",
-      service: "Property Assessment",
+      service: "Heavy Equipment Assessment",
       amount: "$315.00",
       date: "Dec 12, 2024",
       status: "paid",

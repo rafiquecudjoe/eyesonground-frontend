@@ -11,13 +11,13 @@ import {
 export const CategorySelect = () => {
   const categories = [
     "Vehicle Inspection",
-    "Property Assessment", 
+    "Heavy Equipment Assessment", 
     "Appliance Check",
     "Electronics Verification",
     "Machinery Inspection",
     "Antique Authentication",
     "Equipment Evaluation",
-    "Real Estate Survey",
+    "Industrial Equipment Survey",
     "Art & Collectibles",
     "General Item Inspection"
   ];

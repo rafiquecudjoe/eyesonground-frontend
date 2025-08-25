@@ -152,7 +152,7 @@ export const CreateRequest = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="automotive">Automotive & Vehicles</SelectItem>
-                    <SelectItem value="real-estate">Real Estate & Property</SelectItem>
+                    <SelectItem value="heavy-equipment">Heavy Equipment & Machinery</SelectItem>
                     <SelectItem value="electronics">Electronics & Technology</SelectItem>
                     <SelectItem value="appliances">Home Appliances</SelectItem>
                     <SelectItem value="machinery">Industrial Machinery</SelectItem>
@@ -167,8 +167,8 @@ export const CreateRequest = () => {
                     <SelectItem value="marine">Marine & Boats</SelectItem>
                     <SelectItem value="aviation">Aviation & Aircraft</SelectItem>
                     <SelectItem value="agricultural">Agricultural Equipment</SelectItem>
-                    <SelectItem value="commercial">Commercial Property</SelectItem>
-                    <SelectItem value="industrial">Industrial Property</SelectItem>
+                    <SelectItem value="commercial">Commercial Equipment</SelectItem>
+                    <SelectItem value="industrial">Industrial Facilities</SelectItem>
                     <SelectItem value="retail">Retail & Business Assets</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
@@ -197,16 +197,16 @@ export const CreateRequest = () => {
                       </>
                     )}
                     
-                    {/* Real Estate Subcategories */}
-                    {formData.category === "real-estate" && (
+                    {/* Heavy Equipment Subcategories */}
+                    {formData.category === "heavy-equipment" && (
                       <>
-                        <SelectItem value="residential-homes">Residential Homes</SelectItem>
-                        <SelectItem value="condos-townhomes">Condos/Townhomes</SelectItem>
-                        <SelectItem value="apartments">Apartments</SelectItem>
-                        <SelectItem value="land-lots">Land/Lots</SelectItem>
-                        <SelectItem value="vacation-rentals">Vacation Rentals</SelectItem>
-                        <SelectItem value="mobile-homes">Mobile Homes</SelectItem>
-                        <SelectItem value="new-construction">New Construction</SelectItem>
+                        <SelectItem value="excavators">Excavators</SelectItem>
+                        <SelectItem value="bulldozers">Bulldozers</SelectItem>
+                        <SelectItem value="cranes">Cranes</SelectItem>
+                        <SelectItem value="loaders">Loaders</SelectItem>
+                        <SelectItem value="forklifts">Forklifts</SelectItem>
+                        <SelectItem value="generators">Generators</SelectItem>
+                        <SelectItem value="compressors">Compressors</SelectItem>
                       </>
                     )}
                     
@@ -367,20 +367,20 @@ export const CreateRequest = () => {
                     
                     {formData.category === "commercial" && (
                       <>
-                        <SelectItem value="office-buildings">Office Buildings</SelectItem>
-                        <SelectItem value="retail-spaces">Retail Spaces</SelectItem>
-                        <SelectItem value="warehouses">Warehouses</SelectItem>
-                        <SelectItem value="restaurants">Restaurants</SelectItem>
-                        <SelectItem value="hotels-motels">Hotels/Motels</SelectItem>
+                        <SelectItem value="restaurant-equipment">Restaurant Equipment</SelectItem>
+                        <SelectItem value="office-equipment">Office Equipment</SelectItem>
+                        <SelectItem value="retail-fixtures">Retail Fixtures</SelectItem>
+                        <SelectItem value="warehouse-equipment">Warehouse Equipment</SelectItem>
+                        <SelectItem value="hotel-equipment">Hotel Equipment</SelectItem>
                       </>
                     )}
                     
                     {formData.category === "industrial" && (
                       <>
-                        <SelectItem value="manufacturing-facilities">Manufacturing Facilities</SelectItem>
-                        <SelectItem value="distribution-centers">Distribution Centers</SelectItem>
-                        <SelectItem value="industrial-land">Industrial Land</SelectItem>
-                        <SelectItem value="storage-facilities">Storage Facilities</SelectItem>
+                        <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
+                        <SelectItem value="conveyor-systems">Conveyor Systems</SelectItem>
+                        <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
+                        <SelectItem value="quality-control">Quality Control Equipment</SelectItem>
                       </>
                     )}
                     

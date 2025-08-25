@@ -40,8 +40,8 @@ export const History = ({ userType }: { userType: "client" | "agent" }) => {
     },
     {
       id: 2,
-      title: "Property Assessment - Downtown Apartment",
-      category: "Real Estate",
+      title: "Excavator Assessment - Construction Site",
+      category: "Heavy Equipment",
       location: "New York, NY",
       budget: "$350",
       status: "completed",
@@ -58,7 +58,7 @@ export const History = ({ userType }: { userType: "client" | "agent" }) => {
         name: "Michael Chen",
         avatar: "https://randomuser.me/api/portraits/men/55.jpg"
       },
-      reportUrl: "/reports/property-assessment-2.pdf",
+      reportUrl: "/reports/excavator-assessment-2.pdf",
       totalEarnings: userType === "agent" ? "$315" : undefined
     },
     {

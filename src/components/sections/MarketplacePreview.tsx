@@ -25,19 +25,20 @@ export const MarketplacePreview = () => {
     },
     {
       id: 2,
-      title: "Property Assessment - Downtown Apartment",
-      category: "Real Estate",
-      location: "New York, NY",
-      budget: "$350",
-      urgency: "Within 3 days",
-      postedDate: "5 hours ago",
+      title: "Excavator Assessment - Construction Site",
+      category: "Heavy Equipment",
+      location: "Austin, TX",
+      budget: "$275-$350",
+      urgency: "Standard",
+      postedDate: "2 days ago",
       client: {
-        name: "Michael Chen",
-        avatar: "https://randomuser.me/api/portraits/men/55.jpg",
-        rating: 4.9
+        name: "MidTex Construction",
+        avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+        rating: 4.6
       },
-      applicants: 7,
-      distance: "1.2 miles"
+      applicants: 8,
+      distance: "15.2 miles",
+      description: "Need comprehensive inspection of used CAT excavator including hydraulic systems and engine diagnostics."
     },
     {
       id: 3,
@@ -139,19 +140,21 @@ export const MarketplacePreview = () => {
                     </div>
                     
                     {/* Client Info */}
-                    <div className="flex items-center gap-3">
-                      <Avatar className="w-8 h-8 flex-shrink-0">
-                        <AvatarImage src={job.client.avatar} alt={job.client.name} />
-                        <AvatarFallback>{job.client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0">
-                        <div className="font-medium text-sm text-[rgba(13,38,75,1)] truncate">{job.client.name}</div>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-400 fill-current flex-shrink-0" />
-                          <span className="text-xs text-[rgba(13,38,75,0.7)]">{job.client.rating}</span>
+                    {job.client && (
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-8 h-8 flex-shrink-0">
+                          <AvatarImage src={job.client.avatar} alt={job.client.name} />
+                          <AvatarFallback>{job.client.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm text-[rgba(13,38,75,1)] truncate">{job.client.name}</div>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 text-yellow-400 fill-current flex-shrink-0" />
+                            <span className="text-xs text-[rgba(13,38,75,0.7)]">{job.client.rating}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

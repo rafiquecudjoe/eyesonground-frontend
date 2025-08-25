@@ -1,6 +1,7 @@
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
+import { Mission } from "@/components/sections/Mission";
 import { Services } from "@/components/sections/Services";
 import { AuctionInspection } from "@/components/sections/AuctionInspection";
 import { MarketplacePreview } from "@/components/sections/MarketplacePreview";
@@ -22,6 +23,7 @@ const Index = () => {
         <MarketplacePreview />
         <Features />
         <FeaturedAgents />
+        <Mission />
         <About />
         <Reviews />
         <FAQ />

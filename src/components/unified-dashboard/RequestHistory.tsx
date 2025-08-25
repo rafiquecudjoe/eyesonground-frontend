@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText } from "lucide-react";
+import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -17,22 +17,19 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
   const requests = [
     {
       id: 2,
-      title: "Property Assessment - Downtown Apartment",
-      category: "Real Estate",
-      location: "New York, NY",
-      budget: "$350",
-      status: "in-progress",
-      date: "Dec 18, 2024",
+      title: "Excavator Assessment - Construction Site",
+      category: "Heavy Equipment",
+      location: "Austin, TX",
+      budget: "$275-$350",
+      urgency: "Standard",
+      status: "In Progress",
       agent: {
-        name: "Mike Wilson",
-        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
-        rating: 4.8
+        name: "Robert Kim",
+        avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+        rating: 4.9
       },
-      client: {
-        name: "Michael Chen",
-        avatar: "https://randomuser.me/api/portraits/men/55.jpg"
-      },
-      estimatedCompletion: "Dec 20, 2024"
+      postedDate: "2 days ago",
+      description: "Need thorough inspection of used excavator including hydraulic systems, engine condition, and track wear assessment."
     },
     {
       id: 3,
@@ -143,36 +140,29 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
                   <DollarSign className="h-4 w-4 text-green-600" />
                   <span className="font-semibold text-[rgba(13,38,75,1)]">{request.budget}</span>
                 </div>
-                
-                {request.status === "completed" && request.duration && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-blue-500" />
-                    <span className="text-[rgba(13,38,75,0.8)]">Duration: {request.duration}</span>
-                  </div>
-                )}
               </div>
 
               {/* Agent/Client Info */}
               {request.agent && (
                 <div className="flex items-center gap-2 mb-4 p-3 bg-[rgba(42,100,186,0.05)] rounded-xl">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={request.agent.avatar} />
-                    <AvatarFallback>{request.agent.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={request.agent?.avatar} />
+                    <AvatarFallback>{request.agent?.name?.charAt(0) || "A"}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-[rgba(13,38,75,1)]">
-                      {userType === "client" ? "Agent: " : "Client: "}{userType === "client" ? request.agent.name : request.client?.name}
+                      {userType === "client" ? "Agent: " : "Client: "}{request.agent?.name || "Not assigned"}
                     </p>
-                    {request.agent.rating && (
+                    {request.agent?.rating && (
                       <div className="flex items-center gap-1">
                         <div className="flex">
                           {[...Array(5)].map((_, i) => (
-                            <div key={i} className={`w-3 h-3 ${i < Math.floor(request.agent.rating) ? 'text-yellow-400' : 'text-gray-300'}`}>
+                            <div key={i} className={`w-3 h-3 ${i < Math.floor(request.agent?.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}>
                               ★
                             </div>
                           ))}
                         </div>
-                        <span className="text-xs text-[rgba(13,38,75,0.7)]">{request.agent.rating}</span>
+                        <span className="text-xs text-[rgba(13,38,75,0.7)]">{request.agent?.rating}</span>
                       </div>
                     )}
                   </div>

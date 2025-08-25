@@ -8,11 +8,11 @@ export const Hero = () => {
   const heroImages = [
     {
       src: "/images/pexels-shvetsa-4315575.jpg",
-      alt: "Professional real estate inspector consulting with clients in modern home"
+      alt: "Professional equipment inspector consulting with clients about heavy machinery"
     },
     {
       src: "/images/pexels-gustavo-fring-4975384.jpg", 
-      alt: "Inspector measuring property dimensions with professional tools"
+      alt: "Inspector measuring equipment dimensions with professional tools"
     },
     {
       src: "/images/pexels-tim-samuel-5835356.jpg",

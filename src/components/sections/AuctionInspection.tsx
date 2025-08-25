@@ -114,10 +114,10 @@ export const AuctionInspection = () => {
             <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-2xl border border-[rgba(42,100,186,0.1)] max-w-xs">
               <h5 className="text-[rgba(13,38,75,1)] font-bold mb-2">Inspection Report Includes:</h5>
               <ul className="space-y-1 text-sm text-[rgba(13,38,75,0.8)]">
-                <li>• Detailed photos & videos</li>
-                <li>• Condition assessment</li>
-                <li>• Operational testing</li>
-                <li>• Market value insights</li>
+                <li>• High-resolution photos & videos</li>
+                <li>• Honest condition notes from our on-site inspector</li>
+                <li>• Optional basic function test (start-up, idle, basic movement)</li>
+                <li>• Live video call</li>
               </ul>
             </div>
           </div>
