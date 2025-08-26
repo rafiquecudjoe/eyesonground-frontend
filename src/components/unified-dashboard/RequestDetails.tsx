@@ -403,20 +403,20 @@ export const RequestDetails = ({ userType }: RequestDetailsProps) => {
 
           {/* Payment Information */}
           <Card className="border-[rgba(42,100,186,0.2)] shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <CardHeader className="border-b border-[rgba(42,100,186,0.1)]">
+            <CardHeader className="border-b border-[rgba(42,100,186,0.1)] pb-6">
               <CardTitle className="text-lg text-[rgba(13,38,75,1)] flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
                 Payment Status
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
+            <CardContent className="space-y-4 pt-6">
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <span className="text-sm text-[rgba(13,38,75,0.8)]">Status</span>
                 {getPaymentStatusBadge(request.paymentStatus)}
               </div>
               
               {request.paidAt && (
-                <div className="flex justify-between p-3 border border-green-200 rounded-lg bg-green-50">
+                <div className="flex justify-between p-4 border border-green-200 rounded-lg bg-green-50">
                   <span className="text-sm text-[rgba(13,38,75,0.8)]">Paid At</span>
                   <span className="text-sm text-[rgba(13,38,75,1)]">
                     {formatDate(request.paidAt)}
@@ -437,14 +437,14 @@ export const RequestDetails = ({ userType }: RequestDetailsProps) => {
 
           {/* Additional Information */}
           <Card className="border-[rgba(42,100,186,0.2)] shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <CardHeader className="border-b border-[rgba(42,100,186,0.1)]">
+            <CardHeader className="border-b border-[rgba(42,100,186,0.1)] pb-6">
               <CardTitle className="text-lg text-[rgba(13,38,75,1)] flex items-center gap-2">
                 <Camera className="h-5 w-5" />
                 Additional Options
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
+            <CardContent className="space-y-4 pt-6">
+              <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50">
                 <span className="text-sm text-[rgba(13,38,75,0.8)]">Recording Consent</span>
                 <Badge 
                   variant={request.recordingConsent ? "default" : "secondary"}
