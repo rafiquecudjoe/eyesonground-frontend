@@ -27,7 +27,7 @@ export const Services = () => {
         "Professional inspection of industrial machinery, construction equipment, and heavy-duty tools with operational assessments and safety checks.",
     },
     {
-      icon: "/images/pexels-rdne-7362950.jpg",
+      icon: "/images/image4.jpeg",
       title: "HEAVY EQUIPMENT & MACHINERY",
       description:
         "Comprehensive inspection of heavy equipment, construction machinery, and industrial tools with operational assessments and safety checks.",

@@ -28,7 +28,7 @@ export const About = () => {
             </div>
             <div className="relative">
               <img
-              src="/images/pexels-tim-samuel-5835356.jpg"
+              src="/images/image4.jpeg"
               alt="Professional inspector conducting detailed inspection with tablet and equipment"
               className="aspect-[1.26] object-cover w-full rounded-3xl shadow-2xl border-4 border-white/50"
               />
@@ -75,7 +75,7 @@ export const About = () => {
             </div>
             <div className="flex items-start gap-4 text-base text-[#233E4C] leading-6 mt-12 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <img
-                src="/images/pexels-tim-samuel-5835356.jpg"
+                src="/images/image4.jpeg"
                 alt="Feature 1"
                 className="aspect-square object-cover w-14 h-14 rounded-xl shadow-lg flex-shrink-0 border border-white/50"
               />
@@ -88,7 +88,7 @@ export const About = () => {
             </div>
             <div className="flex items-start gap-4 text-base text-[#233E4C] leading-6 mt-6 p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-[rgba(42,100,186,0.1)] shadow-sm">
               <img
-                src="/images/pexels-rdne-7362950.jpg"
+                src="/images/image4.jpeg"
                 alt="Feature 2"
                 className="aspect-square object-cover w-14 h-14 rounded-xl shadow-lg flex-shrink-0 border border-white/50"
               />
