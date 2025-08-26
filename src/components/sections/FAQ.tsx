@@ -92,7 +92,7 @@ export const FAQ = () => {
           <h3 className="text-2xl font-bold text-[rgba(13,38,75,1)] mb-4">Still have questions?</h3>
           <p className="text-[rgba(13,38,75,0.7)] mb-6">Our support team is here to help you get started with your first inspection.</p>
           <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-            <Link to="/account-type">Get Started Today</Link>
+            <Link to="/account-type?type=client">Get Started Today</Link>
           </Button>
         </div>
       </div>

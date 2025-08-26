@@ -22,20 +22,16 @@ export const AuctionInspection = () => {
               </div>
               
               <h2 className="text-[rgba(13,38,75,1)] text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-                Never Bid Blind at 
-                <span className="text-[rgba(42,100,186,1)]"> Auctions</span> Again
+                Get Your Eyes 
+                <span className="text-[rgba(42,100,186,1)]"> On The Ground</span>
               </h2>
               
               <p className="text-[rgba(13,38,75,0.8)] text-lg leading-relaxed">
-                At the auction, every machine looks shiny from a distance. But what's hiding under the hood? 
-                With Eyes on Ground, you'll never bid blind again. Need to inspect an item before buying? 
-                Our verified local agents provide real-time inspections with photos, videos, and detailed 
-                reports—so you know exactly what you're bidding on.
+                Need to inspect an item before buying? Our verified agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
               </p>
               
               <p className="text-[rgba(13,38,75,0.9)] text-base font-medium">
-                We inspect, we report, and we give you the confidence to buy the right machine at the right price. 
-                Eyes on Ground—your eyes when you can't be there.
+                Whether it's equipment, vehicles, or valuable items, we provide the eyes and expertise you need to make informed purchasing decisions.
               </p>
             </div>
             
@@ -73,7 +69,7 @@ export const AuctionInspection = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/client-registration">
+              <Link to="/account-type?type=client">
                 <Button className="w-full sm:w-auto bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                   Start Auction Inspection
                 </Button>
@@ -90,7 +86,7 @@ export const AuctionInspection = () => {
           <div className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <img
-                src="/images/pexels-gustavo-fring-4975384.jpg"
+                src="/images/image4.jpeg"
                 alt="Professional machinery inspection at auction site"
                 className="w-full h-[500px] object-cover"
               />

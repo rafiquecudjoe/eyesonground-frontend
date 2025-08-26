@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,15 @@ import { ArrowLeft, Users, Shield, CheckCircle, Star, Globe, Clock, Eye } from "
 const AccountTypeSelection = () => {
   const [selectedType, setSelectedType] = useState<"client" | "agent" | null>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Auto-select based on URL parameter
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'client' || type === 'agent') {
+      setSelectedType(type);
+    }
+  }, [searchParams]);
 
   const handleContinue = () => {
     if (selectedType) {
@@ -170,7 +179,7 @@ const AccountTypeSelection = () => {
                   )}
                 </div>
                 
-                <h3 className="text-2xl font-bold mb-4">I'm a Agent</h3>
+                <h3 className="text-2xl font-bold mb-4">I'm an Agent</h3>
                 <p className={cn(
                   "text-base leading-relaxed mb-6",
                   selectedType === "agent" ? "text-white/90" : "text-[rgba(13,38,75,0.7)]"

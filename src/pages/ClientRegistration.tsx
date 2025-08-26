@@ -14,8 +14,10 @@ const ClientRegistration = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const navigate = useNavigate();
 
@@ -42,13 +44,25 @@ const ClientRegistration = () => {
     setShowPassword(!showPassword);
   };
 
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic form validation
-    if (!firstName || !lastName || !email || !password || !agreed) {
-      toast.error("Registration failed", {
-        description: "Please fill in all required fields and agree to terms"
+    // Basic validation
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !agreed) {
+      toast.error("Please fill in all fields", {
+        description: "All fields are required to create your account"
+      });
+      return;
+    }
+
+    // Password confirmation validation
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match", {
+        description: "Please make sure both password fields match"
       });
       return;
     }
@@ -258,6 +272,32 @@ const ClientRegistration = () => {
                   </div>
                 </div>
                 
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-[rgba(13,38,75,1)] font-medium">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50 backdrop-blur-sm pr-12"
+                      placeholder="Confirm your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={toggleConfirmPasswordVisibility}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[rgba(42,100,186,1)] transition-colors"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+                
                 <div className="flex items-start space-x-3 pt-2">
                   <Checkbox
                     id="terms"
@@ -270,12 +310,12 @@ const ClientRegistration = () => {
                     className="text-sm text-[rgba(13,38,75,0.8)] leading-relaxed"
                   >
                     I agree to the{" "}
-                    <Link to="/terms" className="text-[rgba(42,100,186,1)] hover:underline font-medium">
+                    <Link to="/terms-and-conditions" className="text-[rgba(42,100,186,1)] hover:underline font-medium">
                       Terms of Service
                     </Link>{" "}
                     and{" "}
                     <Link
-                      to="/privacy"
+                      to="/privacy-policy"
                       className="text-[rgba(42,100,186,1)] hover:underline font-medium"
                     >
                       Privacy Policy
@@ -286,7 +326,7 @@ const ClientRegistration = () => {
                 <Button
                   type="submit"
                   className="w-full h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                  disabled={!agreed || !firstName || !lastName || !email || !password || registerMutation.isPending}
+                  disabled={!agreed || !firstName || !lastName || !email || !password || !confirmPassword || registerMutation.isPending}
                 >
                   {registerMutation.isPending ? (
                     <>

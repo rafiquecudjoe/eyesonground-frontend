@@ -81,12 +81,6 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const clientNavItems = [
     { 
-      path: `${basePath}/marketplace`, 
-      label: "Marketplace", 
-      icon: ShoppingBag,
-      description: "Browse inspection services"
-    },
-    { 
       path: `${basePath}/create-request`, 
       label: "Post Request", 
       icon: Plus,

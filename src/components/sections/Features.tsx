@@ -63,7 +63,7 @@ export const Features = () => {
             </div>
           </div>
           
-          <Link to="/account-type" className="block w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white text-center py-4 rounded-xl font-semibold hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+          <Link to="/account-type?type=client" className="block w-full bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white text-center py-4 rounded-xl font-semibold hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
             Request Your First Inspection
           </Link>
         </div>

@@ -21,7 +21,7 @@ export const Services = () => {
         "Detailed inspections of home appliances, electronics, and gadgets with functionality tests, condition reports, and warranty verification.",
     },
     {
-      icon: "/images/pexels-gustavo-fring-4975384.jpg",
+      icon: "/images/image4.jpeg",
       title: "MACHINERY & EQUIPMENT",
       description:
         "Professional inspection of industrial machinery, construction equipment, and heavy-duty tools with operational assessments and safety checks.",
@@ -60,7 +60,7 @@ export const Services = () => {
         {/* Call to action */}
         <div className="text-center mt-16">
           <Button asChild className="bg-white text-[rgba(13,38,75,1)] hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <Link to="/account-type">
+            <Link to="/account-type?type=client">
               Start Your First Inspection
             </Link>
           </Button>

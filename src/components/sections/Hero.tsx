@@ -7,15 +7,15 @@ import { Search, MapPin, Eye, Shield, Clock } from "lucide-react";
 export const Hero = () => {
   const heroImages = [
     {
-      src: "/images/image1.jpeg",
+      src: "/images/image4.jpeg",
       alt: "Professional equipment inspector consulting with clients about heavy machinery"
     },
     {
-      src: "/images/image2.jpeg",
+      src: "/images/image5.jpeg",
       alt: "Inspector measuring equipment dimensions with professional tools"
     },
     {
-      src: "/images/pexels-tim-samuel-5835356.jpg",
+      src: "/images/image1.jpeg",
       alt: "Professional inspector documenting findings with tablet outdoors"
     },
     {
@@ -43,11 +43,15 @@ export const Hero = () => {
                 <span className="text-sm font-medium text-[rgba(13,38,75,1)]">Trusted Remote Inspection Service</span>
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight max-md:max-w-full max-md:text-[40px] max-md:leading-[50px] bg-gradient-to-r from-[rgba(13,38,75,1)] to-[rgba(42,100,186,1)] bg-clip-text text-transparent">
-                Get Your Eyes <br />
-                <span className="text-[rgba(42,100,186,1)]">On The Ground</span>
+                Never Bid Blind at <br />
+                <span className="text-[rgba(42,100,186,1)]">Auctions</span> Again
               </h1>
               <p className="text-xl md:text-2xl font-light leading-relaxed mt-6 max-md:max-w-full text-[rgba(13,38,75,0.8)]">
-                Need to inspect an item before buying? Our verified agents provide real-time inspections with photos, videos, and detailed reports - so you can buy with confidence from anywhere in the world.
+                At the auction, every machine looks shiny from a distance. But what's hiding under the hood? Our verified local agents provide real-time inspections with photos, videos, and detailed reports—so you know exactly what you're bidding on.
+              </p>
+              
+              <p className="text-lg md:text-xl font-medium leading-relaxed mt-4 max-md:max-w-full text-[rgba(13,38,75,0.9)]">
+                We inspect, we report, and we give you the confidence to buy the right machine at the right price. Eyes on Ground—your eyes when you can't be there.
               </p>
             </div>
             
@@ -70,12 +74,12 @@ export const Hero = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row w-full items-center gap-4 mt-8 max-md:max-w-full">
               <Button asChild className="w-full sm:w-auto bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <Link to="/account-type">
+                <Link to="/account-type?type=client">
                   Request Inspection
                 </Link>
               </Button>
               <Button asChild variant="outline" className="w-full sm:w-auto border-2 border-[rgba(13,38,75,1)] text-[rgba(13,38,75,1)] px-8 py-6 text-lg font-semibold rounded-xl hover:bg-[rgba(13,38,75,0.05)] transition-all duration-300 hover:shadow-md">
-                <Link to="/account-type">
+                <Link to="/account-type?type=agent">
                   Become an Agent
                 </Link>
               </Button>
@@ -84,7 +88,7 @@ export const Hero = () => {
             {/* Marketplace CTA */}
             <div className="flex justify-center mt-6">
               <Button asChild variant="ghost" className="text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] font-medium px-6 py-2 rounded-lg hover:bg-[rgba(42,100,186,0.1)] transition-all duration-300 group">
-                <Link to="/account-type" className="flex items-center gap-2">
+                <Link to="/account-type?type=agent" className="flex items-center gap-2">
                   <Search className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   Browse Marketplace & Agents
                 </Link>

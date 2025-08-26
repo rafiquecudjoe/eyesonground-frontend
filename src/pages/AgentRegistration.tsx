@@ -26,8 +26,10 @@ const AgentRegistration = () => {
   const [dob, setDob] = useState<Date | undefined>(undefined);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   // Address information
   const [fullAddress, setFullAddress] = useState("");
@@ -58,9 +60,17 @@ const AgentRegistration = () => {
   const handleNextStep = () => {
     if (step === "basicInfo") {
       // Validate basic info before proceeding
-      if (!firstName || !lastName || !email || !password || !dob) {
+      if (!firstName || !lastName || !email || !password || !confirmPassword || !dob) {
         toast.error("Please fill in all required fields", {
           description: "All basic information fields are required"
+        });
+        return;
+      }
+
+      // Password confirmation validation
+      if (password !== confirmPassword) {
+        toast.error("Passwords don't match", {
+          description: "Please make sure both password fields match"
         });
         return;
       }
@@ -95,6 +105,10 @@ const AgentRegistration = () => {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   const handleCompleteRegistration = async () => {
@@ -360,6 +374,32 @@ const AgentRegistration = () => {
                     </div>
                   </div>
                   
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-[rgba(13,38,75,1)] font-medium">Confirm Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50 backdrop-blur-sm pr-12"
+                        placeholder="Confirm your password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={toggleConfirmPasswordVisibility}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-[rgba(42,100,186,1)] transition-colors"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  
                   <div className="flex items-start space-x-3 pt-2">
                     <Checkbox
                       id="terms"
@@ -372,12 +412,12 @@ const AgentRegistration = () => {
                       className="text-sm text-[rgba(13,38,75,0.8)] leading-relaxed"
                     >
                       I agree to the{" "}
-                      <Link to="/terms" className="text-[rgba(42,100,186,1)] hover:underline font-medium">
+                      <Link to="/terms-and-conditions" className="text-[rgba(42,100,186,1)] hover:underline font-medium">
                         Terms of Service
                       </Link>{" "}
                       and{" "}
                       <Link
-                        to="/privacy"
+                        to="/privacy-policy"
                         className="text-[rgba(42,100,186,1)] hover:underline font-medium"
                       >
                         Privacy Policy

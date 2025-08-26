@@ -11,6 +11,8 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AccountTypeSelection from "./pages/AccountTypeSelection";
 import UnifiedDashboard from "./pages/UnifiedDashboard";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/clientregister" element={<ClientRegistration />} />
           <Route path="/account-type" element={<AccountTypeSelection />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
           <Route path="/agent-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
