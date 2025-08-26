@@ -42,7 +42,6 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
             <Route path="/profile" element={<Profile userType="client" />} />
             <Route path="/settings" element={<Settings userType="client" />} />
           </>
-          </>
         )}
         
         {/* Agent Routes */}
