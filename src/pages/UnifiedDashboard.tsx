@@ -33,6 +33,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
       <Routes>
         {/* Client Routes */}
         {userType === "client" && (
+          <>
             <Route path="/" element={<Navigate to="/client-dashboard/post-board" replace />} />
             <Route path="/post-board" element={<CreateRequest />} />
             <Route path="/my-ads" element={<RequestHistory userType="client" />} />
