@@ -31,7 +31,7 @@ const ClientRegistration = () => {
         description: "Welcome to your client dashboard"
       });
       
-      navigate("/client-dashboard/marketplace");
+      navigate("/client-dashboard/post-board");
     },
     onError: (error) => {
       toast.error("Registration failed", {

@@ -20,13 +20,91 @@ import { FormProgress } from "./FormProgress";
 import { RequestTips } from "./RequestTips";
 import { ServiceTier, AdditionalService } from "@/lib/pricing/service-tiers";
 
+// City data for each state
+const STATE_CITIES: Record<string, string[]> = {
+  "AL": ["Birmingham", "Montgomery", "Mobile", "Huntsville", "Tuscaloosa", "Hoover", "Dothan", "Auburn", "Decatur", "Madison"],
+  "AK": ["Anchorage", "Fairbanks", "Juneau", "Sitka", "Ketchikan", "Wasilla", "Kenai", "Kodiak", "Bethel", "Palmer"],
+  "AZ": ["Phoenix", "Tucson", "Mesa", "Chandler", "Scottsdale", "Glendale", "Gilbert", "Tempe", "Peoria", "Surprise"],
+  "AR": ["Little Rock", "Fort Smith", "Fayetteville", "Springdale", "Jonesboro", "North Little Rock", "Conway", "Rogers", "Pine Bluff", "Bentonville"],
+  "CA": ["Los Angeles", "San Diego", "San Jose", "San Francisco", "Fresno", "Sacramento", "Long Beach", "Oakland", "Bakersfield", "Anaheim", "Santa Ana", "Riverside", "Stockton", "Irvine", "Chula Vista", "Fremont", "San Bernardino", "Modesto", "Fontana", "Oxnard"],
+  "CO": ["Denver", "Colorado Springs", "Aurora", "Fort Collins", "Lakewood", "Thornton", "Arvada", "Westminster", "Pueblo", "Centennial"],
+  "CT": ["Bridgeport", "New Haven", "Hartford", "Stamford", "Waterbury", "Norwalk", "Danbury", "New Britain", "West Hartford", "Greenwich"],
+  "DE": ["Wilmington", "Dover", "Newark", "Middletown", "Smyrna", "Milford", "Seaford", "Georgetown", "Elsmere", "New Castle"],
+  "FL": ["Jacksonville", "Miami", "Tampa", "Orlando", "St. Petersburg", "Hialeah", "Tallahassee", "Fort Lauderdale", "Port St. Lucie", "Cape Coral", "Pembroke Pines", "Hollywood", "Miramar", "Gainesville", "Coral Springs"],
+  "GA": ["Atlanta", "Augusta", "Columbus", "Macon", "Savannah", "Athens", "Sandy Springs", "Roswell", "Johns Creek", "Albany"],
+  "HI": ["Honolulu", "Pearl City", "Hilo", "Kailua", "Waipahu", "Kaneohe", "Mililani", "Kahului", "Ewa Gentry", "Mililani Town"],
+  "ID": ["Boise", "Meridian", "Nampa", "Idaho Falls", "Pocatello", "Caldwell", "Coeur d'Alene", "Twin Falls", "Lewiston", "Post Falls"],
+  "IL": ["Chicago", "Aurora", "Rockford", "Joliet", "Naperville", "Springfield", "Peoria", "Elgin", "Waukegan", "Cicero"],
+  "IN": ["Indianapolis", "Fort Wayne", "Evansville", "South Bend", "Carmel", "Fishers", "Bloomington", "Hammond", "Gary", "Muncie"],
+  "IA": ["Des Moines", "Cedar Rapids", "Davenport", "Sioux City", "Iowa City", "Waterloo", "Council Bluffs", "Ames", "West Des Moines", "Dubuque"],
+  "KS": ["Wichita", "Overland Park", "Kansas City", "Topeka", "Olathe", "Lawrence", "Shawnee", "Manhattan", "Lenexa", "Salina"],
+  "KY": ["Louisville", "Lexington", "Bowling Green", "Owensboro", "Covington", "Richmond", "Georgetown", "Florence", "Hopkinsville", "Nicholasville"],
+  "LA": ["New Orleans", "Baton Rouge", "Shreveport", "Lafayette", "Lake Charles", "Kenner", "Bossier City", "Monroe", "Alexandria", "Houma"],
+  "ME": ["Portland", "Lewiston", "Bangor", "South Portland", "Auburn", "Biddeford", "Sanford", "Saco", "Westbrook", "Augusta"],
+  "MD": ["Baltimore", "Frederick", "Rockville", "Gaithersburg", "Bowie", "Hagerstown", "Annapolis", "College Park", "Salisbury", "Laurel"],
+  "MA": ["Boston", "Worcester", "Springfield", "Lowell", "Cambridge", "New Bedford", "Brockton", "Quincy", "Lynn", "Fall River"],
+  "MI": ["Detroit", "Grand Rapids", "Warren", "Sterling Heights", "Lansing", "Ann Arbor", "Flint", "Dearborn", "Livonia", "Westland"],
+  "MN": ["Minneapolis", "St. Paul", "Rochester", "Duluth", "Bloomington", "Brooklyn Park", "Plymouth", "St. Cloud", "Eagan", "Woodbury"],
+  "MS": ["Jackson", "Gulfport", "Southaven", "Hattiesburg", "Biloxi", "Meridian", "Tupelo", "Greenville", "Olive Branch", "Horn Lake"],
+  "MO": ["Kansas City", "St. Louis", "Springfield", "Columbia", "Independence", "Lee's Summit", "O'Fallon", "St. Joseph", "St. Charles", "St. Peters"],
+  "MT": ["Billings", "Missoula", "Great Falls", "Bozeman", "Butte", "Helena", "Kalispell", "Havre", "Anaconda", "Miles City"],
+  "NE": ["Omaha", "Lincoln", "Bellevue", "Grand Island", "Kearney", "Fremont", "Hastings", "North Platte", "Norfolk", "Columbus"],
+  "NV": ["Las Vegas", "Henderson", "Reno", "North Las Vegas", "Sparks", "Carson City", "Fernley", "Elko", "Mesquite", "Boulder City"],
+  "NH": ["Manchester", "Nashua", "Concord", "Derry", "Rochester", "Salem", "Dover", "Merrimack", "Londonderry", "Hudson"],
+  "NJ": ["Newark", "Jersey City", "Paterson", "Elizabeth", "Edison", "Woodbridge", "Lakewood", "Toms River", "Hamilton", "Trenton"],
+  "NM": ["Albuquerque", "Las Cruces", "Rio Rancho", "Santa Fe", "Roswell", "Farmington", "Clovis", "Hobbs", "Alamogordo", "Carlsbad"],
+  "NY": ["New York City", "Buffalo", "Rochester", "Yonkers", "Syracuse", "Albany", "New Rochelle", "Mount Vernon", "Schenectady", "Utica"],
+  "NC": ["Charlotte", "Raleigh", "Greensboro", "Durham", "Winston-Salem", "Fayetteville", "Cary", "Wilmington", "High Point", "Concord"],
+  "ND": ["Fargo", "Bismarck", "Grand Forks", "Minot", "West Fargo", "Williston", "Dickinson", "Mandan", "Jamestown", "Wahpeton"],
+  "OH": ["Columbus", "Cleveland", "Cincinnati", "Toledo", "Akron", "Dayton", "Parma", "Canton", "Youngstown", "Lorain"],
+  "OK": ["Oklahoma City", "Tulsa", "Norman", "Broken Arrow", "Lawton", "Edmond", "Moore", "Midwest City", "Enid", "Stillwater"],
+  "OR": ["Portland", "Eugene", "Salem", "Gresham", "Hillsboro", "Bend", "Beaverton", "Medford", "Springfield", "Corvallis"],
+  "PA": ["Philadelphia", "Pittsburgh", "Allentown", "Erie", "Reading", "Scranton", "Bethlehem", "Lancaster", "Harrisburg", "Altoona"],
+  "RI": ["Providence", "Warwick", "Cranston", "Pawtucket", "East Providence", "Woonsocket", "Newport", "Central Falls", "Westerly", "North Providence"],
+  "SC": ["Charleston", "Columbia", "North Charleston", "Mount Pleasant", "Rock Hill", "Greenville", "Summerville", "Sumter", "Goose Creek", "Hilton Head Island"],
+  "SD": ["Sioux Falls", "Rapid City", "Aberdeen", "Brookings", "Watertown", "Mitchell", "Yankton", "Pierre", "Huron", "Vermillion"],
+  "TN": ["Nashville", "Memphis", "Knoxville", "Chattanooga", "Clarksville", "Murfreesboro", "Franklin", "Johnson City", "Bartlett", "Hendersonville"],
+  "TX": ["Houston", "San Antonio", "Dallas", "Austin", "Fort Worth", "El Paso", "Arlington", "Corpus Christi", "Plano", "Lubbock", "Laredo", "Irving", "Garland", "Frisco", "McKinney", "Amarillo", "Grand Prairie", "Brownsville", "Pasadena", "Mesquite"],
+  "UT": ["Salt Lake City", "West Valley City", "Provo", "West Jordan", "Orem", "Sandy", "Ogden", "St. George", "Layton", "Taylorsville"],
+  "VT": ["Burlington", "Essex", "South Burlington", "Colchester", "Rutland", "Bennington", "Brattleboro", "Milton", "Hartford", "Barre"],
+  "VA": ["Virginia Beach", "Norfolk", "Chesapeake", "Richmond", "Newport News", "Alexandria", "Hampton", "Portsmouth", "Suffolk", "Roanoke"],
+  "WA": ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue", "Kent", "Everett", "Renton", "Yakima", "Federal Way"],
+  "WV": ["Charleston", "Huntington", "Parkersburg", "Morgantown", "Wheeling", "Martinsburg", "Fairmont", "Beckley", "Clarksburg", "Lewisburg"],
+  "WI": ["Milwaukee", "Madison", "Green Bay", "Kenosha", "Racine", "Appleton", "Waukesha", "Eau Claire", "Oshkosh", "Janesville"],
+  "WY": ["Cheyenne", "Casper", "Laramie", "Gillette", "Rock Springs", "Sheridan", "Green River", "Evanston", "Riverton", "Jackson"],
+  "DC": ["Washington"]
+};
+
+// Function to get cities for a state
+const getCitiesForState = (state: string): string[] => {
+  return STATE_CITIES[state] || [];
+};
+
+// Function to get address suggestions (mock implementation)
+const getAddressSuggestions = (input: string): string[] => {
+  if (!input || input.length < 3) return [];
+  
+  // Mock address suggestions - in a real app, this would call a geocoding API
+  const suggestions = [
+    `${input} Street, City, State`,
+    `${input} Avenue, City, State`,
+    `${input} Boulevard, City, State`,
+    `${input} Drive, City, State`,
+    `${input} Lane, City, State`
+  ];
+  
+  return suggestions.slice(0, 5);
+};
+
 export const CreateRequest = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     category: "",
     subCategory: "",
-    location: "",
+    customSubCategory: "",
+    state: "",
+    city: "",
     address: "",
     urgency: "",
     description: "",
@@ -90,18 +168,18 @@ export const CreateRequest = () => {
       description: "Agents will start applying soon"
     });
     
-    navigate("/client-dashboard/my-requests");
+    navigate("/client-dashboard/my-ads");
   };
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl min-h-screen">
       <div className="mb-6">
         <button 
-          onClick={() => navigate("/client-dashboard/my-requests")}
+          onClick={() => navigate("/client-dashboard/post-board")}
           className="inline-flex items-center text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] mb-4 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Requests
+          Back to Post Board
         </button>
         
         <div className="text-center mb-8">
@@ -122,628 +200,577 @@ export const CreateRequest = () => {
         {/* Main Form */}
         <div className="lg:col-span-4">
           <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information */}
-        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-          <CardHeader>
-            <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
-              <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-              Basic Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Request Title</Label>
-              <Input 
-                id="title" 
-                placeholder="e.g., Vehicle Inspection - 2019 Honda Civic" 
-                value={formData.title}
-                onChange={(e) => handleInputChange("title", e.target.value)}
-                className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                required
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                  <SelectTrigger id="category" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="automotive">Automotive & Vehicles</SelectItem>
-                    <SelectItem value="heavy-equipment">Heavy Equipment & Machinery</SelectItem>
-                    <SelectItem value="electronics">Electronics & Technology</SelectItem>
-                    <SelectItem value="appliances">Home Appliances</SelectItem>
-                    <SelectItem value="machinery">Industrial Machinery</SelectItem>
-                    <SelectItem value="construction">Construction Equipment</SelectItem>
-                    <SelectItem value="antiques">Antiques & Collectibles</SelectItem>
-                    <SelectItem value="jewelry">Jewelry & Precious Items</SelectItem>
-                    <SelectItem value="art">Art & Artwork</SelectItem>
-                    <SelectItem value="furniture">Furniture & Home Goods</SelectItem>
-                    <SelectItem value="sporting">Sporting Goods & Equipment</SelectItem>
-                    <SelectItem value="musical">Musical Instruments</SelectItem>
-                    <SelectItem value="medical">Medical Equipment</SelectItem>
-                    <SelectItem value="marine">Marine & Boats</SelectItem>
-                    <SelectItem value="aviation">Aviation & Aircraft</SelectItem>
-                    <SelectItem value="agricultural">Agricultural Equipment</SelectItem>
-                    <SelectItem value="commercial">Commercial Equipment</SelectItem>
-                    <SelectItem value="industrial">Industrial Facilities</SelectItem>
-                    <SelectItem value="retail">Retail & Business Assets</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="subCategory">Sub Category</Label>
-                <Select value={formData.subCategory} onValueChange={(value) => handleInputChange("subCategory", value)}>
-                  <SelectTrigger id="subCategory" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                    <SelectValue placeholder="Select sub category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* Automotive Subcategories */}
-                    {formData.category === "automotive" && (
-                      <>
-                        <SelectItem value="cars-sedans">Cars - Sedans</SelectItem>
-                        <SelectItem value="cars-suvs">Cars - SUVs/Crossovers</SelectItem>
-                        <SelectItem value="cars-trucks">Cars - Trucks/Pickups</SelectItem>
-                        <SelectItem value="cars-luxury">Cars - Luxury/Sports</SelectItem>
-                        <SelectItem value="cars-classic">Cars - Classic/Vintage</SelectItem>
-                        <SelectItem value="motorcycles">Motorcycles</SelectItem>
-                        <SelectItem value="rvs-motorhomes">RVs/Motorhomes</SelectItem>
-                        <SelectItem value="trailers">Trailers</SelectItem>
-                        <SelectItem value="commercial-vehicles">Commercial Vehicles</SelectItem>
-                      </>
+            {/* Basic Information */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Basic Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Request Title</Label>
+                  <Input 
+                    id="title" 
+                    placeholder="e.g., Vehicle Inspection - 2019 Honda Civic" 
+                    value={formData.title}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={formData.category} onValueChange={(value) => {
+                      handleInputChange("category", value);
+                      handleInputChange("subCategory", ""); // Reset subcategory when category changes
+                    }}>
+                      <SelectTrigger id="category" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="automotive">Automotive & Vehicles</SelectItem>
+                        <SelectItem value="heavy-equipment">Heavy Equipment & Machinery</SelectItem>
+                        <SelectItem value="electronics">Electronics & Technology</SelectItem>
+                        <SelectItem value="appliances">Home Appliances</SelectItem>
+                        <SelectItem value="machinery">Industrial Machinery</SelectItem>
+                        <SelectItem value="construction">Construction Equipment</SelectItem>
+                        <SelectItem value="antiques">Antiques & Collectibles</SelectItem>
+                        <SelectItem value="jewelry">Jewelry & Precious Items</SelectItem>
+                        <SelectItem value="art">Art & Artwork</SelectItem>
+                        <SelectItem value="furniture">Furniture & Home Goods</SelectItem>
+                        <SelectItem value="sporting">Sporting Goods & Equipment</SelectItem>
+                        <SelectItem value="musical">Musical Instruments</SelectItem>
+                        <SelectItem value="medical">Medical Equipment</SelectItem>
+                        <SelectItem value="marine">Marine & Boats</SelectItem>
+                        <SelectItem value="aviation">Aviation & Aircraft</SelectItem>
+                        <SelectItem value="agricultural">Agricultural Equipment</SelectItem>
+                        <SelectItem value="commercial">Commercial Equipment</SelectItem>
+                        <SelectItem value="industrial">Industrial Facilities</SelectItem>
+                        <SelectItem value="retail">Retail & Business Assets</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="subCategory">Sub Category</Label>
+                    {formData.category === "other" ? (
+                      <Input
+                        id="subCategory"
+                        value={formData.customSubCategory || ""}
+                        onChange={(e) => handleInputChange("customSubCategory", e.target.value)}
+                        className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                        placeholder="Enter custom category"
+                      />
+                    ) : (
+                      <Select value={formData.subCategory} onValueChange={(value) => {
+                        if (value === "others") {
+                          handleInputChange("subCategory", value);
+                          handleInputChange("customSubCategory", "");
+                        } else {
+                          handleInputChange("subCategory", value);
+                          handleInputChange("customSubCategory", "");
+                        }
+                      }}>
+                        <SelectTrigger id="subCategory" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                          <SelectValue placeholder="Select sub category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* Automotive Subcategories */}
+                          {formData.category === "automotive" && (
+                            <>
+                              <SelectItem value="cars-sedans">Cars - Sedans</SelectItem>
+                              <SelectItem value="cars-suvs">Cars - SUVs/Crossovers</SelectItem>
+                              <SelectItem value="cars-trucks">Cars - Trucks/Pickups</SelectItem>
+                              <SelectItem value="cars-luxury">Cars - Luxury/Sports</SelectItem>
+                              <SelectItem value="cars-classic">Cars - Classic/Vintage</SelectItem>
+                              <SelectItem value="motorcycles">Motorcycles</SelectItem>
+                              <SelectItem value="rvs-motorhomes">RVs/Motorhomes</SelectItem>
+                              <SelectItem value="trailers">Trailers</SelectItem>
+                              <SelectItem value="commercial-vehicles">Commercial Vehicles</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Heavy Equipment Subcategories */}
+                          {formData.category === "heavy-equipment" && (
+                            <>
+                              <SelectItem value="excavators">Excavators</SelectItem>
+                              <SelectItem value="bulldozers">Bulldozers</SelectItem>
+                              <SelectItem value="cranes">Cranes</SelectItem>
+                              <SelectItem value="loaders">Loaders</SelectItem>
+                              <SelectItem value="forklifts">Forklifts</SelectItem>
+                              <SelectItem value="generators">Generators</SelectItem>
+                              <SelectItem value="compressors">Compressors</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Electronics Subcategories */}
+                          {formData.category === "electronics" && (
+                            <>
+                              <SelectItem value="computers-laptops">Computers/Laptops</SelectItem>
+                              <SelectItem value="smartphones-tablets">Smartphones/Tablets</SelectItem>
+                              <SelectItem value="gaming-consoles">Gaming Consoles</SelectItem>
+                              <SelectItem value="audio-equipment">Audio Equipment</SelectItem>
+                              <SelectItem value="cameras-video">Cameras/Video Equipment</SelectItem>
+                              <SelectItem value="smart-home">Smart Home Devices</SelectItem>
+                              <SelectItem value="televisions">Televisions</SelectItem>
+                              <SelectItem value="networking">Networking Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Appliances Subcategories */}
+                          {formData.category === "appliances" && (
+                            <>
+                              <SelectItem value="kitchen-appliances">Kitchen Appliances</SelectItem>
+                              <SelectItem value="laundry-appliances">Laundry Appliances</SelectItem>
+                              <SelectItem value="hvac-systems">HVAC Systems</SelectItem>
+                              <SelectItem value="water-heaters">Water Heaters</SelectItem>
+                              <SelectItem value="small-appliances">Small Appliances</SelectItem>
+                              <SelectItem value="outdoor-appliances">Outdoor Appliances</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Machinery Subcategories */}
+                          {formData.category === "machinery" && (
+                            <>
+                              <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
+                              <SelectItem value="printing-equipment">Printing Equipment</SelectItem>
+                              <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
+                              <SelectItem value="textile-machinery">Textile Machinery</SelectItem>
+                              <SelectItem value="food-processing">Food Processing Equipment</SelectItem>
+                              <SelectItem value="woodworking-machinery">Woodworking Machinery</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Construction Subcategories */}
+                          {formData.category === "construction" && (
+                            <>
+                              <SelectItem value="excavators">Excavators</SelectItem>
+                              <SelectItem value="bulldozers">Bulldozers</SelectItem>
+                              <SelectItem value="cranes">Cranes</SelectItem>
+                              <SelectItem value="concrete-equipment">Concrete Equipment</SelectItem>
+                              <SelectItem value="generators">Generators</SelectItem>
+                              <SelectItem value="hand-tools">Hand Tools</SelectItem>
+                              <SelectItem value="power-tools">Power Tools</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {/* Antiques Subcategories */}
+                          {formData.category === "antiques" && (
+                            <>
+                              <SelectItem value="vintage-furniture">Vintage Furniture</SelectItem>
+                              <SelectItem value="vintage-jewelry">Vintage Jewelry</SelectItem>
+                              <SelectItem value="collectible-coins">Collectible Coins</SelectItem>
+                              <SelectItem value="vintage-art">Vintage Art</SelectItem>
+                              <SelectItem value="vintage-books">Vintage Books</SelectItem>
+                              <SelectItem value="vintage-toys">Vintage Toys</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "jewelry" && (
+                            <>
+                              <SelectItem value="diamond-jewelry">Diamond Jewelry</SelectItem>
+                              <SelectItem value="gold-jewelry">Gold Jewelry</SelectItem>
+                              <SelectItem value="silver-jewelry">Silver Jewelry</SelectItem>
+                              <SelectItem value="luxury-watches">Luxury Watches</SelectItem>
+                              <SelectItem value="gemstone-jewelry">Gemstone Jewelry</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "art" && (
+                            <>
+                              <SelectItem value="paintings">Paintings</SelectItem>
+                              <SelectItem value="sculptures">Sculptures</SelectItem>
+                              <SelectItem value="photography">Photography</SelectItem>
+                              <SelectItem value="mixed-media">Mixed Media</SelectItem>
+                              <SelectItem value="prints-posters">Prints/Posters</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "furniture" && (
+                            <>
+                              <SelectItem value="bedroom-furniture">Bedroom Furniture</SelectItem>
+                              <SelectItem value="living-room">Living Room Furniture</SelectItem>
+                              <SelectItem value="dining-furniture">Dining Furniture</SelectItem>
+                              <SelectItem value="office-furniture">Office Furniture</SelectItem>
+                              <SelectItem value="outdoor-furniture">Outdoor Furniture</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "sporting" && (
+                            <>
+                              <SelectItem value="fitness-equipment">Fitness Equipment</SelectItem>
+                              <SelectItem value="outdoor-gear">Outdoor Gear</SelectItem>
+                              <SelectItem value="team-sports">Team Sports Equipment</SelectItem>
+                              <SelectItem value="water-sports">Water Sports Equipment</SelectItem>
+                              <SelectItem value="winter-sports">Winter Sports Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "musical" && (
+                            <>
+                              <SelectItem value="guitars">Guitars</SelectItem>
+                              <SelectItem value="pianos-keyboards">Pianos/Keyboards</SelectItem>
+                              <SelectItem value="drums-percussion">Drums/Percussion</SelectItem>
+                              <SelectItem value="wind-instruments">Wind Instruments</SelectItem>
+                              <SelectItem value="string-instruments">String Instruments</SelectItem>
+                              <SelectItem value="audio-recording">Audio/Recording Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "medical" && (
+                            <>
+                              <SelectItem value="diagnostic-equipment">Diagnostic Equipment</SelectItem>
+                              <SelectItem value="surgical-instruments">Surgical Instruments</SelectItem>
+                              <SelectItem value="dental-equipment">Dental Equipment</SelectItem>
+                              <SelectItem value="rehabilitation">Rehabilitation Equipment</SelectItem>
+                              <SelectItem value="laboratory-equipment">Laboratory Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "marine" && (
+                            <>
+                              <SelectItem value="sailboats">Sailboats</SelectItem>
+                              <SelectItem value="motorboats">Motorboats</SelectItem>
+                              <SelectItem value="yachts">Yachts</SelectItem>
+                              <SelectItem value="jet-skis">Jet Skis</SelectItem>
+                              <SelectItem value="fishing-boats">Fishing Boats</SelectItem>
+                              <SelectItem value="marine-engines">Marine Engines</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "aviation" && (
+                            <>
+                              <SelectItem value="single-engine">Single Engine Aircraft</SelectItem>
+                              <SelectItem value="multi-engine">Multi Engine Aircraft</SelectItem>
+                              <SelectItem value="helicopters">Helicopters</SelectItem>
+                              <SelectItem value="gliders">Gliders</SelectItem>
+                              <SelectItem value="aircraft-parts">Aircraft Parts</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "agricultural" && (
+                            <>
+                              <SelectItem value="tractors">Tractors</SelectItem>
+                              <SelectItem value="harvesters">Harvesters</SelectItem>
+                              <SelectItem value="irrigation-systems">Irrigation Systems</SelectItem>
+                              <SelectItem value="livestock-equipment">Livestock Equipment</SelectItem>
+                              <SelectItem value="farming-tools">Farming Tools</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "commercial" && (
+                            <>
+                              <SelectItem value="restaurant-equipment">Restaurant Equipment</SelectItem>
+                              <SelectItem value="office-equipment">Office Equipment</SelectItem>
+                              <SelectItem value="retail-fixtures">Retail Fixtures</SelectItem>
+                              <SelectItem value="warehouse-equipment">Warehouse Equipment</SelectItem>
+                              <SelectItem value="hotel-equipment">Hotel Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "industrial" && (
+                            <>
+                              <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
+                              <SelectItem value="conveyor-systems">Conveyor Systems</SelectItem>
+                              <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
+                              <SelectItem value="quality-control">Quality Control Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                          
+                          {formData.category === "retail" && (
+                            <>
+                              <SelectItem value="store-fixtures">Store Fixtures</SelectItem>
+                              <SelectItem value="point-of-sale">Point of Sale Systems</SelectItem>
+                              <SelectItem value="inventory-equipment">Inventory Equipment</SelectItem>
+                              <SelectItem value="display-equipment">Display Equipment</SelectItem>
+                              <SelectItem value="others">Others</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
                     )}
                     
-                    {/* Heavy Equipment Subcategories */}
-                    {formData.category === "heavy-equipment" && (
-                      <>
-                        <SelectItem value="excavators">Excavators</SelectItem>
-                        <SelectItem value="bulldozers">Bulldozers</SelectItem>
-                        <SelectItem value="cranes">Cranes</SelectItem>
-                        <SelectItem value="loaders">Loaders</SelectItem>
-                        <SelectItem value="forklifts">Forklifts</SelectItem>
-                        <SelectItem value="generators">Generators</SelectItem>
-                        <SelectItem value="compressors">Compressors</SelectItem>
-                      </>
+                    {/* Custom input for "Others" selection */}
+                    {formData.subCategory === "others" && (
+                      <Input
+                        value={formData.customSubCategory || ""}
+                        onChange={(e) => handleInputChange("customSubCategory", e.target.value)}
+                        className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50 mt-2"
+                        placeholder="Please specify the sub category"
+                      />
                     )}
-                    
-                    {/* Electronics Subcategories */}
-                    {formData.category === "electronics" && (
-                      <>
-                        <SelectItem value="computers-laptops">Computers/Laptops</SelectItem>
-                        <SelectItem value="smartphones-tablets">Smartphones/Tablets</SelectItem>
-                        <SelectItem value="gaming-consoles">Gaming Consoles</SelectItem>
-                        <SelectItem value="audio-equipment">Audio Equipment</SelectItem>
-                        <SelectItem value="cameras-video">Cameras/Video Equipment</SelectItem>
-                        <SelectItem value="smart-home">Smart Home Devices</SelectItem>
-                        <SelectItem value="televisions">Televisions</SelectItem>
-                        <SelectItem value="networking">Networking Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {/* Appliances Subcategories */}
-                    {formData.category === "appliances" && (
-                      <>
-                        <SelectItem value="kitchen-appliances">Kitchen Appliances</SelectItem>
-                        <SelectItem value="laundry-appliances">Laundry Appliances</SelectItem>
-                        <SelectItem value="hvac-systems">HVAC Systems</SelectItem>
-                        <SelectItem value="water-heaters">Water Heaters</SelectItem>
-                        <SelectItem value="small-appliances">Small Appliances</SelectItem>
-                        <SelectItem value="outdoor-appliances">Outdoor Appliances</SelectItem>
-                      </>
-                    )}
-                    
-                    {/* Machinery Subcategories */}
-                    {formData.category === "machinery" && (
-                      <>
-                        <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
-                        <SelectItem value="printing-equipment">Printing Equipment</SelectItem>
-                        <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
-                        <SelectItem value="textile-machinery">Textile Machinery</SelectItem>
-                        <SelectItem value="food-processing">Food Processing Equipment</SelectItem>
-                        <SelectItem value="woodworking-machinery">Woodworking Machinery</SelectItem>
-                      </>
-                    )}
-                    
-                    {/* Construction Subcategories */}
-                    {formData.category === "construction" && (
-                      <>
-                        <SelectItem value="excavators">Excavators</SelectItem>
-                        <SelectItem value="bulldozers">Bulldozers</SelectItem>
-                        <SelectItem value="cranes">Cranes</SelectItem>
-                        <SelectItem value="concrete-equipment">Concrete Equipment</SelectItem>
-                        <SelectItem value="generators">Generators</SelectItem>
-                        <SelectItem value="hand-tools">Hand Tools</SelectItem>
-                        <SelectItem value="power-tools">Power Tools</SelectItem>
-                      </>
-                    )}
-                    
-                    {/* Other categories */}
-                    {formData.category === "antiques" && (
-                      <>
-                        <SelectItem value="vintage-furniture">Vintage Furniture</SelectItem>
-                        <SelectItem value="vintage-jewelry">Vintage Jewelry</SelectItem>
-                        <SelectItem value="collectible-coins">Collectible Coins</SelectItem>
-                        <SelectItem value="vintage-art">Vintage Art</SelectItem>
-                        <SelectItem value="vintage-books">Vintage Books</SelectItem>
-                        <SelectItem value="vintage-toys">Vintage Toys</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "jewelry" && (
-                      <>
-                        <SelectItem value="diamond-jewelry">Diamond Jewelry</SelectItem>
-                        <SelectItem value="gold-jewelry">Gold Jewelry</SelectItem>
-                        <SelectItem value="silver-jewelry">Silver Jewelry</SelectItem>
-                        <SelectItem value="luxury-watches">Luxury Watches</SelectItem>
-                        <SelectItem value="gemstone-jewelry">Gemstone Jewelry</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "art" && (
-                      <>
-                        <SelectItem value="paintings">Paintings</SelectItem>
-                        <SelectItem value="sculptures">Sculptures</SelectItem>
-                        <SelectItem value="photography">Photography</SelectItem>
-                        <SelectItem value="mixed-media">Mixed Media</SelectItem>
-                        <SelectItem value="prints-posters">Prints/Posters</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "furniture" && (
-                      <>
-                        <SelectItem value="bedroom-furniture">Bedroom Furniture</SelectItem>
-                        <SelectItem value="living-room">Living Room Furniture</SelectItem>
-                        <SelectItem value="dining-furniture">Dining Furniture</SelectItem>
-                        <SelectItem value="office-furniture">Office Furniture</SelectItem>
-                        <SelectItem value="outdoor-furniture">Outdoor Furniture</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "sporting" && (
-                      <>
-                        <SelectItem value="fitness-equipment">Fitness Equipment</SelectItem>
-                        <SelectItem value="outdoor-gear">Outdoor Gear</SelectItem>
-                        <SelectItem value="team-sports">Team Sports Equipment</SelectItem>
-                        <SelectItem value="water-sports">Water Sports Equipment</SelectItem>
-                        <SelectItem value="winter-sports">Winter Sports Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "musical" && (
-                      <>
-                        <SelectItem value="guitars">Guitars</SelectItem>
-                        <SelectItem value="pianos-keyboards">Pianos/Keyboards</SelectItem>
-                        <SelectItem value="drums-percussion">Drums/Percussion</SelectItem>
-                        <SelectItem value="wind-instruments">Wind Instruments</SelectItem>
-                        <SelectItem value="string-instruments">String Instruments</SelectItem>
-                        <SelectItem value="audio-recording">Audio/Recording Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "medical" && (
-                      <>
-                        <SelectItem value="diagnostic-equipment">Diagnostic Equipment</SelectItem>
-                        <SelectItem value="surgical-instruments">Surgical Instruments</SelectItem>
-                        <SelectItem value="dental-equipment">Dental Equipment</SelectItem>
-                        <SelectItem value="rehabilitation">Rehabilitation Equipment</SelectItem>
-                        <SelectItem value="laboratory-equipment">Laboratory Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "marine" && (
-                      <>
-                        <SelectItem value="sailboats">Sailboats</SelectItem>
-                        <SelectItem value="motorboats">Motorboats</SelectItem>
-                        <SelectItem value="yachts">Yachts</SelectItem>
-                        <SelectItem value="jet-skis">Jet Skis</SelectItem>
-                        <SelectItem value="fishing-boats">Fishing Boats</SelectItem>
-                        <SelectItem value="marine-engines">Marine Engines</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "aviation" && (
-                      <>
-                        <SelectItem value="single-engine">Single Engine Aircraft</SelectItem>
-                        <SelectItem value="multi-engine">Multi Engine Aircraft</SelectItem>
-                        <SelectItem value="helicopters">Helicopters</SelectItem>
-                        <SelectItem value="gliders">Gliders</SelectItem>
-                        <SelectItem value="aircraft-parts">Aircraft Parts</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "agricultural" && (
-                      <>
-                        <SelectItem value="tractors">Tractors</SelectItem>
-                        <SelectItem value="harvesters">Harvesters</SelectItem>
-                        <SelectItem value="irrigation-systems">Irrigation Systems</SelectItem>
-                        <SelectItem value="livestock-equipment">Livestock Equipment</SelectItem>
-                        <SelectItem value="farming-tools">Farming Tools</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "commercial" && (
-                      <>
-                        <SelectItem value="restaurant-equipment">Restaurant Equipment</SelectItem>
-                        <SelectItem value="office-equipment">Office Equipment</SelectItem>
-                        <SelectItem value="retail-fixtures">Retail Fixtures</SelectItem>
-                        <SelectItem value="warehouse-equipment">Warehouse Equipment</SelectItem>
-                        <SelectItem value="hotel-equipment">Hotel Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "industrial" && (
-                      <>
-                        <SelectItem value="manufacturing-equipment">Manufacturing Equipment</SelectItem>
-                        <SelectItem value="conveyor-systems">Conveyor Systems</SelectItem>
-                        <SelectItem value="packaging-equipment">Packaging Equipment</SelectItem>
-                        <SelectItem value="quality-control">Quality Control Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {formData.category === "retail" && (
-                      <>
-                        <SelectItem value="store-fixtures">Store Fixtures</SelectItem>
-                        <SelectItem value="point-of-sale">Point of Sale Systems</SelectItem>
-                        <SelectItem value="inventory-equipment">Inventory Equipment</SelectItem>
-                        <SelectItem value="display-equipment">Display Equipment</SelectItem>
-                      </>
-                    )}
-                    
-                    {/* Default/Other */}
-                    {(!formData.category || formData.category === "other") && (
-                      <SelectItem value="general-inspection">General Inspection</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Location & Service Pricing */}
-        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-          <CardHeader>
-            <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-              Location & Service Pricing
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="location">City/State</Label>
-                <Select value={formData.location} onValueChange={(value) => handleInputChange("location", value)}>
-                  <SelectTrigger id="location" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* Major US Cities by State */}
-                    <SelectItem value="new-york-ny">New York, NY</SelectItem>
-                    <SelectItem value="los-angeles-ca">Los Angeles, CA</SelectItem>
-                    <SelectItem value="chicago-il">Chicago, IL</SelectItem>
-                    <SelectItem value="houston-tx">Houston, TX</SelectItem>
-                    <SelectItem value="phoenix-az">Phoenix, AZ</SelectItem>
-                    <SelectItem value="philadelphia-pa">Philadelphia, PA</SelectItem>
-                    <SelectItem value="san-antonio-tx">San Antonio, TX</SelectItem>
-                    <SelectItem value="san-diego-ca">San Diego, CA</SelectItem>
-                    <SelectItem value="dallas-tx">Dallas, TX</SelectItem>
-                    <SelectItem value="san-jose-ca">San Jose, CA</SelectItem>
-                    <SelectItem value="austin-tx">Austin, TX</SelectItem>
-                    <SelectItem value="jacksonville-fl">Jacksonville, FL</SelectItem>
-                    <SelectItem value="fort-worth-tx">Fort Worth, TX</SelectItem>
-                    <SelectItem value="columbus-oh">Columbus, OH</SelectItem>
-                    <SelectItem value="charlotte-nc">Charlotte, NC</SelectItem>
-                    <SelectItem value="san-francisco-ca">San Francisco, CA</SelectItem>
-                    <SelectItem value="indianapolis-in">Indianapolis, IN</SelectItem>
-                    <SelectItem value="seattle-wa">Seattle, WA</SelectItem>
-                    <SelectItem value="denver-co">Denver, CO</SelectItem>
-                    <SelectItem value="washington-dc">Washington, DC</SelectItem>
-                    <SelectItem value="boston-ma">Boston, MA</SelectItem>
-                    <SelectItem value="el-paso-tx">El Paso, TX</SelectItem>
-                    <SelectItem value="detroit-mi">Detroit, MI</SelectItem>
-                    <SelectItem value="nashville-tn">Nashville, TN</SelectItem>
-                    <SelectItem value="portland-or">Portland, OR</SelectItem>
-                    <SelectItem value="memphis-tn">Memphis, TN</SelectItem>
-                    <SelectItem value="oklahoma-city-ok">Oklahoma City, OK</SelectItem>
-                    <SelectItem value="las-vegas-nv">Las Vegas, NV</SelectItem>
-                    <SelectItem value="louisville-ky">Louisville, KY</SelectItem>
-                    <SelectItem value="baltimore-md">Baltimore, MD</SelectItem>
-                    <SelectItem value="milwaukee-wi">Milwaukee, WI</SelectItem>
-                    <SelectItem value="albuquerque-nm">Albuquerque, NM</SelectItem>
-                    <SelectItem value="tucson-az">Tucson, AZ</SelectItem>
-                    <SelectItem value="fresno-ca">Fresno, CA</SelectItem>
-                    <SelectItem value="mesa-az">Mesa, AZ</SelectItem>
-                    <SelectItem value="sacramento-ca">Sacramento, CA</SelectItem>
-                    <SelectItem value="atlanta-ga">Atlanta, GA</SelectItem>
-                    <SelectItem value="kansas-city-mo">Kansas City, MO</SelectItem>
-                    <SelectItem value="colorado-springs-co">Colorado Springs, CO</SelectItem>
-                    <SelectItem value="miami-fl">Miami, FL</SelectItem>
-                    <SelectItem value="raleigh-nc">Raleigh, NC</SelectItem>
-                    <SelectItem value="omaha-ne">Omaha, NE</SelectItem>
-                    <SelectItem value="long-beach-ca">Long Beach, CA</SelectItem>
-                    <SelectItem value="virginia-beach-va">Virginia Beach, VA</SelectItem>
-                    <SelectItem value="oakland-ca">Oakland, CA</SelectItem>
-                    <SelectItem value="minneapolis-mn">Minneapolis, MN</SelectItem>
-                    <SelectItem value="tulsa-ok">Tulsa, OK</SelectItem>
-                    <SelectItem value="tampa-fl">Tampa, FL</SelectItem>
-                    <SelectItem value="arlington-tx">Arlington, TX</SelectItem>
-                    <SelectItem value="wichita-ks">Wichita, KS</SelectItem>
-                    <SelectItem value="new-orleans-la">New Orleans, LA</SelectItem>
-                    <SelectItem value="cleveland-oh">Cleveland, OH</SelectItem>
-                    <SelectItem value="bakersfield-ca">Bakersfield, CA</SelectItem>
-                    <SelectItem value="tampa-fl">Tampa, FL</SelectItem>
-                    <SelectItem value="honolulu-hi">Honolulu, HI</SelectItem>
-                    <SelectItem value="anaheim-ca">Anaheim, CA</SelectItem>
-                    <SelectItem value="santa-ana-ca">Santa Ana, CA</SelectItem>
-                    <SelectItem value="corpus-christi-tx">Corpus Christi, TX</SelectItem>
-                    <SelectItem value="riverside-ca">Riverside, CA</SelectItem>
-                    <SelectItem value="lexington-ky">Lexington, KY</SelectItem>
-                    <SelectItem value="stockton-ca">Stockton, CA</SelectItem>
-                    <SelectItem value="henderson-nv">Henderson, NV</SelectItem>
-                    <SelectItem value="saint-paul-mn">Saint Paul, MN</SelectItem>
-                    <SelectItem value="cincinnati-oh">Cincinnati, OH</SelectItem>
-                    <SelectItem value="pittsburgh-pa">Pittsburgh, PA</SelectItem>
-                    <SelectItem value="greensboro-nc">Greensboro, NC</SelectItem>
-                    <SelectItem value="lincoln-ne">Lincoln, NE</SelectItem>
-                    <SelectItem value="plano-tx">Plano, TX</SelectItem>
-                    <SelectItem value="anchorage-ak">Anchorage, AK</SelectItem>
-                    <SelectItem value="orlando-fl">Orlando, FL</SelectItem>
-                    <SelectItem value="irvine-ca">Irvine, CA</SelectItem>
-                    <SelectItem value="newark-nj">Newark, NJ</SelectItem>
-                    <SelectItem value="durham-nc">Durham, NC</SelectItem>
-                    <SelectItem value="chula-vista-ca">Chula Vista, CA</SelectItem>
-                    <SelectItem value="toledo-oh">Toledo, OH</SelectItem>
-                    <SelectItem value="fort-wayne-in">Fort Wayne, IN</SelectItem>
-                    <SelectItem value="st-petersburg-fl">St. Petersburg, FL</SelectItem>
-                    <SelectItem value="laredo-tx">Laredo, TX</SelectItem>
-                    <SelectItem value="jersey-city-nj">Jersey City, NJ</SelectItem>
-                    <SelectItem value="chandler-az">Chandler, AZ</SelectItem>
-                    <SelectItem value="madison-wi">Madison, WI</SelectItem>
-                    <SelectItem value="lubbock-tx">Lubbock, TX</SelectItem>
-                    <SelectItem value="norfolk-va">Norfolk, VA</SelectItem>
-                    <SelectItem value="winston-salem-nc">Winston-Salem, NC</SelectItem>
-                    <SelectItem value="glendale-az">Glendale, AZ</SelectItem>
-                    <SelectItem value="garland-tx">Garland, TX</SelectItem>
-                    <SelectItem value="hialeah-fl">Hialeah, FL</SelectItem>
-                    <SelectItem value="reno-nv">Reno, NV</SelectItem>
-                    <SelectItem value="baton-rouge-la">Baton Rouge, LA</SelectItem>
-                    <SelectItem value="irving-tx">Irving, TX</SelectItem>
-                    <SelectItem value="chesapeake-va">Chesapeake, VA</SelectItem>
-                    <SelectItem value="scottsdale-az">Scottsdale, AZ</SelectItem>
-                    <SelectItem value="north-las-vegas-nv">North Las Vegas, NV</SelectItem>
-                    <SelectItem value="fremont-ca">Fremont, CA</SelectItem>
-                    <SelectItem value="gilbert-az">Gilbert, AZ</SelectItem>
-                    <SelectItem value="san-bernardino-ca">San Bernardino, CA</SelectItem>
-                    <SelectItem value="boise-id">Boise, ID</SelectItem>
-                    <SelectItem value="birmingham-al">Birmingham, AL</SelectItem>
-                    <SelectItem value="spokane-wa">Spokane, WA</SelectItem>
-                    <SelectItem value="rochester-ny">Rochester, NY</SelectItem>
-                    <SelectItem value="des-moines-ia">Des Moines, IA</SelectItem>
-                    <SelectItem value="modesto-ca">Modesto, CA</SelectItem>
-                    <SelectItem value="fayetteville-nc">Fayetteville, NC</SelectItem>
-                    <SelectItem value="tacoma-wa">Tacoma, WA</SelectItem>
-                    <SelectItem value="oxnard-ca">Oxnard, CA</SelectItem>
-                    <SelectItem value="fontana-ca">Fontana, CA</SelectItem>
-                    <SelectItem value="columbus-ga">Columbus, GA</SelectItem>
-                    <SelectItem value="montgomery-al">Montgomery, AL</SelectItem>
-                    <SelectItem value="shreveport-la">Shreveport, LA</SelectItem>
-                    <SelectItem value="aurora-il">Aurora, IL</SelectItem>
-                    <SelectItem value="yonkers-ny">Yonkers, NY</SelectItem>
-                    <SelectItem value="akron-oh">Akron, OH</SelectItem>
-                    <SelectItem value="huntington-beach-ca">Huntington Beach, CA</SelectItem>
-                    <SelectItem value="little-rock-ar">Little Rock, AR</SelectItem>
-                    <SelectItem value="augusta-ga">Augusta, GA</SelectItem>
-                    <SelectItem value="amarillo-tx">Amarillo, TX</SelectItem>
-                    <SelectItem value="glendale-ca">Glendale, CA</SelectItem>
-                    <SelectItem value="mobile-al">Mobile, AL</SelectItem>
-                    <SelectItem value="grand-rapids-mi">Grand Rapids, MI</SelectItem>
-                    <SelectItem value="salt-lake-city-ut">Salt Lake City, UT</SelectItem>
-                    <SelectItem value="tallahassee-fl">Tallahassee, FL</SelectItem>
-                    <SelectItem value="huntsville-al">Huntsville, AL</SelectItem>
-                    <SelectItem value="grand-prairie-tx">Grand Prairie, TX</SelectItem>
-                    <SelectItem value="knoxville-tn">Knoxville, TN</SelectItem>
-                    <SelectItem value="worcester-ma">Worcester, MA</SelectItem>
-                    <SelectItem value="newport-news-va">Newport News, VA</SelectItem>
-                    <SelectItem value="brownsville-tx">Brownsville, TX</SelectItem>
-                    <SelectItem value="overland-park-ks">Overland Park, KS</SelectItem>
-                    <SelectItem value="santa-clarita-ca">Santa Clarita, CA</SelectItem>
-                    <SelectItem value="providence-ri">Providence, RI</SelectItem>
-                    <SelectItem value="garden-grove-ca">Garden Grove, CA</SelectItem>
-                    <SelectItem value="chattanooga-tn">Chattanooga, TN</SelectItem>
-                    <SelectItem value="oceanside-ca">Oceanside, CA</SelectItem>
-                    <SelectItem value="jackson-ms">Jackson, MS</SelectItem>
-                    <SelectItem value="fort-lauderdale-fl">Fort Lauderdale, FL</SelectItem>
-                    <SelectItem value="santa-rosa-ca">Santa Rosa, CA</SelectItem>
-                    <SelectItem value="rancho-cucamonga-ca">Rancho Cucamonga, CA</SelectItem>
-                    <SelectItem value="port-st-lucie-fl">Port St. Lucie, FL</SelectItem>
-                    <SelectItem value="tempe-az">Tempe, AZ</SelectItem>
-                    <SelectItem value="ontario-ca">Ontario, CA</SelectItem>
-                    <SelectItem value="vancouver-wa">Vancouver, WA</SelectItem>
-                    <SelectItem value="cape-coral-fl">Cape Coral, FL</SelectItem>
-                    <SelectItem value="sioux-falls-sd">Sioux Falls, SD</SelectItem>
-                    <SelectItem value="springfield-mo">Springfield, MO</SelectItem>
-                    <SelectItem value="peoria-az">Peoria, AZ</SelectItem>
-                    <SelectItem value="pembroke-pines-fl">Pembroke Pines, FL</SelectItem>
-                    <SelectItem value="elk-grove-ca">Elk Grove, CA</SelectItem>
-                    <SelectItem value="rockford-il">Rockford, IL</SelectItem>
-                    <SelectItem value="palmdale-ca">Palmdale, CA</SelectItem>
-                    <SelectItem value="corona-ca">Corona, CA</SelectItem>
-                    <SelectItem value="salinas-ca">Salinas, CA</SelectItem>
-                    <SelectItem value="pomona-ca">Pomona, CA</SelectItem>
-                    <SelectItem value="paterson-nj">Paterson, NJ</SelectItem>
-                    <SelectItem value="joliet-il">Joliet, IL</SelectItem>
-                    <SelectItem value="kansas-city-ks">Kansas City, KS</SelectItem>
-                    <SelectItem value="torrance-ca">Torrance, CA</SelectItem>
-                    <SelectItem value="syracuse-ny">Syracuse, NY</SelectItem>
-                    <SelectItem value="bridgeport-ct">Bridgeport, CT</SelectItem>
-                    <SelectItem value="hayward-ca">Hayward, CA</SelectItem>
-                    <SelectItem value="fort-collins-co">Fort Collins, CO</SelectItem>
-                    <SelectItem value="escondido-ca">Escondido, CA</SelectItem>
-                    <SelectItem value="lakewood-co">Lakewood, CO</SelectItem>
-                    <SelectItem value="naperville-il">Naperville, IL</SelectItem>
-                    <SelectItem value="dayton-oh">Dayton, OH</SelectItem>
-                    <SelectItem value="hollywood-fl">Hollywood, FL</SelectItem>
-                    <SelectItem value="sunnyvale-ca">Sunnyvale, CA</SelectItem>
-                    <SelectItem value="alexandria-va">Alexandria, VA</SelectItem>
-                    <SelectItem value="mesquite-tx">Mesquite, TX</SelectItem>
-                    <SelectItem value="hampton-va">Hampton, VA</SelectItem>
-                    <SelectItem value="pasadena-ca">Pasadena, CA</SelectItem>
-                    <SelectItem value="orange-ca">Orange, CA</SelectItem>
-                    <SelectItem value="savannah-ga">Savannah, GA</SelectItem>
-                    <SelectItem value="cary-nc">Cary, NC</SelectItem>
-                    <SelectItem value="fullerton-ca">Fullerton, CA</SelectItem>
-                    <SelectItem value="warren-mi">Warren, MI</SelectItem>
-                    <SelectItem value="other">Other (Please specify in address)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="address">Specific Address</Label>
-                <Input 
-                  id="address" 
-                  placeholder="Enter the inspection address" 
-                  value={formData.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                  className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                  required
+            {/* Location & Service Pricing */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Location & Service Pricing
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State</Label>
+                    <Select value={formData.state} onValueChange={(value) => {
+                      handleInputChange("state", value);
+                      handleInputChange("city", ""); // Reset city when state changes
+                    }}>
+                      <SelectTrigger id="state" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AL">Alabama</SelectItem>
+                        <SelectItem value="AK">Alaska</SelectItem>
+                        <SelectItem value="AZ">Arizona</SelectItem>
+                        <SelectItem value="AR">Arkansas</SelectItem>
+                        <SelectItem value="CA">California</SelectItem>
+                        <SelectItem value="CO">Colorado</SelectItem>
+                        <SelectItem value="CT">Connecticut</SelectItem>
+                        <SelectItem value="DE">Delaware</SelectItem>
+                        <SelectItem value="FL">Florida</SelectItem>
+                        <SelectItem value="GA">Georgia</SelectItem>
+                        <SelectItem value="HI">Hawaii</SelectItem>
+                        <SelectItem value="ID">Idaho</SelectItem>
+                        <SelectItem value="IL">Illinois</SelectItem>
+                        <SelectItem value="IN">Indiana</SelectItem>
+                        <SelectItem value="IA">Iowa</SelectItem>
+                        <SelectItem value="KS">Kansas</SelectItem>
+                        <SelectItem value="KY">Kentucky</SelectItem>
+                        <SelectItem value="LA">Louisiana</SelectItem>
+                        <SelectItem value="ME">Maine</SelectItem>
+                        <SelectItem value="MD">Maryland</SelectItem>
+                        <SelectItem value="MA">Massachusetts</SelectItem>
+                        <SelectItem value="MI">Michigan</SelectItem>
+                        <SelectItem value="MN">Minnesota</SelectItem>
+                        <SelectItem value="MS">Mississippi</SelectItem>
+                        <SelectItem value="MO">Missouri</SelectItem>
+                        <SelectItem value="MT">Montana</SelectItem>
+                        <SelectItem value="NE">Nebraska</SelectItem>
+                        <SelectItem value="NV">Nevada</SelectItem>
+                        <SelectItem value="NH">New Hampshire</SelectItem>
+                        <SelectItem value="NJ">New Jersey</SelectItem>
+                        <SelectItem value="NM">New Mexico</SelectItem>
+                        <SelectItem value="NY">New York</SelectItem>
+                        <SelectItem value="NC">North Carolina</SelectItem>
+                        <SelectItem value="ND">North Dakota</SelectItem>
+                        <SelectItem value="OH">Ohio</SelectItem>
+                        <SelectItem value="OK">Oklahoma</SelectItem>
+                        <SelectItem value="OR">Oregon</SelectItem>
+                        <SelectItem value="PA">Pennsylvania</SelectItem>
+                        <SelectItem value="RI">Rhode Island</SelectItem>
+                        <SelectItem value="SC">South Carolina</SelectItem>
+                        <SelectItem value="SD">South Dakota</SelectItem>
+                        <SelectItem value="TN">Tennessee</SelectItem>
+                        <SelectItem value="TX">Texas</SelectItem>
+                        <SelectItem value="UT">Utah</SelectItem>
+                        <SelectItem value="VT">Vermont</SelectItem>
+                        <SelectItem value="VA">Virginia</SelectItem>
+                        <SelectItem value="WA">Washington</SelectItem>
+                        <SelectItem value="WV">West Virginia</SelectItem>
+                        <SelectItem value="WI">Wisconsin</SelectItem>
+                        <SelectItem value="WY">Wyoming</SelectItem>
+                        <SelectItem value="DC">Washington D.C.</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      list="cities"
+                      value={formData.city}
+                      onChange={(e) => handleInputChange("city", e.target.value)}
+                      className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                      placeholder={formData.state ? "Type to search cities..." : "Select state first"}
+                      disabled={!formData.state}
+                      required
+                    />
+                    <datalist id="cities">
+                      {formData.state && getCitiesForState(formData.state).map((city) => (
+                        <option key={city} value={city} />
+                      ))}
+                    </datalist>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Specific Address</Label>
+                    <Input 
+                      id="address" 
+                      placeholder="Enter the inspection address" 
+                      value={formData.address}
+                      onChange={(e) => handleInputChange("address", e.target.value)}
+                      className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                      list="addresses"
+                      required
+                    />
+                    <datalist id="addresses">
+                      {getAddressSuggestions(formData.address).map((address, index) => (
+                        <option key={index} value={address} />
+                      ))}
+                    </datalist>
+                  </div>
+                </div>
+                
+                {/* Service Tier Selection */}
+                <ServiceTierSelector
+                  selectedTier={selectedServiceTier}
+                  onTierChange={setSelectedServiceTier}
+                  selectedAdditionalServices={selectedAdditionalServices}
+                  onAdditionalServicesChange={setSelectedAdditionalServices}
+                  className="mt-6"
                 />
-              </div>
-            </div>
-            
-            {/* Service Tier Selection */}
-            <ServiceTierSelector
-              selectedTier={selectedServiceTier}
-              onTierChange={setSelectedServiceTier}
-              selectedAdditionalServices={selectedAdditionalServices}
-              onAdditionalServicesChange={setSelectedAdditionalServices}
-              className="mt-6"
+              </CardContent>
+            </Card>
+
+            {/* Timeline */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Timeline
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="urgency">When do you need this inspection?</Label>
+                  <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
+                    <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                      <SelectValue placeholder="Select timeline" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="same-day">Same Day</SelectItem>
+                      <SelectItem value="within-24h">Within 24 hours</SelectItem>
+                      <SelectItem value="within-3-days">Within 3 days</SelectItem>
+                      <SelectItem value="within-week">Within a week</SelectItem>
+                      <SelectItem value="flexible">Flexible</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Inspection Details */}
+            <InspectionDetailsForm
+              formData={formData}
+              onChange={handleInputChange}
             />
-          </CardContent>
-        </Card>
 
-        {/* Timeline */}
-        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-          <CardHeader>
-            <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-              Timeline
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Label htmlFor="urgency">When do you need this inspection?</Label>
-              <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
-                <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                  <SelectValue placeholder="Select timeline" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="same-day">Same Day</SelectItem>
-                  <SelectItem value="within-24h">Within 24 hours</SelectItem>
-                  <SelectItem value="within-3-days">Within 3 days</SelectItem>
-                  <SelectItem value="within-week">Within a week</SelectItem>
-                  <SelectItem value="flexible">Flexible</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Description & Media */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)]">Description & Media</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="description">Detailed Description</Label>
+                  <Textarea 
+                    id="description" 
+                    value={formData.description}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    className="min-h-[120px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                    placeholder="Describe what you need inspected, any specific concerns, and what you're looking for in the report..."
+                    required
+                  />
+                </div>
+                
+                {/* Photo Upload */}
+                <div className="space-y-2">
+                  <Label>Reference Photos (Optional)</Label>
+                  <div className="border-2 border-dashed border-[rgba(42,100,186,0.3)] rounded-xl p-8 text-center bg-[rgba(42,100,186,0.02)] hover:bg-[rgba(42,100,186,0.05)] transition-colors">
+                    <input
+                      type="file"
+                      id="photo-upload"
+                      className="hidden"
+                      accept="image/jpeg,image/png"
+                      multiple
+                      onChange={handlePhotoChange}
+                    />
+                    <label 
+                      htmlFor="photo-upload"
+                      className="flex flex-col items-center justify-center cursor-pointer"
+                    >
+                      <Upload className="h-8 w-8 text-[rgba(42,100,186,1)] mb-2" />
+                      <p className="text-sm font-medium text-[rgba(13,38,75,1)]">Upload reference images</p>
+                      <p className="text-xs text-[rgba(13,38,75,0.6)] mt-1">JPG, PNG format • Max 5 files</p>
+                      {photoFiles.length > 0 && (
+                        <p className="text-sm text-green-600 mt-2">{photoFiles.length} file(s) selected</p>
+                      )}
+                    </label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Inspection Details */}
-        <InspectionDetailsForm
-          formData={formData}
-          onChange={handleInputChange}
-        />
-
-        {/* Description & Media */}
-        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-          <CardHeader>
-            <CardTitle className="text-[rgba(13,38,75,1)]">Description & Media</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="description">Detailed Description</Label>
-              <Textarea 
-                id="description" 
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                className="min-h-[120px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                placeholder="Describe what you need inspected, any specific concerns, and what you're looking for in the report..."
-                required
-              />
-            </div>
+            {/* Contact Information */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)]">Contact Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input 
+                    id="phoneNumber" 
+                    placeholder="Your contact number" 
+                    value={formData.phoneNumber}
+                    onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                    className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                    required
+                  />
+                </div>
+              </CardContent>
+            </Card>
             
-            {/* Photo Upload */}
-            <div className="space-y-2">
-              <Label>Reference Photos (Optional)</Label>
-              <div className="border-2 border-dashed border-[rgba(42,100,186,0.3)] rounded-xl p-8 text-center bg-[rgba(42,100,186,0.02)] hover:bg-[rgba(42,100,186,0.05)] transition-colors">
-                <input
-                  type="file"
-                  id="photo-upload"
-                  className="hidden"
-                  accept="image/jpeg,image/png"
-                  multiple
-                  onChange={handlePhotoChange}
-                />
-                <label 
-                  htmlFor="photo-upload"
-                  className="flex flex-col items-center justify-center cursor-pointer"
-                >
-                  <Upload className="h-8 w-8 text-[rgba(42,100,186,1)] mb-2" />
-                  <p className="text-sm font-medium text-[rgba(13,38,75,1)]">Upload reference images</p>
-                  <p className="text-xs text-[rgba(13,38,75,0.6)] mt-1">JPG, PNG format • Max 5 files</p>
-                  {photoFiles.length > 0 && (
-                    <p className="text-sm text-green-600 mt-2">{photoFiles.length} file(s) selected</p>
-                  )}
-                </label>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 pt-6">
+              <Button 
+                type="submit"
+                className="flex-1 h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Post Inspection Request
+              </Button>
+              
+              <Button 
+                type="button"
+                onClick={() => navigate("/client-dashboard/post-board")}
+                variant="outline" 
+                className="flex-1 h-12 border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)] rounded-xl"
+              >
+                Cancel
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-          <CardHeader>
-            <CardTitle className="text-[rgba(13,38,75,1)]">Contact Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input 
-                id="phoneNumber" 
-                placeholder="Your contact number" 
-                value={formData.phoneNumber}
-                onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-                className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                required
-              />
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 pt-6">
-          <Button 
-            type="submit"
-            className="flex-1 h-12 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            Post Inspection Request
-          </Button>
-          
-          <Button 
-            type="button"
-            onClick={() => navigate("/client-dashboard/marketplace")}
-            variant="outline" 
-            className="flex-1 h-12 border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)] rounded-xl"
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
+          </form>
         </div>
         
         {/* Progress Sidebar */}

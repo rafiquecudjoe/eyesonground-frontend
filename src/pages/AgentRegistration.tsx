@@ -48,7 +48,7 @@ const AgentRegistration = () => {
         description: "Welcome to your agent dashboard"
       });
       
-      navigate("/agent-dashboard/marketplace");
+      navigate("/agent-dashboard/post-board");
     },
     onError: (error) => {
       toast.error("Registration failed", {

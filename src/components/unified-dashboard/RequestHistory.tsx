@@ -213,9 +213,9 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
           </p>
           {userType === "client" && (
             <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
-              <Link to="/client-dashboard/create-request">
+              <Link to="/client-dashboard/post-board">
                 <Plus className="mr-2 h-4 w-4" />
-                Create Request
+                Post Request
               </Link>
             </Button>
           )}

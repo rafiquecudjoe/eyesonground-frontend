@@ -81,13 +81,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const clientNavItems = [
     { 
-      path: `${basePath}/create-request`, 
-      label: "Post Request", 
-      icon: Plus,
-      description: "Create new inspection ad"
-    },
-    { 
-      path: `${basePath}/my-requests`, 
+      path: `${basePath}/my-ads`, 
       label: "My Ads", 
       icon: FileText,
       description: "Your posted requests"
@@ -120,8 +114,8 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const agentNavItems = [
     { 
-      path: `${basePath}/marketplace`, 
-      label: "Job Marketplace", 
+      path: `${basePath}/post-board`, 
+      label: "Post Board", 
       icon: ShoppingBag,
       description: "Browse available jobs"
     },
