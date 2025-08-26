@@ -21,9 +21,12 @@ export interface RequestPricing {
 export interface AdditionalService {
     id: string;
     name: string;
+    // price is either a flat price or a per-unit/unitPrice when used with quantity/miles
     price: number;
     description: string;
     included: boolean;
+    // optional units (used for travel surcharge as miles)
+    units?: number;
 }
 
 // Service Tier Configuration
@@ -86,32 +89,33 @@ export const SERVICE_TIERS: ServiceTierDetails[] = [
 export const ADDITIONAL_SERVICES: AdditionalService[] = [
     {
         id: 'rush_delivery',
-        name: 'Rush Delivery',
+        name: 'Rush Delivery (Same Day)',
         price: 15,
-        description: 'Get your report within 12 hours',
+        description: 'Get your report faster (priority processing)',
         included: false
     },
     {
-        id: 'expert_consultation',
-        name: 'Expert Consultation Call',
+        id: 'extra_videos',
+        name: 'Extra Videos & Documentation',
         price: 25,
-        description: '30-minute follow-up call with specialist',
+        description: 'Additional video recordings beyond the standard package',
         included: false
     },
     {
-        id: 'second_opinion',
-        name: 'Second Opinion Review',
-        price: 30,
-        description: 'Additional agent review for complex cases',
-        included: false
+        id: 'travel_surcharge',
+        name: 'Travel Surcharge',
+        price: 20,
+        description: 'Travel surcharge for remote locations',
+        included: false,
+        units: 0
     },
     {
         id: 'detailed_measurements',
         name: 'Detailed Measurements',
-        price: 20,
+        price: 30,
         description: 'Precise measurements and dimensions',
         included: false
-    }
+    },
 ];
 
 // Helper functions
@@ -125,7 +129,13 @@ export const calculateTotalPrice = (tier: ServiceTier, additionalServices: Addit
     const basePrice = baseTier?.price || 50;
     const additionalPrice = additionalServices
         .filter(service => service.included)
-        .reduce((sum, service) => sum + service.price, 0);
+        .reduce((sum, service) => {
+            if (service.id === 'travel_surcharge') {
+                const miles = service.units || 0;
+                return sum + (service.price * miles);
+            }
+            return sum + service.price;
+        }, 0);
 
     return basePrice + additionalPrice;
 };

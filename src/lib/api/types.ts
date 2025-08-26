@@ -3,8 +3,8 @@ export const API_CONFIG = {
     baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
     endpoints: {
         users: {
-            register: '/api/v1/users/register',
-            login: '/api/v1/users/login',
+            register: '/api/v1/customers/register',
+            login: '/api/v1/customers/login',
         },
     },
 } as const;

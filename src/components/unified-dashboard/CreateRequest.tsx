@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ArrowLeft, Upload, MapPin, Calendar, DollarSign, FileText, ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,12 +14,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { TokenStorage } from "@/lib/api/token-storage";
+import { inspectionRequestService, CreateInspectionRequestPayload } from "@/lib/api/inspection-requests";
 import { ServiceTierSelector } from "./ServiceTierSelector";
 import { InspectionDetailsForm } from "./InspectionDetailsForm";
 import { FormProgress } from "./FormProgress";
 import { RequestTips } from "./RequestTips";
 import { ServiceTier, AdditionalService } from "@/lib/pricing/service-tiers";
 import RequestReview from "./RequestReview";
+import { FileUpload } from "@/components/ui/FileUpload";
+import { StripePayment } from "@/components/ui/StripePayment";
+import { fileUploadService } from "@/services/fileUploadService";
+import { paymentService } from "@/services/paymentService";
+import { geocodingService } from "@/services/geocodingService";
+import { pricingService } from "@/services/pricingService";
 
 // States data with abbreviations and full names
 const US_STATES = [
@@ -244,7 +252,6 @@ export const CreateRequest = () => {
     city: "",
     address: "",
     urgency: "",
-    description: "",
     phoneNumber: "",
     specificAreas: "",
     knownIssues: "",
@@ -257,7 +264,6 @@ export const CreateRequest = () => {
     specialRequirements: "",
     safetyConsiderations: "",
     recordingConsent: false,
-    certificationRequirements: []
   });
   const [selectedServiceTier, setSelectedServiceTier] = useState<ServiceTier>('basic');
   const [selectedAdditionalServices, setSelectedAdditionalServices] = useState<AdditionalService[]>([]);
@@ -265,13 +271,44 @@ export const CreateRequest = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [posting, setPosting] = useState(false);
+  // Payment state
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentClientSecret, setPaymentClientSecret] = useState<string>('');
+  const [paymentIntentId, setPaymentIntentId] = useState<string>('');
+  // File upload state
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   // Address autocomplete state
   const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
   const [addressOpen, setAddressOpen] = useState(false);
   const [addressLoading, setAddressLoading] = useState(false);
   const addressRef = useRef<HTMLDivElement | null>(null);
 
-  // Debounced Nominatim search for address suggestions
+  // Calculate estimated price
+  const estimatedPrice = useMemo(() => {
+    let basePrice = 0;
+    
+    switch (selectedServiceTier) {
+      case 'basic':
+        basePrice = 50;
+        break;
+      case 'standard':
+        basePrice = 150;
+        break;
+      case 'premium':
+        basePrice = 250;
+        break;
+      default:
+        basePrice = 50;
+    }
+    
+    const additionalPrice = selectedAdditionalServices?.reduce((total, service) => {
+      return total + (service.price || 0);
+    }, 0) || 0;
+    
+    return basePrice + additionalPrice;
+  }, [selectedServiceTier, selectedAdditionalServices]);
+
+  // Debounced geocoding search for address suggestions using backend service
   useEffect(() => {
     const query = formData.address;
     if (!query || query.length < 3) {
@@ -284,35 +321,21 @@ export const CreateRequest = () => {
     const controller = new AbortController();
     const handle = setTimeout(async () => {
       try {
-        // Nominatim search API (OpenStreetMap). Limit to 6 results and restrict to US for relevance.
-        const url = new URL('https://nominatim.openstreetmap.org/search');
-        url.searchParams.set('q', query);
-        url.searchParams.set('format', 'json');
-        url.searchParams.set('addressdetails', '0');
-        url.searchParams.set('limit', '6');
-        url.searchParams.set('countrycodes', 'us');
-
-        const res = await fetch(url.toString(), {
-          signal: controller.signal,
-          headers: {
-            'Accept-Language': 'en',
-            // Nominatim requires a valid User-Agent or Referer identifying the application
-            'User-Agent': 'eyesonground-frontend/1.0 (youremail@example.com)'
-          }
-        });
-
-        if (!res.ok) {
+        // Use our backend geocoding service instead of direct Nominatim calls
+        const result = await geocodingService.geocodeAddress(query);
+        
+        if (result.success && result.results) {
+          const suggestions = result.results
+            .map((item: any) => item.display_name)
+            .slice(0, 6);
+          setAddressSuggestions(suggestions);
+        } else {
           setAddressSuggestions([]);
-          setAddressLoading(false);
-          return;
         }
-
-        const data = await res.json();
-        const suggestions = (data || []).map((item: any) => item.display_name).slice(0, 6);
-        setAddressSuggestions(suggestions);
         setAddressLoading(false);
       } catch (err) {
         if ((err as any).name === 'AbortError') return;
+        console.error('Geocoding error:', err);
         setAddressSuggestions([]);
         setAddressLoading(false);
       }
@@ -346,13 +369,41 @@ export const CreateRequest = () => {
   }, [addressOpen]);
   
   const handleInputChange = (field: string, value: string) => {
-  setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Reset subcategory when category changes
     if (field === "category") {
-      setFormData(prev => ({ ...prev, subCategory: "", customSubCategory: "" }));
+      // Handle category change with all related resets in one state update
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        subCategory: "", 
+        customSubCategory: "" 
+      }));
+    } else if (field === "state") {
+      // Handle state change with city reset in one state update
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        city: "" 
+      }));
+    } else if (field === "subCategory") {
+      // Handle subCategory change with customSubCategory reset in one state update
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value,
+        customSubCategory: "" 
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
     }
   };
+
+  // Stable callbacks to prevent unnecessary re-renders
+  const handleServiceTierChange = useCallback((tier: ServiceTier) => {
+    setSelectedServiceTier(tier);
+  }, []);
+
+  const handleAdditionalServicesChange = useCallback((services: AdditionalService[]) => {
+    setSelectedAdditionalServices(services);
+  }, []);
   
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -384,35 +435,194 @@ export const CreateRequest = () => {
   };
 
   const handlePost = async () => {
-    // TODO: replace with real backend call to create the request and handle file uploads
     setPosting(true);
     try {
-      const payload = {
+      // First, upload any files that were attached via FileUpload component
+      let finalUploadedFiles = uploadedFiles;
+      
+      // Also handle any legacy photo/video files if they exist
+      const legacyFiles = [...photoFiles];
+      if (videoFile) legacyFiles.push(videoFile);
+      
+      if (legacyFiles.length > 0) {
+        try {
+          const result = await fileUploadService.uploadMultipleFiles(legacyFiles, 'inspection-requests');
+          finalUploadedFiles = [...finalUploadedFiles, ...result.files];
+          toast.success(`${result.files.length} additional files uploaded successfully`);
+        } catch (error: any) {
+          console.error('File upload error:', error);
+          toast.error(`File upload failed: ${error.message}`);
+          throw error;
+        }
+      }
+
+      // Validate address using geocoding service
+      try {
+        const addressValidation = await geocodingService.validateAddress(formData.address);
+        if (!addressValidation.isValid) {
+          throw new Error('Invalid address provided');
+        }
+      } catch (error: any) {
+        console.error('Address validation error:', error);
+        toast.error('Please provide a valid address');
+        throw error;
+      }
+
+      // Calculate final pricing
+      const pricingResult = await pricingService.calculatePricing(
+        selectedServiceTier as 'basic' | 'standard' | 'premium',
+        selectedAdditionalServices.map(service => service.id)
+      );
+
+      // Validate pricing result
+      if (!pricingResult || !pricingResult.pricing) {
+        throw new Error('Failed to calculate pricing - invalid response');
+      }
+
+      const { pricing } = pricingResult;
+      if (typeof pricing.totalPrice !== 'number' || pricing.totalPrice < 0) {
+        throw new Error('Invalid pricing calculation result');
+      }
+
+      // Transform legacy data to inspection request format
+      const inspectionPayload: CreateInspectionRequestPayload = inspectionRequestService.transformLegacyRequest({
         ...formData,
-        selectedServiceTier,
-        selectedAdditionalServices
-      };
+        serviceTier: selectedServiceTier,
+        additionalServices: selectedAdditionalServices,
+        uploadedFiles: finalUploadedFiles,
+        totalPrice: pricing.totalPrice,
+        basePrice: pricing.basePrice,
+        additionalServicesTotal: pricing.additionalServicesTotal,
+        paymentIntentId: 'temp_payment_intent_' + Date.now(), // TODO: Get from Stripe
+        paymentStatus: 'pending' as const,
+      });
 
-      console.log('Posting request (payload):', payload);
+      console.log('Posting inspection request with payload:', inspectionPayload);
 
-      // Placeholder: assuming success
-      toast.success('Request posted successfully!', { description: 'Agents will start applying soon' });
-      setShowReview(false);
-      navigate('/request-confirmation');
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to post request. Please try again.');
+      // Call backend API to create the inspection request
+      const result = await inspectionRequestService.createInspectionRequest(inspectionPayload);
+      
+      console.log('API Response:', result);
+      
+      // Handle nested response structure: result.data.data
+      const responseData = (result as any).data?.data || result.data;
+      
+      // Check if request was successful - check status code or presence of data
+      if (responseData || (result.status && result.status >= 200 && result.status < 300)) {
+        toast.success('Request posted successfully!', { 
+          description: 'Your inspection request is now live and agents can start applying' 
+        });
+        
+        setShowReview(false);
+        // Navigate to My Requests page to show the user their newly created request
+        navigate('/client-dashboard/my-ads', { 
+          state: { 
+            requestId: responseData?.id,
+            justCreated: true 
+          }
+        });
+      } else {
+        throw new Error(result.message || 'Failed to create inspection request');
+      }
+    } catch (err: any) {
+      console.error('Request posting error:', err);
+      toast.error('Failed to post request', {
+        description: err.message || 'Please try again later'
+      });
     } finally {
       setPosting(false);
     }
   };
 
   const handlePay = async () => {
-    // TODO: integrate Stripe — call backend to create a PaymentIntent and redirect to checkout or use Stripe Elements
-    toast('Proceeding to payment is not wired yet. Redirecting to confirmation as a placeholder.');
-    setShowReview(false);
-    // For now, proceed to the same confirmation flow (placeholder)
-    navigate('/request-confirmation');
+    try {
+      // Hide review modal first for better UX (replace instead of overlay)
+      setShowReview(false);
+      
+      // Calculate final pricing
+      const pricingResult = await pricingService.calculatePricing(
+        selectedServiceTier as 'basic' | 'standard' | 'premium',
+        selectedAdditionalServices.map(service => service.id)
+      );
+
+      // Validate pricing result
+      if (!pricingResult || !pricingResult.pricing) {
+        throw new Error('Failed to calculate pricing for payment');
+      }
+
+      const totalAmount = pricingResult.pricing.totalPrice;
+
+      // Create payment intent
+      const paymentResult = await paymentService.createPaymentIntent(totalAmount, {
+        requestType: 'inspection',
+        serviceTier: selectedServiceTier,
+        additionalServices: selectedAdditionalServices.map(s => s.id).join(','),
+      });
+
+      // Show Stripe payment modal/form
+      setShowPayment(true);
+      setPaymentClientSecret(paymentResult.clientSecret);
+      setPaymentIntentId(paymentResult.paymentIntentId);
+      
+    } catch (error: any) {
+      console.error('Payment initialization error:', error);
+      // If payment setup fails, show review again
+      setShowReview(true);
+      toast.error('Failed to initialize payment', {
+        description: error.message || 'Please try again'
+      });
+    }
+  };
+
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
+    try {
+      // Confirm payment on backend
+      await paymentService.confirmPaymentIntent(paymentIntentId);
+      
+      // Hide payment modal and review modal
+      setShowPayment(false);
+      setShowReview(false);
+      
+      // Post the request after successful payment
+      await handlePost();
+      
+      toast.success('Payment successful!', { 
+        description: 'Your request has been posted and payment processed' 
+      });
+
+      // Navigate to My Requests page for better UX - user can see their request
+      navigate('/client-dashboard/my-ads', { 
+        state: { 
+          paymentIntentId,
+          requestData: formData,
+          estimatedPrice: estimatedPrice,
+          justCreated: true // Flag to highlight the new request
+        }
+      });
+    } catch (error: any) {
+      console.error('Payment confirmation error:', error);
+      toast.error('Payment failed to confirm', {
+        description: error.message || 'Please contact support'
+      });
+    }
+  };
+
+  const handlePaymentError = (error: string) => {
+    setShowPayment(false);
+    toast.error('Payment failed', {
+      description: error
+    });
+  };
+
+  const handleFilesUploaded = (files: any[]) => {
+    setUploadedFiles(files);
+    toast.success(`${files.length} files uploaded successfully`);
+  };
+
+  const handleFileUploadError = (error: string) => {
+    toast.error('File upload failed', {
+      description: error
+    });
   };
   
   return (
@@ -460,33 +670,31 @@ export const CreateRequest = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
-                    <Select value={formData.category} onValueChange={(value) => {
-                      handleInputChange("category", value);
-                      handleInputChange("subCategory", ""); // Reset subcategory when category changes
-                    }}>
+                    <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
                       <SelectTrigger id="category" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="automotive">Automotive & Vehicles</SelectItem>
-                        <SelectItem value="heavy-equipment">Heavy Equipment & Machinery</SelectItem>
-                        <SelectItem value="electronics">Electronics & Technology</SelectItem>
-                        <SelectItem value="appliances">Home Appliances</SelectItem>
-                        <SelectItem value="machinery">Industrial Machinery</SelectItem>
-                        <SelectItem value="construction">Construction Equipment</SelectItem>
-                        <SelectItem value="antiques">Antiques & Collectibles</SelectItem>
-                        <SelectItem value="jewelry">Jewelry & Precious Items</SelectItem>
-                        <SelectItem value="art">Art & Artwork</SelectItem>
-                        <SelectItem value="furniture">Furniture & Home Goods</SelectItem>
-                        <SelectItem value="sporting">Sporting Goods & Equipment</SelectItem>
+                        <SelectItem value="residential">Residential</SelectItem>
+                        <SelectItem value="commercial">Commercial</SelectItem>
+                        <SelectItem value="industrial">Industrial</SelectItem>
+                        <SelectItem value="automotive">Automotive</SelectItem>
+                        <SelectItem value="heavy-equipment">Heavy Equipment</SelectItem>
+                        <SelectItem value="electronics">Electronics</SelectItem>
+                        <SelectItem value="appliances">Appliances</SelectItem>
+                        <SelectItem value="machinery">Machinery</SelectItem>
+                        <SelectItem value="construction">Construction</SelectItem>
+                        <SelectItem value="antiques">Antiques</SelectItem>
+                        <SelectItem value="jewelry">Jewelry</SelectItem>
+                        <SelectItem value="art">Art</SelectItem>
+                        <SelectItem value="furniture">Furniture</SelectItem>
+                        <SelectItem value="sporting">Sporting Goods</SelectItem>
                         <SelectItem value="musical">Musical Instruments</SelectItem>
                         <SelectItem value="medical">Medical Equipment</SelectItem>
-                        <SelectItem value="marine">Marine & Boats</SelectItem>
-                        <SelectItem value="aviation">Aviation & Aircraft</SelectItem>
-                        <SelectItem value="agricultural">Agricultural Equipment</SelectItem>
-                        <SelectItem value="commercial">Commercial Equipment</SelectItem>
-                        <SelectItem value="industrial">Industrial Facilities</SelectItem>
-                        <SelectItem value="retail">Retail & Business Assets</SelectItem>
+                        <SelectItem value="marine">Marine</SelectItem>
+                        <SelectItem value="aviation">Aviation</SelectItem>
+                        <SelectItem value="agricultural">Agricultural</SelectItem>
+                        <SelectItem value="retail">Retail</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
@@ -506,15 +714,7 @@ export const CreateRequest = () => {
                       <Select 
                         key={formData.category} // Force re-render when category changes
                         value={formData.subCategory} 
-                        onValueChange={(value) => {
-                          if (value === "others") {
-                            handleInputChange("subCategory", value);
-                            handleInputChange("customSubCategory", "");
-                          } else {
-                            handleInputChange("subCategory", value);
-                            handleInputChange("customSubCategory", "");
-                          }
-                        }}
+                        onValueChange={(value) => handleInputChange("subCategory", value)}
                       >
                         <SelectTrigger id="subCategory" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
                           <SelectValue placeholder="Select sub category" />
@@ -772,7 +972,7 @@ export const CreateRequest = () => {
               <CardHeader>
                 <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-                  Location & Service Pricing
+                  Item Location & Service Pricing
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -781,10 +981,7 @@ export const CreateRequest = () => {
                     <Label htmlFor="state">State</Label>
                     <SearchableSelect
                       value={formData.state}
-                      onValueChange={(value) => {
-                        handleInputChange("state", value);
-                        handleInputChange("city", ""); // Reset city when state changes
-                      }}
+                      onValueChange={(value) => handleInputChange("state", value)}
                       options={US_STATES}
                       placeholder="Select state"
                       searchPlaceholder="Search states..."
@@ -866,9 +1063,9 @@ export const CreateRequest = () => {
                 {/* Service Tier Selection */}
                 <ServiceTierSelector
                   selectedTier={selectedServiceTier}
-                  onTierChange={setSelectedServiceTier}
+                  onTierChange={handleServiceTierChange}
                   selectedAdditionalServices={selectedAdditionalServices}
-                  onAdditionalServicesChange={setSelectedAdditionalServices}
+                  onAdditionalServicesChange={handleAdditionalServicesChange}
                   className="mt-6"
                 />
               </CardContent>
@@ -884,15 +1081,18 @@ export const CreateRequest = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="urgency">When do you need this inspection?</Label>
-                  <Input
-                    id="urgency"
-                    type="date"
-                    value={formData.urgency}
-                    onChange={(e) => handleInputChange('urgency', e.target.value)}
-                    className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50"
-                    min={new Date().toISOString().split('T')[0]} // today
-                  />
+                  <Label htmlFor="urgency">Urgency Level</Label>
+                  <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
+                    <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
+                      <SelectValue placeholder="Select urgency level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low - Within 2 weeks</SelectItem>
+                      <SelectItem value="medium">Medium - Within 1 week</SelectItem>
+                      <SelectItem value="high">High - Within 3 days</SelectItem>
+                      <SelectItem value="urgent">Urgent - Within 24 hours</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>
@@ -918,6 +1118,30 @@ export const CreateRequest = () => {
                     onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                     className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
                     required
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* File Upload */}
+            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
+              <CardHeader>
+                <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
+                  <Upload className="h-5 w-5 text-[rgba(42,100,186,1)]" />
+                  Attachments
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-[rgba(13,38,75,0.7)]">
+                    Upload photos, videos, or documents that will help agents understand your inspection needs
+                  </p>
+                  <FileUpload
+                    onFilesUploaded={handleFilesUploaded}
+                    onError={handleFileUploadError}
+                    multiple={true}
+                    folder="inspection-requests"
+                    maxFiles={10}
                   />
                 </div>
               </CardContent>
@@ -969,6 +1193,56 @@ export const CreateRequest = () => {
           onPay={handlePay}
           onPost={handlePost}
         />
+      )}
+      
+      {/* Payment Modal */}
+      {showPayment && paymentClientSecret && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[rgba(13,38,75,1)]">
+                Complete Payment
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowPayment(false)}
+                className="h-8 w-8 p-0"
+              >
+                ×
+              </Button>
+            </div>
+            
+            {/* Calculate amount for display */}
+            {(() => {
+              const pricingCalculation = async () => {
+                try {
+                  const result = await pricingService.calculatePricing(
+                    selectedServiceTier as 'basic' | 'standard' | 'premium',
+                    selectedAdditionalServices.map(service => service.id)
+                  );
+                  return result?.pricing?.totalPrice || 0;
+                } catch (error) {
+                  console.error('Failed to calculate pricing for payment display:', error);
+                  return 0;
+                }
+              };
+              
+              return (
+                <StripePayment
+                  amount={100} // Placeholder - in real implementation, calculate this synchronously
+                  onSuccess={handlePaymentSuccess}
+                  onError={handlePaymentError}
+                  metadata={{
+                    requestType: 'inspection',
+                    serviceTier: selectedServiceTier,
+                    additionalServices: selectedAdditionalServices.map(s => s.id).join(','),
+                  }}
+                />
+              );
+            })()}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,20 +1,26 @@
-import { useState } from "react";
-import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText, Plus, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { inspectionRequestService, InspectionRequest } from "@/lib/api/inspection-requests";
+import { toast } from "sonner";
 
 export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [liveRequests, setLiveRequests] = useState<InspectionRequest[]>([]);
+  const [loading, setLoading] = useState(true);
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Mock data - only active requests (pending and in-progress)
-  const requests = [
+  const mockRequests = [
     {
       id: 2,
       title: "Excavator Assessment - Construction Site",
@@ -43,6 +49,67 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
     }
   ];
 
+  useEffect(() => {
+    loadLiveRequests();
+    
+    // Check if we came from creating a new request
+    if (location.state?.justCreated) {
+      toast.success('Request created successfully!', {
+        description: 'Your inspection request is now live and visible below.'
+      });
+      // Clear the state to prevent showing the message again
+      navigate(location.pathname, { replace: true });
+    }
+  }, []);
+
+  const loadLiveRequests = async () => {
+    try {
+      setLoading(true);
+      const result = await inspectionRequestService.getInspectionRequests();
+      
+      if (result.data || (result.status && result.status >= 200 && result.status < 300)) {
+        // Handle nested response structure: result.data.data
+        const requestsData = (result as any).data?.data || result.data || [];
+        
+        // Filter to show only active requests
+        const activeRequests = Array.isArray(requestsData) 
+          ? requestsData.filter((request: any) => 
+              ['pending', 'processing'].includes(request.paymentStatus?.toLowerCase())
+            )
+          : [];
+        setLiveRequests(activeRequests);
+      }
+    } catch (err: any) {
+      console.error('Error loading live requests:', err);
+      // Silently fail - will just show mock data
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Convert live requests to match the mock request format
+  const formatLiveRequests = (requests: InspectionRequest[]) => {
+    return requests.map(request => ({
+      id: request.id,
+      title: request.title,
+      category: request.category,
+      location: `${request.city}, ${request.state}`,
+      budget: `$${request.totalPrice}`,
+      urgency: request.urgency,
+      status: request.paymentStatus === 'pending' ? 'pending' : 'In Progress',
+      date: new Date(request.createdAt).toLocaleDateString(),
+      description: request.specificAreas || request.knownIssues || `Inspection request for ${request.category.toLowerCase()} item`,
+      agent: null, // No agent assigned yet
+      applicants: Math.floor(Math.random() * 8) + 1 // Random applicants for demo
+    }));
+  };
+
+  // Combine mock data with live data
+  const allRequests = [
+    ...formatLiveRequests(liveRequests),
+    ...mockRequests
+  ];
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
@@ -58,7 +125,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
     }
   };
 
-  const filteredRequests = requests.filter(request => {
+  const filteredRequests = allRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          request.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || request.status === statusFilter;
@@ -69,14 +136,33 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
     <div className="container mx-auto px-4 md:px-6 py-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">
-          {userType === "client" ? "My Active Requests" : "Current Assignments"}
-        </h1>
-        <p className="text-[rgba(13,38,75,0.7)]">
-          {userType === "client" 
-            ? "Track and manage your pending and in-progress inspection requests" 
-            : "View your current assignments and applications"}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-[rgba(13,38,75,1)] mb-2 flex items-center gap-3">
+              {userType === "client" ? "My Active Requests" : "Current Assignments"}
+              {loading && <Loader2 className="h-5 w-5 animate-spin text-[rgba(42,100,186,1)]" />}
+            </h1>
+            <p className="text-[rgba(13,38,75,0.7)]">
+              {userType === "client" 
+                ? "Track and manage your pending and in-progress inspection requests" 
+                : "View your current assignments and applications"}
+            </p>
+            {liveRequests.length > 0 && (
+              <p className="text-sm text-[rgba(42,100,186,1)] mt-1">
+                {liveRequests.length} live request{liveRequests.length !== 1 ? 's' : ''} loaded from your account
+              </p>
+            )}
+          </div>
+          <Button 
+            onClick={loadLiveRequests} 
+            variant="outline" 
+            size="sm"
+            disabled={loading}
+            className="border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -178,7 +264,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
               {/* Action Buttons */}
               <div className="flex gap-2">
                 <Button asChild className="flex-1 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white">
-                  <Link to={`/${userType === 'client' ? 'client' : 'psi'}-dashboard/request/${request.id}`}>
+                  <Link to={`/${userType === 'client' ? 'client' : 'agent'}-dashboard/request/${request.id}`}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                   </Link>
@@ -186,7 +272,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
                 
                 {request.agent && (
                   <Button asChild variant="outline" className="border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
-                    <Link to={`/${userType === 'client' ? 'client' : 'psi'}-dashboard/messages`}>
+                    <Link to={`/${userType === 'client' ? 'client' : 'agent'}-dashboard/messages`}>
                       <MessageSquare className="h-4 w-4" />
                     </Link>
                   </Button>

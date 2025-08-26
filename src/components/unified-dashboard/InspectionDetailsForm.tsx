@@ -25,32 +25,11 @@ interface InspectionDetailsFormProps {
     specialRequirements: string;
     safetyConsiderations: string;
     recordingConsent: boolean;
-    certificationRequirements: string[];
   };
   onChange: (field: string, value: any) => void;
 }
 
 export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsFormProps) => {
-  const [availableCertifications] = useState([
-    'Licensed Home Inspector',
-    'ASI Certified',
-    'Automotive Technician',
-    'Real Estate Professional',
-    'Electronics Specialist',
-    'HVAC Certified',
-    'Structural Engineer',
-    'Insurance Adjuster'
-  ]);
-
-  const handleCertificationChange = (certification: string, checked: boolean) => {
-    const current = formData.certificationRequirements || [];
-    if (checked) {
-      onChange('certificationRequirements', [...current, certification]);
-    } else {
-      onChange('certificationRequirements', current.filter(c => c !== certification));
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Specific Notes */}
@@ -62,6 +41,17 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="specificAreas">Specific Areas to Focus On</Label>
+            <Textarea
+              id="specificAreas"
+              placeholder="Specify particular rooms, areas, or components you want the inspector to focus on..."
+              value={formData.specificAreas}
+              onChange={(e) => onChange('specificAreas', e.target.value)}
+              className="min-h-[80px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="knownIssues">Known Issues or Concerns</Label>
             <Textarea
@@ -93,6 +83,19 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
               onChange={(e) => onChange('accessInstructions', e.target.value)}
               className="min-h-[80px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="accessAttachments">Upload related files or media</Label>
+            <input
+              id="accessAttachments"
+              type="file"
+              accept="image/*,video/*,application/pdf"
+              multiple
+              onChange={(e) => onChange('accessAttachments', e.target.files ? Array.from(e.target.files) : [])}
+              className="w-full"
+            />
+            <p className="text-xs text-[rgba(13,38,75,0.6)]">You can upload images, short videos, or PDFs to help the agent locate the item.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,10 +163,6 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
             </Select>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Agent Requirements */}
-      <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
       </Card>
 
       {/* Consent & Legal */}

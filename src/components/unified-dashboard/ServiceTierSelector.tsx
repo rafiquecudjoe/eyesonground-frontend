@@ -43,19 +43,21 @@ export const ServiceTierSelector = ({
     }
   };
 
-  const handleAdditionalServiceToggle = (service: AdditionalService) => {
-    const isCurrentlySelected = selectedAdditionalServices.some(s => s.id === service.id);
-    
-    if (isCurrentlySelected) {
-      onAdditionalServicesChange(
-        selectedAdditionalServices.filter(s => s.id !== service.id)
-      );
+  const handleTravelMilesChange = (miles: number) => {
+    const svc = selectedAdditionalServices.find(s => s.id === 'travel_surcharge');
+    if (svc) {
+      const updated = selectedAdditionalServices.map(s => s.id === 'travel_surcharge' ? { ...s, units: miles } : s);
+      onAdditionalServicesChange(updated);
     } else {
-      onAdditionalServicesChange([
-        ...selectedAdditionalServices,
-        { ...service, included: true }
-      ]);
+      // Auto-select travel surcharge when miles entered
+      const travelService = ADDITIONAL_SERVICES.find(s => s.id === 'travel_surcharge');
+      if (travelService) {
+        onAdditionalServicesChange([...selectedAdditionalServices, { ...travelService, included: true, units: miles }]);
+      }
     }
+
+    // eslint-disable-next-line no-console
+    console.log('Travel miles changed to', miles);
   };
 
   const totalPrice = calculateTotalPrice(selectedTier, selectedAdditionalServices);
@@ -173,32 +175,51 @@ export const ServiceTierSelector = ({
               return (
                 <Card
                   key={service.id}
-                  className={`cursor-pointer transition-all duration-200 ${
+                  className={`transition-all duration-200 ${
                     isSelected
                       ? 'border-[rgba(42,100,186,1)] bg-[rgba(42,100,186,0.05)]'
                       : 'border-[rgba(42,100,186,0.2)] hover:border-[rgba(42,100,186,0.4)]'
                   }`}
-                  onClick={() => handleAdditionalServiceToggle(service)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={() => handleAdditionalServiceToggle(service)}
-                        className="mt-1"
-                      />
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={(checked) => {
+                              const newServices = Boolean(checked)
+                                ? [...selectedAdditionalServices, { ...service, included: true }]
+                                : selectedAdditionalServices.filter(s => s.id !== service.id);
+                              onAdditionalServicesChange(newServices);
+                            }}
+                            className="mt-1"
+                          />
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <h5 className="font-medium text-[rgba(13,38,75,1)]">
                             {service.name}
                           </h5>
                           <span className="font-bold text-[rgba(42,100,186,1)]">
-                            +${service.price}
+                            {service.id === 'travel_surcharge' ? `+$${service.price}/mile` : `+$${service.price}`}
                           </span>
                         </div>
                         <p className="text-sm text-[rgba(13,38,75,0.7)]">
                           {service.description}
                         </p>
+
+                        {service.id === 'travel_surcharge' && isSelected && (
+                          <div className="mt-2">
+                            <label className="text-sm text-[rgba(13,38,75,0.7)] block mb-1">Estimated miles</label>
+                            <input
+                              type="number"
+                              min={0}
+                              step={1}
+                              value={selectedAdditionalServices.find(s => s.id === 'travel_surcharge')?.units || 0}
+                              onChange={(e) => handleTravelMilesChange(Number(e.target.value))}
+                              className="w-full h-10 rounded-xl border-[rgba(42,100,186,0.2)] px-3"
+                            />
+                            <p className="text-xs text-[rgba(13,38,75,0.6)] mt-1">Total: ${((selectedAdditionalServices.find(s => s.id === 'travel_surcharge')?.units || 0) * (service.price || 0)).toFixed(2)}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
