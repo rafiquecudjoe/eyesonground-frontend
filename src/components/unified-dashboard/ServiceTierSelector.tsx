@@ -43,6 +43,32 @@ export const ServiceTierSelector = ({
     }
   };
 
+  const handleAdditionalServiceToggle = (service: AdditionalService, checked?: boolean) => {
+    const isCurrentlySelected = selectedAdditionalServices.some(s => s.id === service.id);
+
+    // Determine desired state: if checked provided use it, otherwise toggle
+    const shouldSelect = typeof checked === 'boolean' ? checked : !isCurrentlySelected;
+
+    let updated: AdditionalService[] = [];
+    if (shouldSelect) {
+      // add (or keep existing but mark included)
+      if (isCurrentlySelected) {
+        updated = selectedAdditionalServices.map(s => s.id === service.id ? { ...s, included: true } : s);
+      } else {
+        updated = [...selectedAdditionalServices, { ...service, included: true }];
+      }
+    } else {
+      // remove
+      updated = selectedAdditionalServices.filter(s => s.id !== service.id);
+    }
+
+    // Debug log to help tracing selection issues
+    // eslint-disable-next-line no-console
+    console.log('Toggling additional service', service.id, 'select?', shouldSelect, 'updated:', updated);
+
+    onAdditionalServicesChange(updated);
+  };
+
   const handleTravelMilesChange = (miles: number) => {
     const svc = selectedAdditionalServices.find(s => s.id === 'travel_surcharge');
     if (svc) {
@@ -175,22 +201,19 @@ export const ServiceTierSelector = ({
               return (
                 <Card
                   key={service.id}
-                  className={`transition-all duration-200 ${
+                  className={`cursor-pointer transition-all duration-200 ${
                     isSelected
                       ? 'border-[rgba(42,100,186,1)] bg-[rgba(42,100,186,0.05)]'
                       : 'border-[rgba(42,100,186,0.2)] hover:border-[rgba(42,100,186,0.4)]'
                   }`}
+                  onClick={() => handleAdditionalServiceToggle(service)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={(checked) => {
-                              const newServices = Boolean(checked)
-                                ? [...selectedAdditionalServices, { ...service, included: true }]
-                                : selectedAdditionalServices.filter(s => s.id !== service.id);
-                              onAdditionalServicesChange(newServices);
-                            }}
+                            onCheckedChange={(checked) => handleAdditionalServiceToggle(service, Boolean(checked))}
+                            onClick={(e) => e.stopPropagation()}
                             className="mt-1"
                           />
                       <div className="flex-1">
@@ -215,6 +238,7 @@ export const ServiceTierSelector = ({
                               step={1}
                               value={selectedAdditionalServices.find(s => s.id === 'travel_surcharge')?.units || 0}
                               onChange={(e) => handleTravelMilesChange(Number(e.target.value))}
+                              onClick={(e) => e.stopPropagation()}
                               className="w-full h-10 rounded-xl border-[rgba(42,100,186,0.2)] px-3"
                             />
                             <p className="text-xs text-[rgba(13,38,75,0.6)] mt-1">Total: ${((selectedAdditionalServices.find(s => s.id === 'travel_surcharge')?.units || 0) * (service.price || 0)).toFixed(2)}</p>
