@@ -100,7 +100,7 @@ const TermsAndConditions = () => {
               <CardContent className="space-y-4 text-[rgba(13,38,75,0.8)]">
                 <h4 className="font-semibold text-[rgba(13,38,75,1)]">For Clients:</h4>
                 <ul className="list-disc list-inside space-y-2 ml-4">
-                  <li>Provide accurate and complete information about inspection requirements</li>
+                  <li>Provide accurate and complete information about Notes</li>
                   <li>Make timely payments for services rendered</li>
                   <li>Respect agent time and scheduling constraints</li>
                   <li>Use inspection reports responsibly for purchasing decisions</li>

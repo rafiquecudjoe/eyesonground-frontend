@@ -81,8 +81,14 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const clientNavItems = [
     { 
+      path: `${basePath}/create-request`, 
+      label: "Post Request", 
+      icon: Plus,
+      description: "Create new inspection request"
+    },
+    { 
       path: `${basePath}/my-ads`, 
-      label: "My Ads", 
+      label: "My Requests", 
       icon: FileText,
       description: "Your posted requests"
     },

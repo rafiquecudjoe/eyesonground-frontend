@@ -53,26 +53,15 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
 
   return (
     <div className="space-y-6">
-      {/* Specific Inspection Requirements */}
+      {/* Specific Notes */}
       <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
         <CardHeader>
           <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
             <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-            Inspection Requirements
+            Notes
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="specificAreas">Specific Areas/Aspects to Focus On</Label>
-            <Textarea
-              id="specificAreas"
-              placeholder="e.g., Engine condition, electrical systems, structural integrity, specific rooms..."
-              value={formData.specificAreas}
-              onChange={(e) => onChange('specificAreas', e.target.value)}
-              className="min-h-[80px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-            />
-          </div>
-          
           <div className="space-y-2">
             <Label htmlFor="knownIssues">Known Issues or Concerns</Label>
             <Textarea
@@ -81,17 +70,6 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
               value={formData.knownIssues}
               onChange={(e) => onChange('knownIssues', e.target.value)}
               className="min-h-[80px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="safetyConsiderations">Safety Considerations or Hazards</Label>
-            <Textarea
-              id="safetyConsiderations"
-              placeholder="Any safety concerns, hazardous materials, restricted areas, or special precautions..."
-              value={formData.safetyConsiderations}
-              onChange={(e) => onChange('safetyConsiderations', e.target.value)}
-              className="min-h-[60px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
             />
           </div>
         </CardContent>
@@ -107,10 +85,10 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="accessInstructions">Property Access Instructions</Label>
+            <Label htmlFor="accessInstructions">Property Access Instuctions - Special Requirements</Label>
             <Textarea
               id="accessInstructions"
-              placeholder="Key location, entry codes, gate access, parking instructions, etc..."
+              placeholder="Information like Lot numbers, Item number , item location, etc..."
               value={formData.accessInstructions}
               onChange={(e) => onChange('accessInstructions', e.target.value)}
               className="min-h-[80px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
@@ -174,56 +152,18 @@ export const InspectionDetailsForm = ({ formData, onChange }: InspectionDetailsF
                 <SelectValue placeholder="When are you available?" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="weekdays-morning">Weekdays (9 AM - 12 PM)</SelectItem>
-                <SelectItem value="weekdays-afternoon">Weekdays (12 PM - 5 PM)</SelectItem>
-                <SelectItem value="weekdays-evening">Weekdays (5 PM - 8 PM)</SelectItem>
-                <SelectItem value="weekends">Weekends Only</SelectItem>
+                <SelectItem value="weekdays-afternoon">Weekdays (8 AM - 5 PM)</SelectItem>
+                <SelectItem value="weekends">Weekdays plus Weekends</SelectItem>
                 <SelectItem value="anytime">Anytime</SelectItem>
                 <SelectItem value="flexible">Flexible (Will coordinate)</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="specialRequirements">Special Requirements</Label>
-            <Textarea
-              id="specialRequirements"
-              placeholder="Scheduling constraints, appointment preferences, or special accommodations needed..."
-              value={formData.specialRequirements}
-              onChange={(e) => onChange('specialRequirements', e.target.value)}
-              className="min-h-[60px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-            />
           </div>
         </CardContent>
       </Card>
 
       {/* Agent Requirements */}
       <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-        <CardHeader>
-          <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
-            <Shield className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-            Agent Requirements
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <Label>Required Certifications/Expertise</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {availableCertifications.map((cert) => (
-                <div key={cert} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={cert}
-                    checked={formData.certificationRequirements?.includes(cert) || false}
-                    onCheckedChange={(checked) => handleCertificationChange(cert, checked as boolean)}
-                  />
-                  <Label htmlFor={cert} className="text-sm text-[rgba(13,38,75,0.8)]">
-                    {cert}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
       </Card>
 
       {/* Consent & Legal */}

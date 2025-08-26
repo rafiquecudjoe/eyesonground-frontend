@@ -21,7 +21,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
   
   useEffect(() => {
     const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
-    const defaultRoute = "/post-board";
+    const defaultRoute = userType === "client" ? "/create-request" : "/post-board";
     
     if (location.pathname === basePath || location.pathname === `${basePath}/`) {
       navigate(`${basePath}${defaultRoute}`);
@@ -34,8 +34,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Client Routes */}
         {userType === "client" && (
           <>
-            <Route path="/" element={<Navigate to="/client-dashboard/post-board" replace />} />
-            <Route path="/post-board" element={<Marketplace userType="client" />} />
+            <Route path="/" element={<Navigate to="/client-dashboard/create-request" replace />} />
             <Route path="/create-request" element={<CreateRequest />} />
             <Route path="/my-ads" element={<RequestHistory userType="client" />} />
             <Route path="/history" element={<History userType="client" />} />

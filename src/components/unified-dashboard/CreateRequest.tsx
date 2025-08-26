@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, Upload, MapPin, Calendar, DollarSign, FileText } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Upload, MapPin, Calendar, DollarSign, FileText, ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,62 @@ import { InspectionDetailsForm } from "./InspectionDetailsForm";
 import { FormProgress } from "./FormProgress";
 import { RequestTips } from "./RequestTips";
 import { ServiceTier, AdditionalService } from "@/lib/pricing/service-tiers";
+import RequestReview from "./RequestReview";
+
+// States data with abbreviations and full names
+const US_STATES = [
+  { code: "AL", name: "Alabama" },
+  { code: "AK", name: "Alaska" },
+  { code: "AZ", name: "Arizona" },
+  { code: "AR", name: "Arkansas" },
+  { code: "CA", name: "California" },
+  { code: "CO", name: "Colorado" },
+  { code: "CT", name: "Connecticut" },
+  { code: "DE", name: "Delaware" },
+  { code: "FL", name: "Florida" },
+  { code: "GA", name: "Georgia" },
+  { code: "HI", name: "Hawaii" },
+  { code: "ID", name: "Idaho" },
+  { code: "IL", name: "Illinois" },
+  { code: "IN", name: "Indiana" },
+  { code: "IA", name: "Iowa" },
+  { code: "KS", name: "Kansas" },
+  { code: "KY", name: "Kentucky" },
+  { code: "LA", name: "Louisiana" },
+  { code: "ME", name: "Maine" },
+  { code: "MD", name: "Maryland" },
+  { code: "MA", name: "Massachusetts" },
+  { code: "MI", name: "Michigan" },
+  { code: "MN", name: "Minnesota" },
+  { code: "MS", name: "Mississippi" },
+  { code: "MO", name: "Missouri" },
+  { code: "MT", name: "Montana" },
+  { code: "NE", name: "Nebraska" },
+  { code: "NV", name: "Nevada" },
+  { code: "NH", name: "New Hampshire" },
+  { code: "NJ", name: "New Jersey" },
+  { code: "NM", name: "New Mexico" },
+  { code: "NY", name: "New York" },
+  { code: "NC", name: "North Carolina" },
+  { code: "ND", name: "North Dakota" },
+  { code: "OH", name: "Ohio" },
+  { code: "OK", name: "Oklahoma" },
+  { code: "OR", name: "Oregon" },
+  { code: "PA", name: "Pennsylvania" },
+  { code: "RI", name: "Rhode Island" },
+  { code: "SC", name: "South Carolina" },
+  { code: "SD", name: "South Dakota" },
+  { code: "TN", name: "Tennessee" },
+  { code: "TX", name: "Texas" },
+  { code: "UT", name: "Utah" },
+  { code: "VT", name: "Vermont" },
+  { code: "VA", name: "Virginia" },
+  { code: "WA", name: "Washington" },
+  { code: "WV", name: "West Virginia" },
+  { code: "WI", name: "Wisconsin" },
+  { code: "WY", name: "Wyoming" },
+  { code: "DC", name: "Washington D.C." }
+];
 
 // City data for each state
 const STATE_CITIES: Record<string, string[]> = {
@@ -96,6 +152,87 @@ const getAddressSuggestions = (input: string): string[] => {
   return suggestions.slice(0, 5);
 };
 
+// Searchable Select Component
+const SearchableSelect = ({ 
+  value, 
+  onValueChange, 
+  options, 
+  placeholder, 
+  searchPlaceholder = "Search...",
+  className = "" 
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  options: { code: string; name: string }[];
+  placeholder: string;
+  searchPlaceholder?: string;
+  className?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredOptions = options.filter(option =>
+    option.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    option.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedOption = options.find(option => option.code === value);
+
+  const handleSelect = (optionCode: string) => {
+    onValueChange(optionCode);
+    setIsOpen(false);
+    setSearchTerm("");
+  };
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full h-12 px-3 py-2 text-left bg-white/50 border border-[rgba(42,100,186,0.2)] rounded-xl flex items-center justify-between hover:border-[rgba(42,100,186,0.4)] focus:border-[rgba(42,100,186,1)] focus:outline-none ${className}`}
+      >
+        <span className={selectedOption ? "text-gray-900" : "text-gray-500"}>
+          {selectedOption ? `${selectedOption.name} (${selectedOption.code})` : placeholder}
+        </span>
+        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-[rgba(42,100,186,0.2)] rounded-xl shadow-lg max-h-60 overflow-hidden">
+          <div className="p-3 border-b border-gray-100">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:border-[rgba(42,100,186,1)] focus:outline-none"
+              />
+            </div>
+          </div>
+          <div className="max-h-48 overflow-y-auto">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.code}
+                  type="button"
+                  onClick={() => handleSelect(option.code)}
+                  className="w-full px-3 py-2 text-left hover:bg-[rgba(42,100,186,0.05)] focus:bg-[rgba(42,100,186,0.1)] focus:outline-none transition-colors"
+                >
+                  {option.name} ({option.code})
+                </button>
+              ))
+            ) : (
+              <div className="px-3 py-2 text-gray-500">No states found</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const CreateRequest = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -112,6 +249,7 @@ export const CreateRequest = () => {
     specificAreas: "",
     knownIssues: "",
     accessInstructions: "",
+  accessAttachments: [] as File[],
     contactPerson: "",
     contactPhone: "",
     preferredContact: "",
@@ -125,9 +263,95 @@ export const CreateRequest = () => {
   const [selectedAdditionalServices, setSelectedAdditionalServices] = useState<AdditionalService[]>([]);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [showReview, setShowReview] = useState(false);
+  const [posting, setPosting] = useState(false);
+  // Address autocomplete state
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [addressOpen, setAddressOpen] = useState(false);
+  const [addressLoading, setAddressLoading] = useState(false);
+  const addressRef = useRef<HTMLDivElement | null>(null);
+
+  // Debounced Nominatim search for address suggestions
+  useEffect(() => {
+    const query = formData.address;
+    if (!query || query.length < 3) {
+      setAddressSuggestions([]);
+      setAddressLoading(false);
+      return;
+    }
+
+    setAddressLoading(true);
+    const controller = new AbortController();
+    const handle = setTimeout(async () => {
+      try {
+        // Nominatim search API (OpenStreetMap). Limit to 6 results and restrict to US for relevance.
+        const url = new URL('https://nominatim.openstreetmap.org/search');
+        url.searchParams.set('q', query);
+        url.searchParams.set('format', 'json');
+        url.searchParams.set('addressdetails', '0');
+        url.searchParams.set('limit', '6');
+        url.searchParams.set('countrycodes', 'us');
+
+        const res = await fetch(url.toString(), {
+          signal: controller.signal,
+          headers: {
+            'Accept-Language': 'en',
+            // Nominatim requires a valid User-Agent or Referer identifying the application
+            'User-Agent': 'eyesonground-frontend/1.0 (youremail@example.com)'
+          }
+        });
+
+        if (!res.ok) {
+          setAddressSuggestions([]);
+          setAddressLoading(false);
+          return;
+        }
+
+        const data = await res.json();
+        const suggestions = (data || []).map((item: any) => item.display_name).slice(0, 6);
+        setAddressSuggestions(suggestions);
+        setAddressLoading(false);
+      } catch (err) {
+        if ((err as any).name === 'AbortError') return;
+        setAddressSuggestions([]);
+        setAddressLoading(false);
+      }
+    }, 500); // debounce
+
+    return () => {
+      clearTimeout(handle);
+      controller.abort();
+    };
+  }, [formData.address]);
+
+  // Close address dropdown when clicking outside or pressing Escape
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (addressOpen && addressRef.current && !addressRef.current.contains(e.target as Node)) {
+        setAddressOpen(false);
+      }
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setAddressOpen(false);
+    };
+
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [addressOpen]);
   
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Reset subcategory when category changes
+    if (field === "category") {
+      setFormData(prev => ({ ...prev, subCategory: "", customSubCategory: "" }));
+    }
   };
   
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,33 +379,45 @@ export const CreateRequest = () => {
       toast.error("Please provide either access instructions or a contact phone number");
       return;
     }
-    
-    console.log("Request data:", { 
-      ...formData, 
-      selectedServiceTier,
-      selectedAdditionalServices,
-      photoFiles, 
-      videoFile 
-    });
-    
-    toast.success("Request posted successfully!", {
-      description: "Agents will start applying soon"
-    });
-    
-    navigate("/client-dashboard/my-ads");
+    // Open review modal instead of immediately posting
+    setShowReview(true);
+  };
+
+  const handlePost = async () => {
+    // TODO: replace with real backend call to create the request and handle file uploads
+    setPosting(true);
+    try {
+      const payload = {
+        ...formData,
+        selectedServiceTier,
+        selectedAdditionalServices
+      };
+
+      console.log('Posting request (payload):', payload);
+
+      // Placeholder: assuming success
+      toast.success('Request posted successfully!', { description: 'Agents will start applying soon' });
+      setShowReview(false);
+      navigate('/request-confirmation');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to post request. Please try again.');
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  const handlePay = async () => {
+    // TODO: integrate Stripe — call backend to create a PaymentIntent and redirect to checkout or use Stripe Elements
+    toast('Proceeding to payment is not wired yet. Redirecting to confirmation as a placeholder.');
+    setShowReview(false);
+    // For now, proceed to the same confirmation flow (placeholder)
+    navigate('/request-confirmation');
   };
   
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl min-h-screen">
       <div className="mb-6">
-        <button 
-          onClick={() => navigate("/client-dashboard/post-board")}
-          className="inline-flex items-center text-[rgba(42,100,186,1)] hover:text-[rgba(13,38,75,1)] mb-4 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Post Board
-        </button>
-        
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-[rgba(42,100,186,0.1)] px-4 py-2 rounded-full mb-4">
             <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
@@ -266,16 +502,20 @@ export const CreateRequest = () => {
                         className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
                         placeholder="Enter custom category"
                       />
-                    ) : (
-                      <Select value={formData.subCategory} onValueChange={(value) => {
-                        if (value === "others") {
-                          handleInputChange("subCategory", value);
-                          handleInputChange("customSubCategory", "");
-                        } else {
-                          handleInputChange("subCategory", value);
-                          handleInputChange("customSubCategory", "");
-                        }
-                      }}>
+                    ) : formData.category ? (
+                      <Select 
+                        key={formData.category} // Force re-render when category changes
+                        value={formData.subCategory} 
+                        onValueChange={(value) => {
+                          if (value === "others") {
+                            handleInputChange("subCategory", value);
+                            handleInputChange("customSubCategory", "");
+                          } else {
+                            handleInputChange("subCategory", value);
+                            handleInputChange("customSubCategory", "");
+                          }
+                        }}
+                      >
                         <SelectTrigger id="subCategory" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
                           <SelectValue placeholder="Select sub category" />
                         </SelectTrigger>
@@ -511,7 +751,7 @@ export const CreateRequest = () => {
                           )}
                         </SelectContent>
                       </Select>
-                    )}
+                    ) : null}
                     
                     {/* Custom input for "Others" selection */}
                     {formData.subCategory === "others" && (
@@ -539,106 +779,87 @@ export const CreateRequest = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="state">State</Label>
-                    <Select value={formData.state} onValueChange={(value) => {
-                      handleInputChange("state", value);
-                      handleInputChange("city", ""); // Reset city when state changes
-                    }}>
-                      <SelectTrigger id="state" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                        <SelectValue placeholder="Select state" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="AL">Alabama</SelectItem>
-                        <SelectItem value="AK">Alaska</SelectItem>
-                        <SelectItem value="AZ">Arizona</SelectItem>
-                        <SelectItem value="AR">Arkansas</SelectItem>
-                        <SelectItem value="CA">California</SelectItem>
-                        <SelectItem value="CO">Colorado</SelectItem>
-                        <SelectItem value="CT">Connecticut</SelectItem>
-                        <SelectItem value="DE">Delaware</SelectItem>
-                        <SelectItem value="FL">Florida</SelectItem>
-                        <SelectItem value="GA">Georgia</SelectItem>
-                        <SelectItem value="HI">Hawaii</SelectItem>
-                        <SelectItem value="ID">Idaho</SelectItem>
-                        <SelectItem value="IL">Illinois</SelectItem>
-                        <SelectItem value="IN">Indiana</SelectItem>
-                        <SelectItem value="IA">Iowa</SelectItem>
-                        <SelectItem value="KS">Kansas</SelectItem>
-                        <SelectItem value="KY">Kentucky</SelectItem>
-                        <SelectItem value="LA">Louisiana</SelectItem>
-                        <SelectItem value="ME">Maine</SelectItem>
-                        <SelectItem value="MD">Maryland</SelectItem>
-                        <SelectItem value="MA">Massachusetts</SelectItem>
-                        <SelectItem value="MI">Michigan</SelectItem>
-                        <SelectItem value="MN">Minnesota</SelectItem>
-                        <SelectItem value="MS">Mississippi</SelectItem>
-                        <SelectItem value="MO">Missouri</SelectItem>
-                        <SelectItem value="MT">Montana</SelectItem>
-                        <SelectItem value="NE">Nebraska</SelectItem>
-                        <SelectItem value="NV">Nevada</SelectItem>
-                        <SelectItem value="NH">New Hampshire</SelectItem>
-                        <SelectItem value="NJ">New Jersey</SelectItem>
-                        <SelectItem value="NM">New Mexico</SelectItem>
-                        <SelectItem value="NY">New York</SelectItem>
-                        <SelectItem value="NC">North Carolina</SelectItem>
-                        <SelectItem value="ND">North Dakota</SelectItem>
-                        <SelectItem value="OH">Ohio</SelectItem>
-                        <SelectItem value="OK">Oklahoma</SelectItem>
-                        <SelectItem value="OR">Oregon</SelectItem>
-                        <SelectItem value="PA">Pennsylvania</SelectItem>
-                        <SelectItem value="RI">Rhode Island</SelectItem>
-                        <SelectItem value="SC">South Carolina</SelectItem>
-                        <SelectItem value="SD">South Dakota</SelectItem>
-                        <SelectItem value="TN">Tennessee</SelectItem>
-                        <SelectItem value="TX">Texas</SelectItem>
-                        <SelectItem value="UT">Utah</SelectItem>
-                        <SelectItem value="VT">Vermont</SelectItem>
-                        <SelectItem value="VA">Virginia</SelectItem>
-                        <SelectItem value="WA">Washington</SelectItem>
-                        <SelectItem value="WV">West Virginia</SelectItem>
-                        <SelectItem value="WI">Wisconsin</SelectItem>
-                        <SelectItem value="WY">Wyoming</SelectItem>
-                        <SelectItem value="DC">Washington D.C.</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <SearchableSelect
+                      value={formData.state}
+                      onValueChange={(value) => {
+                        handleInputChange("state", value);
+                        handleInputChange("city", ""); // Reset city when state changes
+                      }}
+                      options={US_STATES}
+                      placeholder="Select state"
+                      searchPlaceholder="Search states..."
+                      className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50"
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      list="cities"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange("city", e.target.value)}
-                      className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                      placeholder={formData.state ? "Type to search cities..." : "Select state first"}
-                      disabled={!formData.state}
-                      required
-                    />
-                    <datalist id="cities">
-                      {formData.state && getCitiesForState(formData.state).map((city) => (
-                        <option key={city} value={city} />
-                      ))}
-                    </datalist>
+                    {formData.state ? (
+                      <SearchableSelect
+                        value={formData.city}
+                        onValueChange={(value) => handleInputChange("city", value)}
+                        options={getCitiesForState(formData.state).map((name) => ({ code: name, name }))}
+                        placeholder="Select city"
+                        searchPlaceholder="Search cities..."
+                        className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50"
+                      />
+                    ) : (
+                      <Input
+                        id="city"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange("city", e.target.value)}
+                        className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
+                        placeholder="Select state first"
+                        disabled
+                        required
+                      />
+                    )}
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
+                  <div ref={addressRef} className="space-y-2 relative">
                     <Label htmlFor="address">Specific Address</Label>
-                    <Input 
-                      id="address" 
-                      placeholder="Enter the inspection address" 
+                    <Input
+                      id="address"
+                      placeholder="Enter the inspection address"
                       value={formData.address}
-                      onChange={(e) => handleInputChange("address", e.target.value)}
+                      onChange={(e) => {
+                        handleInputChange("address", e.target.value);
+                        setAddressOpen(true);
+                      }}
+                      onFocus={() => formData.address.length >= 3 && setAddressOpen(true)}
                       className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                      list="addresses"
                       required
+                      autoComplete="off"
                     />
-                    <datalist id="addresses">
-                      {getAddressSuggestions(formData.address).map((address, index) => (
-                        <option key={index} value={address} />
-                      ))}
-                    </datalist>
+
+                    {/* Suggestions dropdown */}
+                    {addressOpen && (
+                      <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-[rgba(42,100,186,0.1)] rounded-xl shadow-lg max-h-60 overflow-auto">
+                        <div className="p-2">
+                          {addressLoading ? (
+                            <div className="text-sm text-gray-500">Searching...</div>
+                          ) : addressSuggestions.length > 0 ? (
+                            addressSuggestions.map((sugg, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  handleInputChange("address", sugg);
+                                  setAddressOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 hover:bg-[rgba(42,100,186,0.05)] rounded-md"
+                              >
+                                {sugg}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="text-sm text-gray-500 px-3 py-2">No suggestions</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -664,18 +885,14 @@ export const CreateRequest = () => {
               <CardContent>
                 <div className="space-y-2">
                   <Label htmlFor="urgency">When do you need this inspection?</Label>
-                  <Select value={formData.urgency} onValueChange={(value) => handleInputChange("urgency", value)}>
-                    <SelectTrigger id="urgency" className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50">
-                      <SelectValue placeholder="Select timeline" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="same-day">Same Day</SelectItem>
-                      <SelectItem value="within-24h">Within 24 hours</SelectItem>
-                      <SelectItem value="within-3-days">Within 3 days</SelectItem>
-                      <SelectItem value="within-week">Within a week</SelectItem>
-                      <SelectItem value="flexible">Flexible</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="urgency"
+                    type="date"
+                    value={formData.urgency}
+                    onChange={(e) => handleInputChange('urgency', e.target.value)}
+                    className="h-12 rounded-xl border-[rgba(42,100,186,0.2)] bg-white/50"
+                    min={new Date().toISOString().split('T')[0]} // today
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -685,52 +902,6 @@ export const CreateRequest = () => {
               formData={formData}
               onChange={handleInputChange}
             />
-
-            {/* Description & Media */}
-            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-              <CardHeader>
-                <CardTitle className="text-[rgba(13,38,75,1)]">Description & Media</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="description">Detailed Description</Label>
-                  <Textarea 
-                    id="description" 
-                    value={formData.description}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
-                    className="min-h-[120px] rounded-xl border-[rgba(42,100,186,0.2)] focus:border-[rgba(42,100,186,1)] bg-white/50"
-                    placeholder="Describe what you need inspected, any specific concerns, and what you're looking for in the report..."
-                    required
-                  />
-                </div>
-                
-                {/* Photo Upload */}
-                <div className="space-y-2">
-                  <Label>Reference Photos (Optional)</Label>
-                  <div className="border-2 border-dashed border-[rgba(42,100,186,0.3)] rounded-xl p-8 text-center bg-[rgba(42,100,186,0.02)] hover:bg-[rgba(42,100,186,0.05)] transition-colors">
-                    <input
-                      type="file"
-                      id="photo-upload"
-                      className="hidden"
-                      accept="image/jpeg,image/png"
-                      multiple
-                      onChange={handlePhotoChange}
-                    />
-                    <label 
-                      htmlFor="photo-upload"
-                      className="flex flex-col items-center justify-center cursor-pointer"
-                    >
-                      <Upload className="h-8 w-8 text-[rgba(42,100,186,1)] mb-2" />
-                      <p className="text-sm font-medium text-[rgba(13,38,75,1)]">Upload reference images</p>
-                      <p className="text-xs text-[rgba(13,38,75,0.6)] mt-1">JPG, PNG format • Max 5 files</p>
-                      {photoFiles.length > 0 && (
-                        <p className="text-sm text-green-600 mt-2">{photoFiles.length} file(s) selected</p>
-                      )}
-                    </label>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Contact Information */}
             <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
@@ -789,6 +960,16 @@ export const CreateRequest = () => {
           </div>
         </div>
       </div>
+      {showReview && (
+        <RequestReview
+          formData={formData}
+          selectedTier={selectedServiceTier}
+          selectedAdditionalServices={selectedAdditionalServices}
+          onClose={() => setShowReview(false)}
+          onPay={handlePay}
+          onPost={handlePost}
+        />
+      )}
     </div>
   );
 };

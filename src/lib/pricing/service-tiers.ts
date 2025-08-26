@@ -37,11 +37,10 @@ export const SERVICE_TIERS: ServiceTierDetails[] = [
         icon: '📸',
         features: [
             'High-quality live images (15-20 photos)',
-            'Detailed written inspection report',
-            'Agent review notes and observations',
-            'Condition assessment summary',
+            'Basic written inspection report',
             'Digital delivery via platform',
-            'Basic defect identification'
+            'Basic defect identification',
+            'Cars,light trucks'
         ]
     },
     {
@@ -55,11 +54,11 @@ export const SERVICE_TIERS: ServiceTierDetails[] = [
         features: [
             'Everything in Basic tier',
             'Live video recording (5-10 minutes)',
-            'Narrated walkthrough by agent',
             'Close-up videos of defects/issues',
             'Audio commentary and explanations',
             'Enhanced defect documentation',
-            'Priority processing'
+            'Priority processing',
+            'Tracktors, skid steers, pickups'
         ]
     },
     {
@@ -77,7 +76,8 @@ export const SERVICE_TIERS: ServiceTierDetails[] = [
             'Immediate answers to your questions',
             'Custom focus areas per your requests',
             'Same-day report delivery',
-            'Priority agent assignment'
+            'Priority agent assignment',
+            'Combines,excavatos,dozers, high value items'
         ]
     }
 ];
