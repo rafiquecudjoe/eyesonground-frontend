@@ -1,23 +1,24 @@
 # Multi-stage build for optimized production image
 FROM node:18-alpine AS builder
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
+# Install build dependencies and pnpm
+RUN apk add --no-cache python3 make g++ && \
+    npm install -g pnpm
 
 # Set working directory
 WORKDIR /app
 
 # Copy package files first for better caching
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install ALL dependencies (including dev dependencies needed for build)
-RUN npm ci && npm cache clean --force
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM nginx:alpine AS production
