@@ -3,34 +3,35 @@ import { ServiceCard } from "../ui/ServiceCard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Car, Smartphone, Settings, Building2 } from "lucide-react";
 
 export const Services = () => {
   const isMobile = useIsMobile();
   
   const services = [
     {
-      icon: "/images/image1.jpeg",
+      icon: Car,
       title: "VEHICLE INSPECTIONS",
       description:
         "Comprehensive vehicle inspections including engine checks, body condition, interior assessment, and test drives by certified automotive experts.",
     },
     {
-      icon: "/images/pexels-cottonbro-5184919.jpg",
+      icon: Smartphone,
       title: "APPLIANCE & ELECTRONICS", 
       description:
         "Detailed inspections of home appliances, electronics, and gadgets with functionality tests, condition reports, and warranty verification.",
     },
     {
-      icon: "/images/image4.jpeg",
+      icon: Settings,
       title: "MACHINERY & EQUIPMENT",
       description:
         "Professional inspection of industrial machinery, construction equipment, and heavy-duty tools with operational assessments and safety checks.",
     },
     {
-      icon: "/images/image4.jpeg",
-      title: "HEAVY EQUIPMENT & MACHINERY",
+      icon: Building2,
+      title: "PROPERTY & REAL ESTATE",
       description:
-        "Comprehensive inspection of heavy equipment, construction machinery, and industrial tools with operational assessments and safety checks.",
+        "Comprehensive property inspections including structural assessments, electrical systems, plumbing checks, and detailed condition reports.",
     },
   ];
 
