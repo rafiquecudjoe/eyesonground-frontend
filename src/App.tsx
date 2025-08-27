@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import AgentRegistration from "./pages/AgentRegistration";
 import ClientRegistration from "./pages/ClientRegistration";
@@ -31,6 +31,11 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          
+          {/* Handle legacy /dashboard routes */}
+          <Route path="/dashboard" element={<Navigate to="/client-dashboard/overview" replace />} />
+          <Route path="/dashboard/*" element={<Navigate to="/client-dashboard/overview" replace />} />
+          
           <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
           <Route path="/agent-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
           <Route path="/request-confirmation" element={<RequestConfirmation />} />

@@ -9,6 +9,7 @@ import { Profile } from "@/components/unified-dashboard/Profile";
 import { Settings } from "@/components/unified-dashboard/Settings";
 import { Marketplace } from "@/components/unified-dashboard/Marketplace";
 import { Earnings } from "@/components/unified-dashboard/Earnings";
+import { DashboardOverview } from "@/components/unified-dashboard/DashboardOverview";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -22,7 +23,7 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
   
   useEffect(() => {
     const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
-    const defaultRoute = userType === "client" ? "/create-request" : "/post-board";
+    const defaultRoute = userType === "client" ? "/overview" : "/overview";
     
     if (location.pathname === basePath || location.pathname === `${basePath}/`) {
       navigate(`${basePath}${defaultRoute}`);
@@ -35,7 +36,8 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Client Routes */}
         {userType === "client" && (
           <>
-            <Route path="/" element={<Navigate to="/client-dashboard/create-request" replace />} />
+            <Route path="/" element={<Navigate to="/client-dashboard/overview" replace />} />
+            <Route path="/overview" element={<DashboardOverview userType="client" />} />
             <Route path="/create-request" element={<CreateRequest />} />
             <Route path="/my-ads" element={<RequestHistory userType="client" />} />
             <Route path="/request/:id" element={<RequestDetails userType="client" />} />
@@ -49,7 +51,8 @@ const UnifiedDashboard = ({ userType }: UnifiedDashboardProps) => {
         {/* Agent Routes */}
         {userType === "agent" && (
           <>
-            <Route path="/" element={<Navigate to="/agent-dashboard/post-board" replace />} />
+            <Route path="/" element={<Navigate to="/agent-dashboard/overview" replace />} />
+            <Route path="/overview" element={<DashboardOverview userType="agent" />} />
             <Route path="/post-board" element={<Marketplace userType="agent" />} />
             <Route path="/my-assignments" element={<RequestHistory userType="agent" />} />
             <Route path="/request/:id" element={<RequestDetails userType="agent" />} />

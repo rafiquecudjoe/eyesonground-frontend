@@ -81,6 +81,12 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
 
   const clientNavItems = [
     { 
+      path: `${basePath}/overview`, 
+      label: "Dashboard", 
+      icon: Home,
+      description: "Overview and quick actions"
+    },
+    { 
       path: `${basePath}/create-request`, 
       label: "Post Request", 
       icon: Plus,
@@ -119,6 +125,12 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
   ];
 
   const agentNavItems = [
+    { 
+      path: `${basePath}/overview`, 
+      label: "Dashboard", 
+      icon: Home,
+      description: "Overview and performance"
+    },
     { 
       path: `${basePath}/post-board`, 
       label: "Post Board", 
