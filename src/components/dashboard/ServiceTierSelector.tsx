@@ -64,7 +64,6 @@ export const ServiceTierSelector = ({
 
     // Debug log to help tracing selection issues
     // eslint-disable-next-line no-console
-    console.log('Toggling additional service', service.id, 'select?', shouldSelect, 'updated:', updated);
 
     onAdditionalServicesChange(updated);
   };
@@ -83,7 +82,6 @@ export const ServiceTierSelector = ({
     }
 
     // eslint-disable-next-line no-console
-    console.log('Travel miles changed to', miles);
   };
 
   const totalPrice = calculateTotalPrice(selectedTier, selectedAdditionalServices);

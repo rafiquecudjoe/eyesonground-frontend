@@ -28,12 +28,12 @@ const Login = () => {
         toast.success("Login successful!", {
           description: "Welcome to your client dashboard"
         });
-        navigate("/client-dashboard/overview");
+        navigate("/dashboard/overview");
       } else {
         toast.success("Login successful!", {
           description: "Welcome to your agent dashboard"
         });
-        navigate("/agent-dashboard/overview");
+        navigate("/dashboard/overview");
       }
     },
     onError: (error) => {

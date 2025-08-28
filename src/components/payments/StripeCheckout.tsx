@@ -32,10 +32,8 @@ export const StripeCheckout: React.FC<StripeCheckoutProps> = ({
       
       // Construct valid URIs for success and cancel URLs
       const successUrl = new URL('/payment-success?payment=success&session_id={CHECKOUT_SESSION_ID}', baseUrl).toString();
-      const cancelUrl = new URL('/unified-dashboard?payment=cancelled', baseUrl).toString();
-      
-      console.log('Generated URLs:', { successUrl, cancelUrl });
-      
+      const cancelUrl = new URL('/dashboard?payment=cancelled', baseUrl).toString();
+            
       const checkoutPayload = {
         amount: amount,
         description: description,
@@ -44,12 +42,8 @@ export const StripeCheckout: React.FC<StripeCheckoutProps> = ({
         metadata: metadata,
       };
 
-      console.log('Checkout payload:', checkoutPayload);
-
       const session = await apiPaymentService.createCheckoutSession(checkoutPayload);
-      
-      console.log('Session created:', session);
-      console.log('Redirecting to:', session.url);
+
       
       // Redirect to Stripe Checkout
       apiPaymentService.redirectToStripeCheckout(session.url);

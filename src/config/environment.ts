@@ -114,14 +114,6 @@ class ConfigService {
 
     // Development helpers
     logConfig(): void {
-        if (this.config.isDevelopment) {
-            console.group('🔧 Environment Configuration');
-            console.log('API Base URL:', this.config.apiBaseUrl);
-            console.log('Stripe Key:', this.config.stripePublishableKey ? '✅ Configured' : '❌ Missing');
-            console.log('Client Key:', this.config.clientKey ? '✅ Configured' : '❌ Missing');
-            console.log('Environment:', this.config.isDevelopment ? 'Development' : 'Production');
-            console.groupEnd();
-        }
     }
 }
 

@@ -59,7 +59,6 @@ export const Messages = ({ userType }: { userType: "client" | "agent" }) => {
   
   const sendMessage = () => {
     if (messageText.trim()) {
-      console.log("Sending message:", messageText);
       setMessageText("");
     }
   };

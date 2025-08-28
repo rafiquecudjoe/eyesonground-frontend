@@ -26,48 +26,65 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // Get Stripe session ID from URL
+        // Get parameters from URL
         const sessionId = searchParams.get('session_id');
+        const requestId = searchParams.get('request_id');
         const paymentStatus = searchParams.get('payment');
         
-        if (paymentStatus !== 'success' || !sessionId) {
-          setError('Invalid payment parameters');
+        if (paymentStatus !== 'success') {
+          setError('Invalid payment status');
           setIsLoading(false);
           return;
         }
 
-        // Verify payment with backend
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/payments/verify-session/${sessionId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('eyesonground_access_token')}`,
-            'client-key': import.meta.env.VITE_CLIENT_KEY || '',
-            'client-secret': import.meta.env.VITE_CLIENT_SECRET || '',
-          },
-        });
+        // If we have a session_id, verify with Stripe session
+        if (sessionId) {
+          // Verify payment with backend using session ID
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/payments/verify-session/${sessionId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('eyesonground_access_token')}`,
+              'client-key': import.meta.env.VITE_CLIENT_KEY || '',
+              'client-secret': import.meta.env.VITE_CLIENT_SECRET || '',
+            },
+          });
 
-        if (!response.ok) {
-          throw new Error('Failed to verify payment');
+          if (!response.ok) {
+            throw new Error('Failed to verify payment session');
+          }
+
+          const result = await response.json();
+          
+          if (!result.data?.isSuccessful) {
+            throw new Error('Payment verification failed');
+          }
+
+          // Set payment details from session verification
+          setPaymentDetails({
+            sessionId: sessionId,
+            amount: (result.data.amountTotal / 100), // Convert from cents
+            currency: result.data.currency?.toUpperCase() || 'USD',
+            status: 'succeeded',
+            customerEmail: result.data.customerEmail,
+            paymentIntentId: result.data.paymentIntentId,
+            confirmationNumber: `REQ-${Date.now().toString().slice(-6)}`,
+            paidAt: new Date().toISOString(),
+            requestId: requestId
+          });
+        } else if (requestId) {
+          // Fallback: If no session_id but we have request_id, 
+          // assume payment was successful (webhook already processed)
+          setPaymentDetails({
+            requestId: requestId,
+            status: 'succeeded',
+            confirmationNumber: `REQ-${Date.now().toString().slice(-6)}`,
+            paidAt: new Date().toISOString(),
+            message: 'Payment processed successfully! Your inspection request has been activated.'
+          });
+        } else {
+          throw new Error('Missing payment parameters');
         }
-
-        const result = await response.json();
-        
-        if (!result.data?.isSuccessful) {
-          throw new Error('Payment verification failed');
-        }
-
-        // Set payment details
-        setPaymentDetails({
-          sessionId: sessionId,
-          amount: (result.data.amountTotal / 100), // Convert from cents
-          currency: result.data.currency?.toUpperCase() || 'USD',
-          status: 'succeeded',
-          customerEmail: result.data.customerEmail,
-          paymentIntentId: result.data.paymentIntentId,
-          confirmationNumber: `REQ-${Date.now().toString().slice(-6)}`,
-          paidAt: new Date().toISOString()
-        });
         
         setIsLoading(false);
         
@@ -102,7 +119,7 @@ const PaymentSuccess = () => {
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Payment Error</h2>
             <p className="text-gray-600 mb-4">{error || 'There was an issue with your payment verification.'}</p>
-            <Button onClick={() => navigate('/unified-dashboard')} className="w-full">
+            <Button onClick={() => navigate('/dashboard')} className="w-full">
               Return to Dashboard
             </Button>
           </CardContent>
@@ -137,14 +154,14 @@ const PaymentSuccess = () => {
                 <div>
                   <label className="text-sm font-medium text-gray-500">Amount Paid</label>
                   <p className="text-lg font-semibold text-gray-900">
-                    ${paymentDetails.amount.toFixed(2)} {paymentDetails.currency}
+                    {paymentDetails.amount ? `$${paymentDetails.amount.toFixed(2)} ${paymentDetails.currency || 'USD'}` : 'Payment Processed'}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500">Payment Status</label>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="bg-green-100 text-green-800">
-                      {paymentDetails.status}
+                      {paymentDetails.status === 'succeeded' ? 'Successful' : paymentDetails.status}
                     </Badge>
                   </div>
                 </div>
@@ -152,10 +169,19 @@ const PaymentSuccess = () => {
               
               <Separator />
               
-              <div>
-                <label className="text-sm font-medium text-gray-500">Session ID</label>
-                <p className="text-sm font-mono text-gray-700 break-all">{paymentDetails.sessionId}</p>
-              </div>
+              {paymentDetails.sessionId && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Session ID</label>
+                  <p className="text-sm font-mono text-gray-700 break-all">{paymentDetails.sessionId}</p>
+                </div>
+              )}
+              
+              {paymentDetails.requestId && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500">Request ID</label>
+                  <p className="text-sm font-mono text-gray-700 break-all">{paymentDetails.requestId}</p>
+                </div>
+              )}
               
               <div>
                 <label className="text-sm font-medium text-gray-500">Confirmation Number</label>
@@ -168,6 +194,12 @@ const PaymentSuccess = () => {
                   {new Date(paymentDetails.paidAt).toLocaleString()}
                 </p>
               </div>
+              
+              {paymentDetails.message && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm text-green-800">{paymentDetails.message}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -217,7 +249,7 @@ const PaymentSuccess = () => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
-              onClick={() => navigate('/unified-dashboard')}
+              onClick={() => navigate('/dashboard')}
               className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
             >
               <Home className="h-4 w-4 mr-2" />

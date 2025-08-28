@@ -424,7 +424,7 @@ export const Marketplace = ({ userType }: { userType: "client" | "agent" }) => {
           </p>
           {userType === "client" && (
             <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white mb-4">
-              <Link to="/client-dashboard/create-request">
+              <Link to="/dashboard/create-request">
                 <Plus className="mr-2 h-4 w-4" />
                 Post Your Request
               </Link>

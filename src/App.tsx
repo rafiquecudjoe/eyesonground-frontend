@@ -10,7 +10,7 @@ import ClientRegistration from "./pages/ClientRegistration";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AccountTypeSelection from "./pages/AccountTypeSelection";
-import UnifiedDashboard from "./pages/UnifiedDashboard";
+import Dashboard from "./pages/Dashboard";
 import RequestConfirmation from "./pages/RequestConfirmation";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
@@ -40,12 +40,12 @@ const App = () => (
           <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           
-          {/* Handle legacy /dashboard routes */}
-          <Route path="/dashboard" element={<Navigate to="/client-dashboard/overview" replace />} />
-          <Route path="/dashboard/*" element={<Navigate to="/client-dashboard/overview" replace />} />
+          {/* Single Dashboard Route - auto-detects user type */}
+          <Route path="/dashboard/*" element={<Dashboard />} />
           
-          <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
-          <Route path="/agent-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
+          {/* Legacy redirects for old dashboard routes */}
+          <Route path="/dashboard/*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard/*" element={<Navigate to="/dashboard" replace />} />
           <Route path="/request-confirmation" element={<RequestConfirmation />} />
           
           {/* Payment Routes */}

@@ -236,9 +236,6 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                         
                         <Button
                           onClick={() => {
-                            console.log('🔥 Pay Now button clicked');
-                            console.log('📋 Form data:', formData);
-                            console.log('💰 Total amount:', total);
                             onPay();
                           }}
                           className="w-full h-12 bg-gradient-to-r from-[#2a64ba] to-[#1e4a87] hover:from-[#1e4a87] hover:to-[#0d264b] text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2"

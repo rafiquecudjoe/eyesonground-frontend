@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText, Plus, Loader2 } from "lucide-react";
+import { Search, Eye, MessageSquare, Calendar, MapPin, DollarSign, Clock, Filter, FileText, Plus, Loader2, CreditCard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { inspectionRequestService, InspectionRequest } from "@/lib/api/inspection-requests";
+import { paymentService } from "@/lib/api/payment";
 import { toast } from "sonner";
 
 export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) => {
@@ -15,9 +16,51 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
   const [statusFilter, setStatusFilter] = useState("all");
   const [liveRequests, setLiveRequests] = useState<InspectionRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [paymentLoading, setPaymentLoading] = useState<string | null>(null);
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Handle payment for pending_payment requests
+  const handlePayNow = async (request: any) => {
+    try {
+      setPaymentLoading(request.id);
+      
+      toast.info('Redirecting to payment...', {
+        description: 'Please complete your payment to activate this request.'
+      });
+
+      // Create a new checkout session for this request
+      const checkoutPayload = {
+        amount: (request as any).totalPrice || parseFloat(request.budget.replace(/[$,-]/g, '')) || 100, // Use totalPrice or extract from budget
+        currency: 'usd',
+        successUrl: `${window.location.origin}/payment-success?payment=success&request_id=${request.id}&session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${window.location.origin}/dashboard`,
+        metadata: {
+          requestId: request.id,
+          requestTitle: request.title,
+          requestLocation: request.location,
+          serviceTier: 'standard'
+        }
+      };
+
+      const session = await paymentService.createCheckoutSession(checkoutPayload);
+      
+      if (session.url) {
+        // Redirect to Stripe checkout
+        window.location.href = session.url;
+      } else {
+        throw new Error('Failed to create payment session');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error('Payment setup failed', {
+        description: error instanceof Error ? error.message : 'Please try again later'
+      });
+    } finally {
+      setPaymentLoading(null);
+    }
+  };
 
   // Mock data - only active requests (pending and in-progress)
   const mockRequests = [
@@ -44,8 +87,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
       location: "San Francisco, CA",
       budget: "$85",
       status: "pending", 
-      date: "Dec 20, 2024",
-      applicants: 5
+      date: "Dec 20, 2024"
     }
   ];
 
@@ -71,12 +113,15 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
         // Handle nested response structure: result.data.data
         const requestsData = (result as any).data?.data || result.data || [];
         
-        // Filter to show only active requests
+    
+        
+        // Filter to show only active requests (including pending payment)
         const activeRequests = Array.isArray(requestsData) 
           ? requestsData.filter((request: any) => 
-              ['pending', 'processing'].includes(request.paymentStatus?.toLowerCase())
+              ['pending', 'processing', 'pending_payment'].includes(request.paymentStatus?.toLowerCase())
             )
           : [];
+        
         setLiveRequests(activeRequests);
       }
     } catch (err: any) {
@@ -87,7 +132,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
     }
   };
 
-  // Convert live requests to match the mock request format
+      // Convert live requests to match the mock request format
   const formatLiveRequests = (requests: InspectionRequest[]) => {
     return requests.map(request => ({
       id: request.id,
@@ -96,11 +141,16 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
       location: `${request.city}, ${request.state}`,
       budget: `$${request.totalPrice}`,
       urgency: request.urgency,
-      status: request.paymentStatus === 'pending' ? 'pending' : 'In Progress',
+      status: request.paymentStatus === 'pending_payment' 
+        ? 'Pending Payment' 
+        : request.paymentStatus === 'pending' 
+          ? 'Pending' 
+          : 'In Progress',
       date: new Date(request.createdAt).toLocaleDateString(),
       description: request.specificAreas || request.knownIssues || `Inspection request for ${request.category.toLowerCase()} item`,
       agent: null, // No agent assigned yet
-      applicants: Math.floor(Math.random() * 8) + 1 // Random applicants for demo
+      paymentStatus: request.paymentStatus, // Add this for the payment button logic
+      totalPrice: request.totalPrice // Add this for accurate payment amount
     }));
   };
 
@@ -114,10 +164,12 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
     switch (status) {
       case "completed":
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-      case "in-progress":
+      case "In Progress":
         return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">In Progress</Badge>;
-      case "pending":
+      case "Pending":
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
+      case "Pending Payment":
+        return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Pending Payment</Badge>;
       case "cancelled":
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Cancelled</Badge>;
       default:
@@ -184,8 +236,9 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
             className="px-4 py-3 rounded-xl border border-[rgba(42,100,186,0.2)] bg-white/80 backdrop-blur-sm text-[rgba(13,38,75,1)] focus:border-[rgba(42,100,186,1)] focus:outline-none"
           >
             <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
+            <option value="Pending Payment">Pending Payment</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
@@ -255,16 +308,39 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
                 </div>
               )}
 
-              {!request.agent && request.applicants && (
+              {!request.agent && (request as any).paymentStatus !== 'pending_payment' && (
                 <div className="mb-4 p-3 bg-[rgba(42,100,186,0.05)] rounded-xl">
-                  <p className="text-sm text-[rgba(13,38,75,0.8)]">{request.applicants} agents applied</p>
+                  <p className="text-sm text-[rgba(13,38,75,0.8)]">
+                    {request.status === 'Pending' ? 'Matching with available agents...' : 'Agent assignment in progress'}
+                  </p>
                 </div>
               )}
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button asChild className="flex-1 bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white">
-                  <Link to={`/${userType === 'client' ? 'client' : 'agent'}-dashboard/request/${request.id}`}>
+                {/* Payment Button for pending_payment status */}
+                {(request as any).paymentStatus === 'pending_payment' && userType === 'client' && (
+                  <Button 
+                    onClick={() => handlePayNow(request)}
+                    disabled={paymentLoading === request.id}
+                    className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
+                  >
+                    {paymentLoading === request.id ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Pay Now
+                      </>
+                    )}
+                  </Button>
+                )}
+                
+                <Button asChild className={`${(request as any).paymentStatus === 'pending_payment' && userType === 'client' ? 'flex-none' : 'flex-1'} bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)] text-white`}>
+                  <Link to={`/dashboard/request/${request.id}`}>
                     <Eye className="mr-2 h-4 w-4" />
                     View Details
                   </Link>
@@ -272,7 +348,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
                 
                 {request.agent && (
                   <Button asChild variant="outline" className="border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]">
-                    <Link to={`/${userType === 'client' ? 'client' : 'agent'}-dashboard/messages`}>
+                    <Link to={`/dashboard/messages`}>
                       <MessageSquare className="h-4 w-4" />
                     </Link>
                   </Button>
@@ -299,7 +375,7 @@ export const RequestHistory = ({ userType }: { userType: "client" | "agent" }) =
           </p>
           {userType === "client" && (
             <Button asChild className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white">
-              <Link to="/client-dashboard/post-board">
+              <Link to="/dashboard/create-request">
                 <Plus className="mr-2 h-4 w-4" />
                 Post Request
               </Link>

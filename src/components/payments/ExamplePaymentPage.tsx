@@ -4,7 +4,6 @@ import { HybridPayment } from '@/components/payments/HybridPayment';
 
 const ExamplePaymentPage: React.FC = () => {
   const handlePaymentSuccess = (paymentIntentId: string) => {
-    console.log('Payment successful:', paymentIntentId);
     // Handle successful payment - redirect, show success message, etc.
     alert('Payment successful! Payment ID: ' + paymentIntentId);
   };

@@ -13,8 +13,8 @@ Allow: /terms-and-conditions
 Allow: /privacy-policy
 
 # Disallow admin and dashboard areas
-Disallow: /client-dashboard/
-Disallow: /agent-dashboard/
+Disallow: /dashboard/
+Disallow: /dashboard/
 Disallow: /dashboard/
 Disallow: /api/
 Disallow: /payment-success

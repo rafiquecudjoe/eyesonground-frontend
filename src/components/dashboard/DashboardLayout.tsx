@@ -77,7 +77,7 @@ export const DashboardLayout = ({ children, userType }: DashboardLayoutProps) =>
     }
   }, [navigate]);
 
-  const basePath = userType === "client" ? "/client-dashboard" : "/agent-dashboard";
+  const basePath = "/dashboard";
 
   const clientNavItems = [
     { 

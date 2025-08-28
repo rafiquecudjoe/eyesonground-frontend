@@ -110,7 +110,7 @@ export const Navbar = () => {
         {/* Back to Dashboard button for logged-in users */}
         {isLoggedIn && (
           <Link
-            to={userType === 'client' ? '/client-dashboard' : '/agent-dashboard'}
+            to="/dashboard"
             className="self-stretch bg-gradient-to-r from-green-500 to-emerald-600 min-h-[47px] gap-2.5 overflow-hidden text-white flex items-center justify-center pl-[21px] pr-5 py-[13px] rounded-xl max-md:pl-5 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             <ArrowRight className="h-4 w-4" />
@@ -170,7 +170,7 @@ export const Navbar = () => {
             {/* Back to Dashboard button for mobile logged-in users */}
             {isLoggedIn && (
               <Link
-                to={userType === 'client' ? '/client-dashboard' : '/agent-dashboard'}
+                to={userType === 'client' ? '/dashboard' : '/dashboard'}
                 className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl text-center hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-2"
                 onClick={toggleMenu}
               >

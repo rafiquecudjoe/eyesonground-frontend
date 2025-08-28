@@ -34,7 +34,7 @@ const PaymentFailed = () => {
   const handleContactSupport = () => {
     // You can implement contact support functionality here
     // For now, we'll navigate to dashboard where they can find support info
-    navigate('/client-dashboard/overview');
+    navigate('/dashboard/overview');
   };
 
   return (
@@ -154,7 +154,7 @@ const PaymentFailed = () => {
               
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/client-dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                 size="lg"
               >

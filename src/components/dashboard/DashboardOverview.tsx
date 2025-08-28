@@ -1,9 +1,11 @@
-import React from 'react';
-import { Plus, FileText, MessageSquare, TrendingUp, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, FileText, MessageSquare, TrendingUp, Clock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { dashboardStatsService, DashboardData } from '@/lib/api/dashboard-stats';
+import { toast } from 'sonner';
 
 interface DashboardOverviewProps {
   userType: "client" | "agent";
@@ -11,46 +13,57 @@ interface DashboardOverviewProps {
 
 export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
   const navigate = useNavigate();
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - replace with real data from your API
-  const stats = {
-    client: {
-      totalRequests: 12,
-      activeRequests: 3,
-      completedRequests: 8,
-      pendingReviews: 1
-    },
-    agent: {
-      totalJobs: 45,
-      activeJobs: 5,
-      completedJobs: 38,
-      earnings: 2850
+  useEffect(() => {
+    loadDashboardData();
+  }, [userType]);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const data = await dashboardStatsService.getDashboardStats(userType);
+      setDashboardData(data);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      toast.error('Failed to load dashboard data', {
+        description: 'Using cached data. Please refresh to try again.'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const recentActivity = [
-    {
-      id: 1,
-      title: userType === 'client' ? 'Vehicle Inspection - 2019 Honda Civic' : 'Commercial Property Assessment',
-      status: 'completed',
-      date: '2 hours ago',
-      amount: userType === 'client' ? '$85' : '$125'
+  // Use live stats or fallback to defaults
+  const stats = dashboardData?.stats || {
+    client: {
+      totalRequests: 0,
+      activeRequests: 0,
+      completedRequests: 0,
+      pendingReviews: 0
     },
-    {
-      id: 2,
-      title: userType === 'client' ? 'Home Appliance Check' : 'Industrial Equipment Audit',
-      status: 'in-progress',
-      date: '1 day ago',
-      amount: userType === 'client' ? '$45' : '$200'
-    },
-    {
-      id: 3,
-      title: userType === 'client' ? 'Electronics Assessment' : 'Machinery Inspection',
-      status: 'pending',
-      date: '3 days ago',
-      amount: userType === 'client' ? '$65' : '$150'
+    agent: {
+      totalJobs: 0,
+      activeJobs: 0,
+      completedJobs: 0,
+      earnings: 0
     }
-  ];
+  };
+
+  const recentActivity = dashboardData?.recentActivity || [];
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 md:px-6 py-6">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-[rgba(42,100,186,1)]" />
+          <span className="ml-2 text-[rgba(13,38,75,0.7)]">Loading dashboard...</span>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -74,14 +87,33 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
     <div className="container mx-auto px-6 py-8 max-w-7xl">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">
-          Welcome back! 👋
-        </h1>
-        <p className="text-[rgba(13,38,75,0.7)] text-lg">
-          {userType === 'client' 
-            ? "Here's what's happening with your inspection requests" 
-            : "Here's your job performance overview"}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-[rgba(13,38,75,1)] mb-2 flex items-center gap-3">
+              Welcome back! 👋
+              {loading && <Loader2 className="h-6 w-6 animate-spin text-[rgba(42,100,186,1)]" />}
+            </h1>
+            <p className="text-[rgba(13,38,75,0.7)] text-lg">
+              {userType === 'client' 
+                ? "Here's what's happening with your inspection requests" 
+                : "Here's your job performance overview"}
+            </p>
+            {dashboardData && recentActivity.length > 0 && (
+              <p className="text-sm text-[rgba(42,100,186,1)] mt-1">
+                Live data • {recentActivity.length} recent activit{recentActivity.length !== 1 ? 'ies' : 'y'}
+              </p>
+            )}
+          </div>
+          <Button 
+            onClick={loadDashboardData} 
+            variant="outline" 
+            size="sm"
+            disabled={loading}
+            className="border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)]"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
+          </Button>
+        </div>
       </div>
 
       {/* Quick Actions */}
@@ -91,7 +123,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
           {userType === 'client' ? (
             <>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-[rgba(42,100,186,0.05)] to-[rgba(13,38,75,0.05)] border-[rgba(42,100,186,0.2)]" 
-                    onClick={() => navigate('/client-dashboard/create-request')}>
+                    onClick={() => navigate('/dashboard/create-request')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Plus className="h-6 w-6 text-white" />
@@ -102,7 +134,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
               </Card>
               
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" 
-                    onClick={() => navigate('/client-dashboard/my-ads')}>
+                    onClick={() => navigate('/dashboard/my-ads')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <FileText className="h-6 w-6 text-blue-600" />
@@ -113,7 +145,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
               </Card>
               
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" 
-                    onClick={() => navigate('/client-dashboard/messages')}>
+                    onClick={() => navigate('/dashboard/messages')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <MessageSquare className="h-6 w-6 text-green-600" />
@@ -126,7 +158,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
           ) : (
             <>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-[rgba(42,100,186,0.05)] to-[rgba(13,38,75,0.05)] border-[rgba(42,100,186,0.2)]" 
-                    onClick={() => navigate('/agent-dashboard/post-board')}>
+                    onClick={() => navigate('/dashboard/post-board')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] rounded-xl flex items-center justify-center mx-auto mb-4">
                     <FileText className="h-6 w-6 text-white" />
@@ -137,7 +169,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
               </Card>
               
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" 
-                    onClick={() => navigate('/agent-dashboard/my-assignments')}>
+                    onClick={() => navigate('/dashboard/my-assignments')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <TrendingUp className="h-6 w-6 text-blue-600" />
@@ -148,7 +180,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
               </Card>
               
               <Card className="hover:shadow-lg transition-shadow cursor-pointer" 
-                    onClick={() => navigate('/agent-dashboard/earnings')}>
+                    onClick={() => navigate('/dashboard/earnings')}>
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <TrendingUp className="h-6 w-6 text-green-600" />
@@ -251,36 +283,57 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-[rgba(13,38,75,1)]">Recent Activity</h2>
           <Button variant="outline" size="sm" 
-                  onClick={() => navigate(userType === 'client' ? '/client-dashboard/my-ads' : '/agent-dashboard/my-assignments')}>
+                  onClick={() => navigate('/dashboard/requests')}>
             View All
           </Button>
         </div>
         
         <Card>
           <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
-              {recentActivity.map((item) => (
-                <div key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(item.status)}
-                        <Badge className={`${getStatusColor(item.status)} border-0`}>
-                          {item.status.replace('-', ' ')}
-                        </Badge>
+            {recentActivity.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {recentActivity.map((item) => (
+                  <div key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(item.status)}
+                          <Badge className={`${getStatusColor(item.status)} border-0`}>
+                            {item.status.replace('-', ' ')}
+                          </Badge>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-[rgba(13,38,75,1)]">{item.title}</h4>
+                          <p className="text-sm text-[rgba(13,38,75,0.6)]">{item.date}</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium text-[rgba(13,38,75,1)]">{item.title}</h4>
-                        <p className="text-sm text-[rgba(13,38,75,0.6)]">{item.date}</p>
+                      <div className="text-right">
+                        <div className="font-semibold text-[rgba(13,38,75,1)]">{item.amount}</div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-[rgba(13,38,75,1)]">{item.amount}</div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center">
+                <FileText className="h-12 w-12 text-[rgba(13,38,75,0.3)] mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-[rgba(13,38,75,1)] mb-2">No recent activity</h3>
+                <p className="text-[rgba(13,38,75,0.6)] mb-4">
+                  {userType === 'client' 
+                    ? "Your inspection requests will appear here once you create them." 
+                    : "Your completed jobs and assignments will show up here."}
+                </p>
+                {userType === 'client' && (
+                  <Button 
+                    onClick={() => navigate('/dashboard/create-request')}
+                    className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] text-white"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create First Request
+                  </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -298,7 +351,7 @@ export const DashboardOverview = ({ userType }: DashboardOverviewProps) => {
           </p>
           <Button 
             className="bg-gradient-to-r from-[rgba(42,100,186,1)] to-[rgba(13,38,75,1)] hover:from-[rgba(42,100,186,0.9)] hover:to-[rgba(13,38,75,0.9)]"
-            onClick={() => navigate(userType === 'client' ? '/client-dashboard/create-request' : '/agent-dashboard/post-board')}
+            onClick={() => navigate(userType === 'client' ? '/dashboard/create-request' : '/dashboard/post-board')}
           >
             {userType === 'client' ? "Post New Request" : "Browse Jobs"}
           </Button>

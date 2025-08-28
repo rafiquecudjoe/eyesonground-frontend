@@ -22,7 +22,7 @@ const RequestConfirmation = () => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          navigate('/client-dashboard/my-ads');
+          navigate('/dashboard/my-ads');
           return 0;
         }
         return prev - 1;
@@ -114,7 +114,7 @@ const RequestConfirmation = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button 
-                onClick={() => navigate('/client-dashboard/my-ads')}
+                onClick={() => navigate('/dashboard/my-ads')}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                 size="lg"
               >
@@ -125,7 +125,7 @@ const RequestConfirmation = () => {
               
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/client-dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="flex-1 border-[rgba(42,100,186,0.3)] text-[rgba(13,38,75,1)] hover:bg-[rgba(42,100,186,0.05)] hover:border-[rgba(42,100,186,0.5)] transition-all duration-200"
                 size="lg"
               >

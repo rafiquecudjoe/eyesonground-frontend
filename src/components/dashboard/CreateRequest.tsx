@@ -435,8 +435,6 @@ export const CreateRequest = () => {
         paidAt: undefined,
       };
 
-      console.log('Posting request to backend:', payload);
-
       // Call the actual backend API
       const response = await inspectionRequestService.createInspectionRequest(payload);
       
@@ -506,17 +504,11 @@ export const CreateRequest = () => {
         paidAt: undefined, // Will be set when payment succeeds
       };
 
-      console.log('🚀 Creating inspection request before payment:', requestData);
-      console.log('🔍 API Base URL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
-
       // Create the inspection request first
       const response = await inspectionRequestService.createInspectionRequest(requestData);
-      
-      console.log('🎯 API Response:', response);
-      
+            
       if (response.data) {
         const requestId = response.data.id;
-        console.log('✅ Inspection request created successfully:', requestId);
         
         // Step 2: Initiate payment with request ID in metadata
         const userData = TokenStorage.getUserData();
@@ -525,7 +517,7 @@ export const CreateRequest = () => {
         // Prepare checkout session with request reference
         const baseUrl = window.location.protocol + '//' + window.location.host;
         const successUrl = new URL(`/payment-success?payment=success&request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`, baseUrl).toString();
-        const cancelUrl = new URL(`/unified-dashboard?payment=cancelled&request_id=${requestId}`, baseUrl).toString();
+        const cancelUrl = new URL(`/dashboard?payment=cancelled&request_id=${requestId}`, baseUrl).toString();
         
         const checkoutPayload = {
           amount: totalPrice,
@@ -540,8 +532,6 @@ export const CreateRequest = () => {
             userId: userId,
           },
         };
-
-        console.log('💳 Creating Stripe checkout session with payload:', checkoutPayload);
 
         // Create Stripe checkout session
         const session = await paymentService.createCheckoutSession(checkoutPayload);
@@ -1122,7 +1112,7 @@ export const CreateRequest = () => {
               
               <Button 
                 type="button"
-                onClick={() => navigate("/client-dashboard/post-board")}
+                onClick={() => navigate("/dashboard/post-board")}
                 variant="outline" 
                 className="flex-1 h-12 border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.1)] rounded-xl"
               >

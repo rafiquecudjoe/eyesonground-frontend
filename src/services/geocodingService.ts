@@ -238,7 +238,6 @@ class GeocodingService {
             // Fallback: Use geocoding to validate if user is authenticated
             if (this.isAuthenticated()) {
                 try {
-                    console.log('Attempting fallback validation using geocoding...');
                     const geocodeResult = await this.geocodeAddress(address);
                     return {
                         success: true,
