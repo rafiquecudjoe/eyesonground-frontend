@@ -217,7 +217,7 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                     </Button>
                     
                     <div className="text-xs text-[rgba(13,38,75,0.6)] text-center px-2">
-                      Post your request to get quotes from inspectors. Payment processed after service completion.
+                      Post your request to connect with qualified agents. We use a hybrid approach to match you with the best inspectors for your needs.
                     </div>
 
                     {/* Pay Now Button */}

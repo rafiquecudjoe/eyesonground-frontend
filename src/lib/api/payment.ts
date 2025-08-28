@@ -1,5 +1,5 @@
-// Payment service for handling Stripe integration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+// Enhanced Payment service for new Stripe integration
+import { configService } from '@/config/environment';
 
 export interface StripePaymentIntent {
     id: string;
@@ -20,9 +20,22 @@ export interface PaymentVerification {
     charges?: any;
 }
 
+export interface SavedPaymentMethod {
+    id: string;
+    type: string;
+    card?: {
+        brand: string;
+        last4: string;
+        exp_month: number;
+        exp_year: number;
+    };
+    created: number;
+}
+
 export interface CreateStripePaymentIntentPayload {
     amount: number; // Amount in dollars (will be converted to cents)
     currency?: string;
+    savePaymentMethod?: boolean; // NEW: Option to save payment method
     description?: string;
     metadata?: {
         requestId?: string;
@@ -30,16 +43,42 @@ export interface CreateStripePaymentIntentPayload {
         customerEmail?: string;
         [key: string]: string;
     };
-    return_url?: string;
+}
+
+export interface CreateCheckoutSessionPayload {
+    amount: number;
+    currency?: string;
+    description?: string;
+    successUrl: string;
+    cancelUrl: string;
+    serviceDetails?: {
+        inspectionType?: string;
+        propertyAddress?: string;
+        agentName?: string;
+        scheduledDate?: string;
+    };
+    metadata?: Record<string, string>;
+}
+
+export interface CheckoutSessionResponse {
+    sessionId: string;
+    url: string;
+    paymentIntentId?: string;
+}
+
+export interface PayWithSavedMethodPayload {
+    paymentMethodId: string;
+    amount: number;
+    currency?: string;
 }
 
 class PaymentService {
     private getHeaders() {
-        const token = localStorage.getItem('token');
-        return {
-            'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` })
-        };
+        return configService.getApiHeaders();
+    }
+
+    private getApiUrl(endpoint: string): string {
+        return configService.getApiUrl(endpoint);
     }
 
     /**
@@ -47,16 +86,10 @@ class PaymentService {
      */
     async createPaymentIntent(payload: CreateStripePaymentIntentPayload): Promise<StripePaymentIntent> {
         try {
-            const requestPayload = {
-                ...payload,
-                amount: Math.round(payload.amount * 100), // Convert dollars to cents for Stripe
-                currency: payload.currency || 'usd'
-            };
-
-            const response = await fetch(`${API_BASE_URL}/api/v1/payments/stripe/create-intent`, {
+            const response = await fetch(this.getApiUrl('api/v1/payments/create-payment-intent'), {
                 method: 'POST',
                 headers: this.getHeaders(),
-                body: JSON.stringify(requestPayload)
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) {
@@ -64,7 +97,20 @@ class PaymentService {
             }
 
             const data = await response.json();
-            return data.data;
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to create payment intent');
+            }
+
+            return {
+                id: data.data.paymentIntentId,
+                amount: data.data.amount,
+                currency: data.data.currency,
+                client_secret: data.data.clientSecret,
+                status: 'requires_payment_method',
+                createdAt: new Date().toISOString(),
+                metadata: payload.metadata
+            };
         } catch (error) {
             console.error('Error creating payment intent:', error);
             throw error;
@@ -72,11 +118,11 @@ class PaymentService {
     }
 
     /**
-     * Verify payment with Stripe
+     * Get user's saved payment methods
      */
-    async verifyPayment(paymentIntentId: string): Promise<PaymentVerification> {
+    async getSavedPaymentMethods(): Promise<SavedPaymentMethod[]> {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/v1/payments/stripe/verify/${paymentIntentId}`, {
+            const response = await fetch(this.getApiUrl('api/v1/payments/saved-methods'), {
                 method: 'GET',
                 headers: this.getHeaders()
             });
@@ -86,9 +132,108 @@ class PaymentService {
             }
 
             const data = await response.json();
-            return data.data;
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to fetch saved payment methods');
+            }
+
+            return data.data || [];
         } catch (error) {
-            console.error('Error verifying payment:', error);
+            console.error('Error fetching saved payment methods:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Pay with saved payment method
+     */
+    async payWithSavedMethod(payload: PayWithSavedMethodPayload): Promise<{ success: boolean; paymentIntentId: string; amount: number; status: string; paidAt?: string }> {
+        try {
+            const response = await fetch(this.getApiUrl('api/v1/payments/pay-with-saved'), {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Payment with saved method failed');
+            }
+
+            return {
+                success: true,
+                paymentIntentId: data.data.paymentIntentId,
+                amount: data.data.amount,
+                status: data.data.status,
+                paidAt: data.data.status === 'succeeded' ? new Date().toISOString() : undefined
+            };
+        } catch (error) {
+            console.error('Error paying with saved method:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Remove saved payment method
+     */
+    async removeSavedPaymentMethod(paymentMethodId: string): Promise<{ success: boolean; message: string }> {
+        try {
+            const response = await fetch(this.getApiUrl(`api/v1/payments/remove-saved-method/${paymentMethodId}`), {
+                method: 'POST',
+                headers: this.getHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to remove payment method');
+            }
+
+            return { success: true, message: 'Payment method removed successfully' };
+        } catch (error) {
+            console.error('Error removing saved payment method:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Confirm payment (for tracking purposes)
+     */
+    async confirmPayment(paymentIntentId: string): Promise<PaymentVerification> {
+        try {
+            const response = await fetch(this.getApiUrl('api/v1/payments/confirm-with-method'), {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ paymentIntentId })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Payment confirmation failed');
+            }
+
+            return {
+                success: true,
+                paymentIntentId: data.data.paymentIntentId,
+                amount: data.data.amount,
+                status: data.data.status
+            };
+        } catch (error) {
+            console.error('Error confirming payment:', error);
             throw error;
         }
     }
@@ -96,9 +241,9 @@ class PaymentService {
     /**
      * Get payment status
      */
-    async getPaymentStatus(reference: string): Promise<PaymentVerification> {
+    async getPaymentStatus(paymentIntentId: string): Promise<PaymentVerification> {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/v1/payments/status/${reference}`, {
+            const response = await fetch(this.getApiUrl(`api/v1/payments/status/${paymentIntentId}`), {
                 method: 'GET',
                 headers: this.getHeaders()
             });
@@ -108,11 +253,94 @@ class PaymentService {
             }
 
             const data = await response.json();
-            return data.data;
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to get payment status');
+            }
+
+            return {
+                success: true,
+                paymentIntentId: data.data.paymentIntentId,
+                amount: data.data.amount / 100, // Convert from cents to dollars
+                status: data.data.status,
+                paidAt: data.data.status === 'succeeded' ? new Date().toISOString() : undefined
+            };
         } catch (error) {
             console.error('Error getting payment status:', error);
             throw error;
         }
+    }
+
+    /**
+     * Process refund
+     */
+    async refundPayment(paymentIntentId: string, amount?: number, reason?: string): Promise<any> {
+        try {
+            const response = await fetch(this.getApiUrl('api/v1/payments/refund'), {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify({
+                    paymentIntentId,
+                    amount,
+                    reason,
+                    metadata: { refundedAt: new Date().toISOString() }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Refund failed');
+            }
+
+            return data.data;
+        } catch (error) {
+            console.error('Error processing refund:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Create Stripe Checkout session for multiple payment methods
+     */
+    async createCheckoutSession(payload: CreateCheckoutSessionPayload): Promise<CheckoutSessionResponse> {
+        try {
+            const response = await fetch(this.getApiUrl('api/v1/payments/create-checkout-session'), {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to create checkout session');
+            }
+
+            return {
+                sessionId: data.data.sessionId,
+                url: data.data.url,
+                paymentIntentId: data.data.paymentIntentId
+            };
+        } catch (error) {
+            console.error('Error creating checkout session:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Redirect to Stripe Checkout
+     */
+    redirectToStripeCheckout(checkoutUrl: string): void {
+        window.location.href = checkoutUrl;
     }
 
     /**

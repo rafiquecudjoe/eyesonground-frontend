@@ -14,6 +14,7 @@ import UnifiedDashboard from "./pages/UnifiedDashboard";
 import RequestConfirmation from "./pages/RequestConfirmation";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
+import PaymentStatus from "./components/payments/PaymentStatus";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
@@ -41,8 +42,12 @@ const App = () => (
           <Route path="/client-dashboard/*" element={<UnifiedDashboard userType="client" />} />
           <Route path="/agent-dashboard/*" element={<UnifiedDashboard userType="agent" />} />
           <Route path="/request-confirmation" element={<RequestConfirmation />} />
+          
+          {/* Payment Routes */}
+          <Route path="/payment-status" element={<PaymentStatus />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
