@@ -3,6 +3,8 @@
  * Centralizes all environment variable management with validation
  */
 
+import { TokenStorage } from '@/lib/api/token-storage';
+
 interface EnvironmentConfig {
     // API Configuration
     apiBaseUrl: string;
@@ -94,7 +96,7 @@ class ConfigService {
 
     // Helper methods
     getApiHeaders(): Record<string, string> {
-        const token = localStorage.getItem('token');
+        const token = TokenStorage.getAccessToken();
 
         return {
             'Content-Type': 'application/json',

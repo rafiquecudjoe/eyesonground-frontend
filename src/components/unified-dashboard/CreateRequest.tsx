@@ -475,8 +475,8 @@ export const CreateRequest = () => {
         }, 0);
       const totalPrice = basePrice + additionalServicesTotal;
 
-      // Prepare request data for creation
-      const requestData = {
+      // Step 1: Create inspection request BEFORE payment processing
+      const requestData: CreateInspectionRequestPayload = {
         title: formData.title || '',
         category: (formData.category as CreateInspectionRequestPayload['category']) || 'residential',
         subCategory: formData.subCategory || '',
@@ -500,28 +500,37 @@ export const CreateRequest = () => {
         safetyConsiderations: formData.safetyConsiderations || '',
         recordingConsent: formData.recordingConsent || false,
         uploadedFiles: [], // TODO: Implement file upload handling
-        paymentIntentId: paymentIntentId,
-        paymentStatus: 'succeeded' as const,
-        paidAt: new Date().toISOString(),
+        paymentIntentId: paymentIntentId, // Link to payment
+        paymentStatus: 'pending', // Will be updated by webhook when payment succeeds
+        paidAt: undefined, // Will be set by webhook
       };
 
-      setShowReview(false);
-      
-      // Create inspection request with payment confirmation
+      console.log('Creating inspection request before payment:', requestData);
+
+      // Create the inspection request first
       const response = await inspectionRequestService.createInspectionRequest(requestData);
       
       if (response.data) {
-        toast.success('Payment successful! Request created.', {
-          description: 'Your inspection request has been submitted and paid for. You\'ll be matched with an agent within 30 minutes.'
+        console.log('Inspection request created:', response.data.id);
+        
+        setShowReview(false);
+        
+        // Step 2: Payment has already been processed by Stripe
+        // The webhook will update the request status when payment confirmation arrives
+        
+        toast.success('Request created and payment processing!', {
+          description: 'Your inspection request has been created. Payment confirmation will be processed shortly.'
         });
-        navigate('/client-dashboard/my-ads');
+        
+        // Redirect to success page where webhook will have updated the payment status
+        navigate(`/payment-success?payment=success&request_id=${response.data.id}&payment_intent=${paymentIntentId}`);
       } else {
-        throw new Error('Failed to create inspection request');
+        throw new Error('Failed to create inspection request before payment');
       }
       
     } catch (err) {
-      console.error('Error processing payment:', err);
-      toast.error('Failed to process payment. Please try again.', {
+      console.error('Error creating request before payment:', err);
+      toast.error('Failed to create request. Please try again.', {
         description: err instanceof Error ? err.message : 'Unknown error occurred'
       });
     } finally {

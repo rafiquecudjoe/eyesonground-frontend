@@ -16,7 +16,8 @@ import {
   Package
 } from 'lucide-react';
 import { ServiceTierDetails, SERVICE_TIERS, calculateTotalPrice } from '@/lib/pricing/service-tiers';
-import { SecureStripePayment } from '@/components/payments/StripePayment';
+import { StripeCheckout } from '@/components/payments/StripeCheckout';
+import { TokenStorage } from '@/lib/api/token-storage';
 
 interface RequestReviewProps {
   formData: any;
@@ -28,6 +29,9 @@ interface RequestReviewProps {
 }
 
 export const RequestReview = ({ formData, selectedTier, selectedAdditionalServices, onClose, onPay, onPost }: RequestReviewProps) => {
+  // Get current user data for payment metadata
+  const userData = TokenStorage.getUserData();
+  const userId = userData?.id?.toString() || 'unknown_user';
   const tier = SERVICE_TIERS.find(t => t.id === selectedTier);
   const total = calculateTotalPrice(selectedTier as any, selectedAdditionalServices || []);
 
@@ -230,14 +234,14 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                           </div>
                         </div>
                         
-                        <SecureStripePayment
+                        <StripeCheckout
                           amount={total}
                           description={`Inspection Request: ${formData.title}`}
                           metadata={{
                             requestTitle: formData.title,
                             requestLocation: `${formData.city}, ${formData.state}`,
                             serviceTier: tier?.name || '',
-                            userId: 'user_id_here', // Replace with actual user ID from auth
+                            userId: userId,
                           }}
                           onSuccess={(paymentIntentId) => {
                             onPay(paymentIntentId);
@@ -245,13 +249,12 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                           onError={(error) => {
                             console.error('Payment failed:', error);
                           }}
-                          showSecurityInfo={true}
                         >
-                          Pay Now (${total})
-                        </SecureStripePayment>
+                          Pay Now (${total.toFixed(2)})
+                        </StripeCheckout>
                         
                         <div className="text-xs text-[rgba(13,38,75,0.6)] text-center px-2">
-                          Secure payment processing. Request will be prioritized and assigned immediately.
+                          Secure checkout powered by Stripe. Request will be prioritized and assigned immediately.
                         </div>
                       </>
                     )}

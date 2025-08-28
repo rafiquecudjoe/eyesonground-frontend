@@ -321,8 +321,14 @@ class PaymentService {
 
             const data = await response.json();
 
-            if (!data.success) {
+            // Check if response contains an error message
+            if (data.error || (data.message && data.message.includes('error'))) {
                 throw new Error(data.message || 'Failed to create checkout session');
+            }
+
+            // Ensure we have the required data
+            if (!data.data || !data.data.sessionId || !data.data.url) {
+                throw new Error('Invalid response: missing session data');
             }
 
             return {
@@ -357,6 +363,34 @@ class PaymentService {
         const timestamp = Date.now();
         const random = Math.floor(Math.random() * 1000000);
         return `EOG_${timestamp}_${random}`;
+    }
+
+    /**
+     * Get payment history for the current user
+     */
+    async getPaymentHistory(): Promise<any[]> {
+        try {
+            const response = await fetch(this.getApiUrl('api/v1/payments/history'), {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Check if response contains an error message
+            if (data.error || (data.message && data.message.includes('error'))) {
+                throw new Error(data.message || 'Failed to get payment history');
+            }
+
+            return data.data?.payments || [];
+        } catch (error) {
+            console.error('Error fetching payment history:', error);
+            throw error;
+        }
     }
 }
 
