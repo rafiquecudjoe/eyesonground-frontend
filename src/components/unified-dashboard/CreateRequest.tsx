@@ -18,8 +18,9 @@ import { ServiceTierSelector } from "./ServiceTierSelector";
 import { InspectionDetailsForm } from "./InspectionDetailsForm";
 import { FormProgress } from "./FormProgress";
 import { RequestTips } from "./RequestTips";
-import { ServiceTier, AdditionalService } from "@/lib/pricing/service-tiers";
+import { ServiceTier, AdditionalService, calculateTotalPrice, SERVICE_TIERS } from "@/lib/pricing/service-tiers";
 import RequestReview from "./RequestReview";
+import { inspectionRequestService, CreateInspectionRequestPayload } from "@/lib/api/inspection-requests";
 
 // States data with abbreviations and full names
 const US_STATES = [
@@ -244,6 +245,7 @@ export const CreateRequest = () => {
     city: "",
     address: "",
     urgency: "",
+    preferredDate: "",
     description: "",
     phoneNumber: "",
     specificAreas: "",
@@ -384,24 +386,71 @@ export const CreateRequest = () => {
   };
 
   const handlePost = async () => {
-    // TODO: replace with real backend call to create the request and handle file uploads
     setPosting(true);
     try {
-      const payload = {
-        ...formData,
-        selectedServiceTier,
-        selectedAdditionalServices
+      // Calculate pricing
+      const baseTier = SERVICE_TIERS.find(t => t.id === selectedServiceTier);
+      const basePrice = baseTier?.price || 50;
+      const additionalServicesTotal = selectedAdditionalServices
+        .filter(service => service.included)
+        .reduce((sum, service) => {
+          if (service.id === 'travel_surcharge') {
+            const miles = service.units || 0;
+            return sum + (service.price * miles);
+          }
+          return sum + service.price;
+        }, 0);
+      const totalPrice = basePrice + additionalServicesTotal;
+
+      // Transform form data to match API payload structure
+      const payload: CreateInspectionRequestPayload = {
+        title: formData.title || '',
+        category: (formData.category as CreateInspectionRequestPayload['category']) || 'residential',
+        subCategory: formData.subCategory || '',
+        customSubCategory: formData.customSubCategory || '',
+        state: formData.state || '',
+        city: formData.city || '',
+        address: formData.address || '',
+        urgency: formData.urgency || new Date().toISOString(),
+        phoneNumber: formData.phoneNumber || '',
+        basePrice: basePrice,
+        additionalServicesTotal: additionalServicesTotal,
+        totalPrice: totalPrice,
+        specificAreas: formData.specificAreas || '',
+        knownIssues: formData.knownIssues || '',
+        accessInstructions: formData.accessInstructions || '',
+        contactPerson: formData.contactPerson || '',
+        contactPhone: formData.contactPhone || '',
+        preferredContact: formData.preferredContact || '',
+        availabilityWindow: formData.availabilityWindow || '',
+        specialRequirements: formData.specialRequirements || '',
+        safetyConsiderations: formData.safetyConsiderations || '',
+        recordingConsent: formData.recordingConsent || false,
+        uploadedFiles: [], // TODO: Implement file upload handling
+        paymentIntentId: 'post_only_request', // Special identifier for post-only requests
+        paymentStatus: 'pending', // For post-only requests, payment status is pending
+        paidAt: undefined,
       };
 
-      console.log('Posting request (payload):', payload);
+      console.log('Posting request to backend:', payload);
 
-      // Placeholder: assuming success
-      toast.success('Request posted successfully!', { description: 'Agents will start applying soon' });
-      setShowReview(false);
-      navigate('/request-confirmation');
+      // Call the actual backend API
+      const response = await inspectionRequestService.createInspectionRequest(payload);
+      
+      if (response.data) {
+        toast.success('Request posted successfully!', { 
+          description: `Request ID: ${response.data.id}. Agents will start applying soon.` 
+        });
+        setShowReview(false);
+        navigate('/request-confirmation');
+      } else {
+        throw new Error('Failed to create request - no data returned');
+      }
     } catch (err) {
-      console.error(err);
-      toast.error('Failed to post request. Please try again.');
+      console.error('Error posting request:', err);
+      toast.error('Failed to post request. Please try again.', {
+        description: err instanceof Error ? err.message : 'Unknown error occurred'
+      });
     } finally {
       setPosting(false);
     }
@@ -416,29 +465,31 @@ export const CreateRequest = () => {
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl min-h-screen">
-      <div className="mb-6">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-[rgba(42,100,186,0.1)] px-4 py-2 rounded-full mb-4">
-            <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
-            <span className="text-sm font-medium text-[rgba(13,38,75,1)]">New Request</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/30 via-white to-indigo-50/30">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <div className="mb-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-[rgba(42,100,186,0.1)] to-[rgba(13,38,75,0.1)] px-6 py-3 rounded-full mb-6 border border-[rgba(42,100,186,0.2)]">
+              <FileText className="h-6 w-6 text-[rgba(42,100,186,1)]" />
+              <span className="text-sm font-semibold text-[rgba(13,38,75,1)]">New Inspection Request</span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold text-[rgba(13,38,75,1)] mb-3 tracking-tight">
+              Post Your Inspection Request
+            </h1>
+            <p className="text-lg text-[rgba(13,38,75,0.7)] max-w-2xl mx-auto leading-relaxed">
+              Get professional inspection services by qualified agents in your area. 
+              Complete the form below to start receiving applications.
+            </p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[rgba(13,38,75,1)] mb-2">
-            Post Inspection Request
-          </h1>
-          <p className="text-[rgba(13,38,75,0.7)]">
-            Provide details about what you need inspected
-          </p>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
-        {/* Main Form */}
-        <div className="lg:col-span-4">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <Card className="bg-white/80 backdrop-blur-sm border-[rgba(42,100,186,0.1)]">
-              <CardHeader>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+          {/* Main Form */}
+          <div className="lg:col-span-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Information */}
+              <Card className="bg-white/90 backdrop-blur-sm border-[rgba(42,100,186,0.2)] shadow-lg hover:shadow-xl transition-all duration-300">
+                <CardHeader className="border-b border-[rgba(42,100,186,0.1)] bg-gradient-to-r from-[rgba(42,100,186,0.05)] to-[rgba(13,38,75,0.05)]">
                 <CardTitle className="text-[rgba(13,38,75,1)] flex items-center gap-2">
                   <FileText className="h-5 w-5 text-[rgba(42,100,186,1)]" />
                   Basic Information
@@ -946,12 +997,13 @@ export const CreateRequest = () => {
         
         {/* Progress Sidebar */}
         <div className="lg:col-span-1 order-first lg:order-last">
-          <div className="sticky top-4 z-10 h-fit max-h-[calc(100vh-2rem)] overflow-y-auto space-y-3">
-            <div className="space-y-3">
+          <div className="sticky top-6 z-10 h-fit max-h-[calc(100vh-3rem)] overflow-y-auto space-y-4">
+            <div className="space-y-4">
               <FormProgress
                 formData={formData}
                 selectedServiceTier={selectedServiceTier}
                 photoFiles={photoFiles}
+                className="shadow-xl"
               />
               <div className="hidden lg:block">
                 <RequestTips />
@@ -970,6 +1022,7 @@ export const CreateRequest = () => {
           onPost={handlePost}
         />
       )}
+      </div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ export interface CreateInspectionRequestPayload {
     state: string;
     city: string;
     address: string;
-    urgency: 'low' | 'medium' | 'high' | 'urgent';
+    urgency: string; // ISO date string for preferred inspection date
     phoneNumber: string;
     basePrice: number;
     additionalServicesTotal?: number;
@@ -72,7 +72,7 @@ export interface UpdateInspectionRequestPayload {
     state?: string;
     city?: string;
     address?: string;
-    urgency?: 'low' | 'medium' | 'high' | 'urgent';
+    urgency?: string; // ISO date string for preferred inspection date
     phoneNumber?: string;
     basePrice?: number;
     additionalServicesTotal?: number;
