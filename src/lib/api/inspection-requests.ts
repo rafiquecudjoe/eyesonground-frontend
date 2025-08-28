@@ -26,8 +26,8 @@ export interface CreateInspectionRequestPayload {
     safetyConsiderations?: string;
     recordingConsent?: boolean;
     uploadedFiles?: string[];
-    paymentIntentId: string;
-    paymentStatus: 'pending' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
+    paymentIntentId?: string;
+    paymentStatus: 'pending' | 'pending_payment' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
     paidAt?: string;
 }
 

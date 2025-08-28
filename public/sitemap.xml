@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://eyesonground.com/</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://eyesonground.com/images/hero-image.jpg</image:loc>
+      <image:title>EyesOnGround Remote Inspection Services</image:title>
+      <image:caption>Professional remote inspection services with verified agents worldwide</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Main Service Pages -->
+  <url>
+    <loc>https://eyesonground.com/services</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/vehicle-inspection</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/equipment-inspection</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/real-estate-inspection</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/marketplace-inspection</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- About & Company -->
+  <url>
+    <loc>https://eyesonground.com/about</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/reviews</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/faq</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- User Actions -->
+  <url>
+    <loc>https://eyesonground.com/account-type</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/login</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/clientregister</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/psiregister</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Location Pages for Local SEO -->
+  <url>
+    <loc>https://eyesonground.com/locations/new-york-city</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://eyesonground.com/images/locations/nyc-skyline.jpg</image:loc>
+      <image:title>New York City Inspection Services</image:title>
+      <image:caption>Professional inspection services in NYC</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://eyesonground.com/locations/los-angeles</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://eyesonground.com/images/locations/la-cityscape.jpg</image:loc>
+      <image:title>Los Angeles Inspection Services</image:title>
+      <image:caption>Professional inspection services in LA</image:caption>
+    </image:image>
+  </url>
+  
+  <url>
+    <loc>https://eyesonground.com/locations/chicago</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://eyesonground.com/images/locations/chicago-skyline.jpg</image:loc>
+      <image:title>Chicago Inspection Services</image:title>
+      <image:caption>Professional inspection services in Chicago</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://eyesonground.com/terms-and-conditions</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>quarterly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://eyesonground.com/privacy-policy</loc>
+    <lastmod>2025-08-28</lastmod>
+    <changefreq>quarterly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

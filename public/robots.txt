@@ -1,8 +1,34 @@
+# Robots.txt for EyesOnGround - Remote Inspection Services
+User-agent: *
+Allow: /
+Allow: /services
+Allow: /about
+Allow: /reviews
+Allow: /faq
+Allow: /account-type
+Allow: /login
+Allow: /clientregister
+Allow: /psiregister
+Allow: /terms-and-conditions
+Allow: /privacy-policy
+
+# Disallow admin and dashboard areas
+Disallow: /client-dashboard/
+Disallow: /agent-dashboard/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /payment-success
+Disallow: /payment-failed
+Disallow: /admin/
+
+# Specific bot permissions
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +36,10 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
+
+# Sitemap location
+Sitemap: https://eyesonground.com/sitemap.xml
+Sitemap: https://eyesonground.com/sitemap-services.xml
+Sitemap: https://eyesonground.com/sitemap-locations.xml

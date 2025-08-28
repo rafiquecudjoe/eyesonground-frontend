@@ -24,7 +24,7 @@ interface RequestReviewProps {
   selectedTier: ServiceTierDetails['id'];
   selectedAdditionalServices: any[];
   onClose: () => void;
-  onPay: (paymentIntentId: string) => void;
+  onPay: () => void;
   onPost: () => void;
 }
 
@@ -234,24 +234,18 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                           </div>
                         </div>
                         
-                        <StripeCheckout
-                          amount={total}
-                          description={`Inspection Request: ${formData.title}`}
-                          metadata={{
-                            requestTitle: formData.title,
-                            requestLocation: `${formData.city}, ${formData.state}`,
-                            serviceTier: tier?.name || '',
-                            userId: userId,
+                        <Button
+                          onClick={() => {
+                            console.log('🔥 Pay Now button clicked');
+                            console.log('📋 Form data:', formData);
+                            console.log('💰 Total amount:', total);
+                            onPay();
                           }}
-                          onSuccess={(paymentIntentId) => {
-                            onPay(paymentIntentId);
-                          }}
-                          onError={(error) => {
-                            console.error('Payment failed:', error);
-                          }}
+                          className="w-full h-12 bg-gradient-to-r from-[#2a64ba] to-[#1e4a87] hover:from-[#1e4a87] hover:to-[#0d264b] text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
                         >
+                          <DollarSign className="h-4 w-4" />
                           Pay Now (${total.toFixed(2)})
-                        </StripeCheckout>
+                        </Button>
                         
                         <div className="text-xs text-[rgba(13,38,75,0.6)] text-center px-2">
                           Secure checkout powered by Stripe. Request will be prioritized and assigned immediately.

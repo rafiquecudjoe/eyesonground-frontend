@@ -22,6 +22,7 @@ import { ServiceTier, AdditionalService, calculateTotalPrice, SERVICE_TIERS } fr
 import RequestReview from "./RequestReview";
 import { inspectionRequestService, CreateInspectionRequestPayload } from "@/lib/api/inspection-requests";
 import { paymentService } from "@/lib/api/payment";
+import { TokenStorage } from "@/lib/api/token-storage";
 import { MatchingPromise } from "./MatchingPromise";
 
 // States data with abbreviations and full names
@@ -458,7 +459,7 @@ export const CreateRequest = () => {
     }
   };
 
-  const handlePay = async (paymentIntentId: string) => {
+  const handlePay = async () => {
     setPosting(true);
     try {
       // Calculate pricing
@@ -478,7 +479,7 @@ export const CreateRequest = () => {
       // Step 1: Create inspection request BEFORE payment processing
       const requestData: CreateInspectionRequestPayload = {
         title: formData.title || '',
-        category: (formData.category as CreateInspectionRequestPayload['category']) || 'residential',
+        category: (formData.category as CreateInspectionRequestPayload['category']) || 'automotive',
         subCategory: formData.subCategory || '',
         customSubCategory: formData.customSubCategory || '',
         state: formData.state || '',
@@ -500,38 +501,95 @@ export const CreateRequest = () => {
         safetyConsiderations: formData.safetyConsiderations || '',
         recordingConsent: formData.recordingConsent || false,
         uploadedFiles: [], // TODO: Implement file upload handling
-        paymentIntentId: paymentIntentId, // Link to payment
-        paymentStatus: 'pending', // Will be updated by webhook when payment succeeds
-        paidAt: undefined, // Will be set by webhook
+        // Don't include paymentIntentId initially - it will be added when payment is processed
+        paymentStatus: 'pending_payment', // Starting as pending payment
+        paidAt: undefined, // Will be set when payment succeeds
       };
 
-      console.log('Creating inspection request before payment:', requestData);
+      console.log('🚀 Creating inspection request before payment:', requestData);
+      console.log('🔍 API Base URL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
 
       // Create the inspection request first
       const response = await inspectionRequestService.createInspectionRequest(requestData);
       
+      console.log('🎯 API Response:', response);
+      
       if (response.data) {
-        console.log('Inspection request created:', response.data.id);
+        const requestId = response.data.id;
+        console.log('✅ Inspection request created successfully:', requestId);
         
-        setShowReview(false);
+        // Step 2: Initiate payment with request ID in metadata
+        const userData = TokenStorage.getUserData();
+        const userId = userData?.id?.toString() || 'unknown_user';
         
-        // Step 2: Payment has already been processed by Stripe
-        // The webhook will update the request status when payment confirmation arrives
+        // Prepare checkout session with request reference
+        const baseUrl = window.location.protocol + '//' + window.location.host;
+        const successUrl = new URL(`/payment-success?payment=success&request_id=${requestId}&session_id={CHECKOUT_SESSION_ID}`, baseUrl).toString();
+        const cancelUrl = new URL(`/unified-dashboard?payment=cancelled&request_id=${requestId}`, baseUrl).toString();
         
-        toast.success('Request created and payment processing!', {
-          description: 'Your inspection request has been created. Payment confirmation will be processed shortly.'
+        const checkoutPayload = {
+          amount: totalPrice,
+          description: `Inspection Request: ${formData.title}`,
+          successUrl: successUrl,
+          cancelUrl: cancelUrl,
+          metadata: {
+            requestId: requestId,
+            requestTitle: formData.title,
+            requestLocation: `${formData.city}, ${formData.state}`,
+            serviceTier: baseTier?.name || '',
+            userId: userId,
+          },
+        };
+
+        console.log('💳 Creating Stripe checkout session with payload:', checkoutPayload);
+
+        // Create Stripe checkout session
+        const session = await paymentService.createCheckoutSession(checkoutPayload);
+        
+        // Store request ID for potential retry scenarios
+        localStorage.setItem('pendingRequestId', requestId);
+        
+        toast.success('Request created! Redirecting to payment...', {
+          description: 'Your request has been saved. Complete payment to activate it.'
         });
         
-        // Redirect to success page where webhook will have updated the payment status
-        navigate(`/payment-success?payment=success&request_id=${response.data.id}&payment_intent=${paymentIntentId}`);
+        // Redirect to Stripe checkout
+        paymentService.redirectToStripeCheckout(session.url);
+        
       } else {
-        throw new Error('Failed to create inspection request before payment');
+        console.error('❌ No data returned from API response:', response);
+        throw new Error('Failed to create inspection request - no data returned');
       }
       
     } catch (err) {
-      console.error('Error creating request before payment:', err);
-      toast.error('Failed to create request. Please try again.', {
-        description: err instanceof Error ? err.message : 'Unknown error occurred'
+      console.error('❌ Error in handlePay function:', err);
+      console.error('❌ Full error details:', {
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : 'No stack trace',
+        response: (err as any)?.response || 'No response data'
+      });
+      
+      // More specific error messages
+      let errorMessage = 'Failed to create request. Please try again.';
+      let errorDescription = 'Unknown error occurred';
+      
+      if (err instanceof Error) {
+        if (err.message.includes('NetworkError') || err.message.includes('fetch')) {
+          errorMessage = 'Connection failed. Please check your internet connection.';
+          errorDescription = 'Unable to connect to the server';
+        } else if (err.message.includes('401') || err.message.includes('unauthorized')) {
+          errorMessage = 'Authentication failed. Please log in again.';
+          errorDescription = 'Your session may have expired';
+        } else if (err.message.includes('400') || err.message.includes('Bad Request')) {
+          errorMessage = 'Invalid request data. Please check your form.';
+          errorDescription = 'Some required fields may be missing or invalid';
+        } else {
+          errorDescription = err.message;
+        }
+      }
+      
+      toast.error(errorMessage, {
+        description: errorDescription
       });
     } finally {
       setPosting(false);

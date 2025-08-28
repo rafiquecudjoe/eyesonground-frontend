@@ -17,6 +17,10 @@ import PaymentFailed from "./pages/PaymentFailed";
 import PaymentStatus from "./components/payments/PaymentStatus";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import { SEOManager } from "./components/seo/SEOManager";
+import NewYorkCityPage from "./pages/locations/NewYorkCity";
+import LosAngelesPage from "./pages/locations/LosAngeles";
+import ChicagoPage from "./pages/locations/Chicago";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +30,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SEOManager />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/psiregister" element={<AgentRegistration />} />
@@ -47,6 +52,11 @@ const App = () => (
           <Route path="/payment-status" element={<PaymentStatus />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-failed" element={<PaymentFailed />} />
+          
+          {/* Location Pages for SEO */}
+          <Route path="/locations/new-york-city" element={<NewYorkCityPage />} />
+          <Route path="/locations/los-angeles" element={<LosAngelesPage />} />
+          <Route path="/locations/chicago" element={<ChicagoPage />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
