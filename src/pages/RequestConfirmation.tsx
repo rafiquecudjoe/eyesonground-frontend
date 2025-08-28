@@ -55,7 +55,7 @@ const RequestConfirmation = () => {
               Request Posted Successfully!
             </CardTitle>
             <p className="text-lg text-[rgba(13,38,75,0.7)] mt-2">
-              Your inspection request is now live and visible to qualified agents
+              We're matching you with a qualified agent in your area
             </p>
           </CardHeader>
           
@@ -64,20 +64,20 @@ const RequestConfirmation = () => {
             <div className="grid md:grid-cols-3 gap-4">
               <div className="text-center p-4 border border-green-200 rounded-xl bg-green-50">
                 <CheckCircle2 className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-[rgba(13,38,75,1)]">Posted</h3>
-                <p className="text-sm text-[rgba(13,38,75,0.7)]">Request is live</p>
+                <h3 className="font-semibold text-[rgba(13,38,75,1)]">Received</h3>
+                <p className="text-sm text-[rgba(13,38,75,0.7)]">Request submitted</p>
               </div>
               
               <div className="text-center p-4 border border-blue-200 rounded-xl bg-blue-50">
                 <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-[rgba(13,38,75,1)]">Notifying</h3>
-                <p className="text-sm text-[rgba(13,38,75,0.7)]">Agents being alerted</p>
+                <h3 className="font-semibold text-[rgba(13,38,75,1)]">Matching</h3>
+                <p className="text-sm text-[rgba(13,38,75,0.7)]">Finding your agent</p>
               </div>
               
               <div className="text-center p-4 border border-purple-200 rounded-xl bg-purple-50">
                 <Clock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-[rgba(13,38,75,1)]">Waiting</h3>
-                <p className="text-sm text-[rgba(13,38,75,0.7)]">For applications</p>
+                <h3 className="font-semibold text-[rgba(13,38,75,1)]">30 Minutes</h3>
+                <p className="text-sm text-[rgba(13,38,75,0.7)]">Expected match time</p>
               </div>
             </div>
 
@@ -90,15 +90,15 @@ const RequestConfirmation = () => {
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 mt-0.5">1</div>
-                  <p className="text-sm text-[rgba(13,38,75,0.8)]">Qualified agents in your area will receive notifications about your request</p>
+                  <p className="text-sm text-[rgba(13,38,75,0.8)]">Our system automatically reviews your request and location requirements</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 mt-0.5">2</div>
-                  <p className="text-sm text-[rgba(13,38,75,0.8)]">Interested agents will submit applications with their profiles and quotes</p>
+                  <p className="text-sm text-[rgba(13,38,75,0.8)]">We match you with the most qualified agent in your area within 30 minutes</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 mt-0.5">3</div>
-                  <p className="text-sm text-[rgba(13,38,75,0.8)]">You'll receive notifications and can review applications in your dashboard</p>
+                  <p className="text-sm text-[rgba(13,38,75,0.8)]">Your assigned agent will contact you to schedule the inspection</p>
                 </div>
               </div>
             </div>
@@ -107,7 +107,7 @@ const RequestConfirmation = () => {
             <div className="text-center p-4 border border-yellow-200 rounded-xl bg-yellow-50">
               <Clock className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
               <p className="text-sm text-[rgba(13,38,75,0.8)]">
-                Automatically redirecting to your requests in <Badge variant="secondary" className="mx-1">{countdown}s</Badge>
+                You'll be matched with an agent within 30 minutes • Redirecting in <Badge variant="secondary" className="mx-1">{countdown}s</Badge>
               </p>
             </div>
 

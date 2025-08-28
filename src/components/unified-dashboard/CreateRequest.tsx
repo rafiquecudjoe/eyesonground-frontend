@@ -21,6 +21,8 @@ import { RequestTips } from "./RequestTips";
 import { ServiceTier, AdditionalService, calculateTotalPrice, SERVICE_TIERS } from "@/lib/pricing/service-tiers";
 import RequestReview from "./RequestReview";
 import { inspectionRequestService, CreateInspectionRequestPayload } from "@/lib/api/inspection-requests";
+import { paymentService } from "@/lib/api/payment";
+import { MatchingPromise } from "./MatchingPromise";
 
 // States data with abbreviations and full names
 const US_STATES = [
@@ -439,7 +441,7 @@ export const CreateRequest = () => {
       
       if (response.data) {
         toast.success('Request posted successfully!', { 
-          description: `Request ID: ${response.data.id}. Agents will start applying soon.` 
+          description: `Request ID: ${response.data.id}. You'll be matched with an agent within 30 minutes.` 
         });
         setShowReview(false);
         navigate('/request-confirmation');
@@ -456,12 +458,75 @@ export const CreateRequest = () => {
     }
   };
 
-  const handlePay = async () => {
-    // TODO: integrate Stripe — call backend to create a PaymentIntent and redirect to checkout or use Stripe Elements
-    toast('Proceeding to payment is not wired yet. Redirecting to confirmation as a placeholder.');
-    setShowReview(false);
-    // For now, proceed to the same confirmation flow (placeholder)
-    navigate('/request-confirmation');
+  const handlePay = async (paymentIntentId: string) => {
+    setPosting(true);
+    try {
+      // Calculate pricing
+      const baseTier = SERVICE_TIERS.find(t => t.id === selectedServiceTier);
+      const basePrice = baseTier?.price || 50;
+      const additionalServicesTotal = selectedAdditionalServices
+        .filter(service => service.included)
+        .reduce((sum, service) => {
+          if (service.id === 'travel_surcharge') {
+            const miles = service.units || 0;
+            return sum + (service.price * miles);
+          }
+          return sum + service.price;
+        }, 0);
+      const totalPrice = basePrice + additionalServicesTotal;
+
+      // Prepare request data for creation
+      const requestData = {
+        title: formData.title || '',
+        category: (formData.category as CreateInspectionRequestPayload['category']) || 'residential',
+        subCategory: formData.subCategory || '',
+        customSubCategory: formData.customSubCategory || '',
+        state: formData.state || '',
+        city: formData.city || '',
+        address: formData.address || '',
+        urgency: formData.urgency || new Date().toISOString(),
+        phoneNumber: formData.phoneNumber || '',
+        basePrice: basePrice,
+        additionalServicesTotal: additionalServicesTotal,
+        totalPrice: totalPrice,
+        specificAreas: formData.specificAreas || '',
+        knownIssues: formData.knownIssues || '',
+        accessInstructions: formData.accessInstructions || '',
+        contactPerson: formData.contactPerson || '',
+        contactPhone: formData.contactPhone || '',
+        preferredContact: formData.preferredContact || '',
+        availabilityWindow: formData.availabilityWindow || '',
+        specialRequirements: formData.specialRequirements || '',
+        safetyConsiderations: formData.safetyConsiderations || '',
+        recordingConsent: formData.recordingConsent || false,
+        uploadedFiles: [], // TODO: Implement file upload handling
+        paymentIntentId: paymentIntentId,
+        paymentStatus: 'succeeded' as const,
+        paidAt: new Date().toISOString(),
+      };
+
+      setShowReview(false);
+      
+      // Create inspection request with payment confirmation
+      const response = await inspectionRequestService.createInspectionRequest(requestData);
+      
+      if (response.data) {
+        toast.success('Payment successful! Request created.', {
+          description: 'Your inspection request has been submitted and paid for. You\'ll be matched with an agent within 30 minutes.'
+        });
+        navigate('/client-dashboard/my-ads');
+      } else {
+        throw new Error('Failed to create inspection request');
+      }
+      
+    } catch (err) {
+      console.error('Error processing payment:', err);
+      toast.error('Failed to process payment. Please try again.', {
+        description: err instanceof Error ? err.message : 'Unknown error occurred'
+      });
+    } finally {
+      setPosting(false);
+    }
   };
   
   return (
@@ -478,9 +543,14 @@ export const CreateRequest = () => {
             </h1>
             <p className="text-lg text-[rgba(13,38,75,0.7)] max-w-2xl mx-auto leading-relaxed">
               Get professional inspection services by qualified agents in your area. 
-              Complete the form below to start receiving applications.
+              Complete the form below to get matched with an agent.
             </p>
           </div>
+        </div>
+        
+        {/* Matching Promise Banner */}
+        <div className="max-w-4xl mx-auto mb-6">
+          <MatchingPromise variant="compact" />
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">

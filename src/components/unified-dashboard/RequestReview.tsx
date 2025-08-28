@@ -9,7 +9,6 @@ import {
   MapPin, 
   Settings, 
   DollarSign, 
-  CreditCard,
   Send,
   Edit3,
   X,
@@ -17,13 +16,14 @@ import {
   Package
 } from 'lucide-react';
 import { ServiceTierDetails, SERVICE_TIERS, calculateTotalPrice } from '@/lib/pricing/service-tiers';
+import { SecureStripePayment } from '@/components/payments/StripePayment';
 
 interface RequestReviewProps {
   formData: any;
   selectedTier: ServiceTierDetails['id'];
   selectedAdditionalServices: any[];
   onClose: () => void;
-  onPay: () => void;
+  onPay: (paymentIntentId: string) => void;
   onPost: () => void;
 }
 
@@ -146,7 +146,7 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                                   </span>
                                   <span className="font-medium text-[rgba(13,38,75,1)]">
                                     ${service.id === 'travel_surcharge' 
-                                      ? (service.units || 0) * service.price 
+                                      ? ((service.units || 0) * service.price).toFixed(2) 
                                       : service.price}
                                   </span>
                                 </div>
@@ -206,11 +206,12 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                     {/* Post Only Button */}
                     <Button 
                       onClick={onPost}
-                      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 h-12"
+                      variant="outline"
+                      className="w-full border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.05)] text-[rgba(13,38,75,1)] h-12"
                     >
                       <Send className="h-4 w-4 mr-2" />
                       Post Request Only
-                      <Badge variant="secondary" className="ml-2 bg-white/20 text-white border-white/30">
+                      <Badge variant="outline" className="ml-2 border-green-300 text-green-700">
                         Free
                       </Badge>
                     </Button>
@@ -229,17 +230,25 @@ export const RequestReview = ({ formData, selectedTier, selectedAdditionalServic
                           </div>
                         </div>
                         
-                        <Button 
-                          onClick={onPay}
-                          variant="outline"
-                          className="w-full border-[rgba(42,100,186,0.3)] hover:bg-[rgba(42,100,186,0.05)] text-[rgba(13,38,75,1)] h-12"
+                        <SecureStripePayment
+                          amount={total}
+                          description={`Inspection Request: ${formData.title}`}
+                          metadata={{
+                            requestTitle: formData.title,
+                            requestLocation: `${formData.city}, ${formData.state}`,
+                            serviceTier: tier?.name || '',
+                            userId: 'user_id_here', // Replace with actual user ID from auth
+                          }}
+                          onSuccess={(paymentIntentId) => {
+                            onPay(paymentIntentId);
+                          }}
+                          onError={(error) => {
+                            console.error('Payment failed:', error);
+                          }}
+                          showSecurityInfo={true}
                         >
-                          <CreditCard className="h-4 w-4 mr-2" />
                           Pay Now (${total})
-                          <Badge variant="outline" className="ml-2 border-green-300 text-green-700">
-                            Instant
-                          </Badge>
-                        </Button>
+                        </SecureStripePayment>
                         
                         <div className="text-xs text-[rgba(13,38,75,0.6)] text-center px-2">
                           Secure payment processing. Request will be prioritized and assigned immediately.

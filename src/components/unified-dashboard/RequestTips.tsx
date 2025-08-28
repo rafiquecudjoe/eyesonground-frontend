@@ -53,6 +53,12 @@ export const RequestTips = () => {
                 Mention safety concerns upfront
               </p>
             </div>
+            <div className="flex items-start gap-1.5">
+              <Star className="h-2.5 w-2.5 text-green-500 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-[rgba(13,38,75,0.8)]">
+                You'll be matched within 30 minutes
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
