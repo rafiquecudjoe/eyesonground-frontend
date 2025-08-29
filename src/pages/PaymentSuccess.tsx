@@ -40,7 +40,7 @@ const PaymentSuccess = () => {
         // If we have a session_id, verify with Stripe session
         if (sessionId) {
           // Verify payment with backend using session ID
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/payments/verify-session/${sessionId}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/payments/verify-session/${sessionId}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
